@@ -6,13 +6,13 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:46:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/03/27 15:21:43 by anlima           ###   ########.fr       */
+/*   Updated: 2024/03/27 15:32:04 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-int main()
+int main(void)
 {
     int server_sockfd;
     int client_sockfd;
