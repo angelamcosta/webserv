@@ -2,7 +2,7 @@
 
 <div align=center>
   
-  ![badge](https://raw.githubusercontent.com/angelamcosta/angelamcosta/main/42_badges/webservm.png)
+  ![badge](https://raw.githubusercontent.com/angelamcosta/angelamcosta/main/42_badges/webservn.png)
 </div>
 
 Webserv is about writing a C++ 98 HTTP server. The subject of the project can be found [here](https://raw.githubusercontent.com/angelamcosta/webserv/main/en.subject.pdf).
