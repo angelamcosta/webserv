@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:46:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/03/27 15:32:04 by anlima           ###   ########.fr       */
+/*   Updated: 2024/04/15 17:31:46 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,17 @@
 
 int main(void)
 {
-    int server_sockfd;
-    int client_sockfd;
-    struct sockaddr_in server_addr;
-    struct sockaddr_in client_addr;
-    socklen_t client_len = sizeof(client_addr);
+    int server_socket;
 
-    server_sockfd = create_server_socket();
-    if (!start_server(server_sockfd))
-        return (0);
-    std::cout << "Server listening on port " << PORT << std::endl;
-    while (true) {
-        client_sockfd = accept(server_sockfd, (struct sockaddr*)&client_addr, &client_len);
-        if (client_sockfd < 0) {
-            std::cout << "Error in accepting connection: " << strerror(errno) << std::endl;
-            continue;
-        }
-        handle_request(client_sockfd);
-    }
-    close(server_sockfd);
-    return (0);
+	server_socket = create_server_socket();
+	if (!start_server(server_socket))
+		return (0);
+	while (1)
+	{
+		int client_socket = accept(server_socket, NULL, NULL);
+		create_process(server_socket, client_socket);
+	}
+	close(server_socket);
+
+	return (0);
 }
