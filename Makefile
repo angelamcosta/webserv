@@ -3,11 +3,13 @@ NAME		=	webserv
 CXX	=	c++
 CXXFLAGS	=	-Wall -Werror -Wextra -std=c++98
 RM			=	rm -rf
+SRCS_FOLDER	=	srcs
 
 SRC			=	main.cpp \
-				srcs/processes.cpp \
-				srcs/requests.cpp \
-				srcs/sockets.cpp
+				$(SRCS_FOLDER)/processes.cpp \
+				$(SRCS_FOLDER)/requests.cpp \
+				$(SRCS_FOLDER)/sockets.cpp \
+				$(SRCS_FOLDER)/static_files.cpp
 
 OBJ			=	$(SRC:.cpp=.o)
 
