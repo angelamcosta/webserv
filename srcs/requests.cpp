@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:42:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/15 17:23:31 by anlima           ###   ########.fr       */
+/*   Updated: 2024/04/16 19:05:53 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,6 @@ void handle_request(int sockfd)
     }
     buffer[bytes_received] = '\0';
     std::cout << "Received request:\n" << buffer << std::endl;
-    ssize_t bytes_sent = send(sockfd, RES, strlen(RES), 0);
-    if (bytes_sent < 0) {
-        std::cout << "Error in sending response" << std::endl;
-    }
-    close(sockfd);
+    std::cout << "Handling request for client socket: " << sockfd << std::endl;
+    serve_file(sockfd, "/home/anlima/webserv/public/index.html");
 }
