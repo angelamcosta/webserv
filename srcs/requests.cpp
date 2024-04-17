@@ -6,13 +6,14 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:42:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/16 19:05:53 by anlima           ###   ########.fr       */
+/*   Updated: 2024/04/17 18:19:35 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../webserv.hpp"
 
 void    handle_request(int sockfd);
+std::map<std::string, std::string>  get_params(std::string url);
 
 void handle_request(int sockfd)
 {
@@ -25,7 +26,37 @@ void handle_request(int sockfd)
         return;
     }
     buffer[bytes_received] = '\0';
+    std::string request(buffer);
+    std::istringstream iss(request);
+    std::string method, url, protocol;
+    iss >> method >> url >> protocol;
     std::cout << "Received request:\n" << buffer << std::endl;
     std::cout << "Handling request for client socket: " << sockfd << std::endl;
-    serve_file(sockfd, "/home/anlima/webserv/public/index.html");
+    std::map<std::string, std::string> params = get_params(url);
+    serve_file(sockfd, "/home/anlima/webserv/public/index.html", params);
+}
+
+std::map<std::string, std::string> get_params(std::string url)
+{
+    std::map<std::string, std::string> params;
+
+    size_t pos = url.find('?');
+    if (pos == std::string::npos)
+        return (params);
+    
+    std::string query = url.substr(pos + 1);
+
+    std::istringstream iss(query);
+    std::string pair;
+    while (std::getline(iss, pair, '&'))
+    {
+        size_t equal_pos = pair.find('=');
+        if (equal_pos != std::string::npos)
+        {
+            std::string key = pair.substr(0, equal_pos);
+            std::string value = pair.substr(equal_pos + 1);
+            params[key] = value;
+        }
+    }
+    return params;
 }
