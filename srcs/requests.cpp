@@ -6,11 +6,11 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:42:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/17 18:19:35 by anlima           ###   ########.fr       */
+/*   Updated: 2024/04/23 18:35:21 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../webserv.hpp"
+#include "../includes/webserv.hpp"
 
 void    handle_request(int sockfd);
 std::map<std::string, std::string>  get_params(std::string url);

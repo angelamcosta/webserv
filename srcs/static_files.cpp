@@ -6,11 +6,11 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:08:48 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/17 18:44:24 by anlima           ###   ########.fr       */
+/*   Updated: 2024/04/23 14:20:52 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../webserv.hpp"
+#include "../includes/webserv.hpp"
 
 std::string mime_type(void);
 std::string dynamic_content(std::string content_str, std::map<std::string, std::string> params);
