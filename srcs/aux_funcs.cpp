@@ -1,33 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   processes.cpp                                      :+:      :+:    :+:   */
+/*   aux_funcs.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/15 17:29:09 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/23 14:45:13 by anlima           ###   ########.fr       */
+/*   Created: 2024/04/23 14:31:01 by anlima            #+#    #+#             */
+/*   Updated: 2024/04/23 14:32:20 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/webserv.hpp"
 
-// just for testing purposes
-void    create_process(int server_socket, int client_socket);
+void    welcome_text(void);
 
-void    create_process(int server_socket, int client_socket)
+void    welcome_text(void)
 {
-    pid_t pid = fork();
-
-    if (pid < 0)
-        close(client_socket);
-    else if (pid == 0)
-    {
-        close(server_socket);
-        handle_request(client_socket);
-        close(client_socket);
-        exit(0);
-    }
-    else
-        close(client_socket);
+    std::cout << LAVENDER << HEART << CLEAR << MINT;
+    std::cout << " Welcome to webserv! " << CLEAR;
+    std::cout << LAVENDER << HEART << CLEAR << std::endl;
+	std::cout << LAVENDER << "Go to " << CLEAR;
+    std::cout << SKYBLUE << "localhost:8080" << CLEAR;
+    std::cout << LAVENDER " to check it out! " << CLEAR << std::endl;
 }
