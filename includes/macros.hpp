@@ -1,29 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   webserv.hpp                                        :+:      :+:    :+:   */
+/*   macros.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/27 13:46:57 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/17 18:11:18 by anlima           ###   ########.fr       */
+/*   Created: 2024/04/23 14:19:47 by anlima            #+#    #+#             */
+/*   Updated: 2024/04/23 14:20:11 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_HPP
-# define WEBSERV_HPP
-
-#include <iostream>
-#include <cstdlib>
-#include <cstring>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <cerrno>
-#include <map>
-#include <fstream>
-#include <sstream>
-#include <string>
+#ifndef MACROS_HPP
+#define MACROS_HPP
 
 # define PORT 8080
 # define BUFFER_SIZE 1024
@@ -47,18 +35,5 @@
 # define YELLOW "\033[38;5;226m"
 # define HEART "♡"
 # define FLOWER "❀"
-
-void    create_process(int server_socket, int client_socket);
-
-void    handle_request(int sockfd);
-std::map<std::string, std::string>  get_params(std::string url);
-
-int bind_socket(int sockfd);
-int start_server(int sockfd);
-int create_server_socket(void);
-
-std::string mime_type(void);
-std::string dynamic_content(std::string content_str, std::map<std::string, std::string> params);
-void    serve_file(int client_socket, std::string const &file_path,std::map<std::string, std::string> params);
 
 #endif
