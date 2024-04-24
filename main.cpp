@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:46:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/24 14:30:27 by anlima           ###   ########.fr       */
+/*   Updated: 2024/04/24 15:33:52 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int main(void) {
     welcome_text();
     while (1) {
         int client_socket = accept(server_socket, NULL, NULL);
-        create_process(server_socket, client_socket);
+        handle_request(client_socket);
     }
     close(server_socket);
 
