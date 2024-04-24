@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:46:57 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/24 14:32:21 by anlima           ###   ########.fr       */
+/*   Updated: 2024/04/24 16:02:42 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,19 +42,12 @@ void process_line(const std::string &line, std::vector<Server> &servers);
 
 void welcome_text(void);
 
-void create_process(int server_socket, int client_socket);
+void create_process(int sockfd);
 
 void handle_request(int sockfd);
-std::map<std::string, std::string> get_params(std::string url);
 
 int bind_socket(int sockfd);
 int start_server(int sockfd);
 int create_server_socket(void);
-
-std::string mime_type(void);
-std::string dynamic_content(std::string content_str,
-                            std::map<std::string, std::string> params);
-void serve_file(int client_socket, std::string const &file_path,
-                std::map<std::string, std::string> params);
 
 #endif

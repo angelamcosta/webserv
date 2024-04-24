@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:19:47 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/24 14:31:54 by anlima           ###   ########.fr       */
+/*   Updated: 2024/04/24 16:09:33 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,7 @@
 #define YELLOW "\033[38;5;226m"
 #define HEART "♡"
 #define FLOWER "❀"
+#define PYTHON_EXEC "/usr/bin/python3"
+#define PYTHON_INDEX "/home/anlima/webserv/cgi-bin/script.py"
 
 #endif

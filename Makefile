@@ -13,8 +13,7 @@ SRC			=	main.cpp \
 				$(SRCS_FOLDER)/aux_funcs.cpp \
 				$(SRCS_FOLDER)/processes.cpp \
 				$(SRCS_FOLDER)/requests.cpp \
-				$(SRCS_FOLDER)/sockets.cpp \
-				$(SRCS_FOLDER)/static_files.cpp
+				$(SRCS_FOLDER)/sockets.cpp
 
 OBJ			=	$(SRC:.cpp=.o)
 
