@@ -6,26 +6,24 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:46:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/23 18:33:41 by anlima           ###   ########.fr       */
+/*   Updated: 2024/04/24 14:30:27 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/webserv.hpp"
 
-int main(void)
-{
+int main(void) {
     int server_socket;
 
-	server_socket = create_server_socket();
-	if (!start_server(server_socket))
-		return (0);
-	welcome_text();
-	while (1)
-	{
-		int client_socket = accept(server_socket, NULL, NULL);
-		create_process(server_socket, client_socket);
-	}
-	close(server_socket);
+    server_socket = create_server_socket();
+    if (!start_server(server_socket))
+        return (0);
+    welcome_text();
+    while (1) {
+        int client_socket = accept(server_socket, NULL, NULL);
+        create_process(server_socket, client_socket);
+    }
+    close(server_socket);
 
-	return (0);
+    return (0);
 }
