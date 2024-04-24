@@ -42,3 +42,7 @@ To get started with **webserv**, follow these steps:
 2. Navigate to the project directory: `cd webserv`
 3. Compile the source files using the provided Makefile: `make`
 4. Run the executable with a configuration file: `./webserv [configuration_file]`
+
+## 📚 Glossary
+
+- [Perl and CGI](https://www.perl.com/article/perl-and-cgi/)
