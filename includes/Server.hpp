@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/24 14:32:00 by anlima           ###   ########.fr       */
+ad/*   Updated: 2024/04/29 16:29:59 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "Location.hpp"
 #include <iostream>
 #include <vector>
+#include <sstream>
 
 class Server {
   private:
@@ -34,6 +35,8 @@ class Server {
 
     void addLocation(Location location);
     void addDirective(Directive directive);
+
+    int getPort(void);
 };
 
 #endif
