@@ -6,17 +6,17 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/24 17:26:17 by anlima           ###   ########.fr       */
+/*   Updated: 2024/04/29 14:03:02 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/webserv.hpp"
 
 int execute_cgi(void);
-void create_process(int sockfd);
 int redirect_stdout(int pipefd[2]);
 void handle_error(std::string message);
 void read_output(int sockfd, int pipefd[2]);
+void create_process(int sockfd, const std::string& query_string);
 
 int execute_cgi(void) {
     char *args[] = {(char *)PYTHON_EXEC, (char *)PYTHON_INDEX, NULL};
@@ -25,29 +25,6 @@ int execute_cgi(void) {
         return (0);
     }
     return (1);
-}
-
-void create_process(int sockfd) {
-    int pipefd[2];
-    if (pipe(pipefd) == -1)
-        throw std::runtime_error("Error in creating pipe");
-
-    pid_t pid = fork();
-    if (pid == -1) {
-        close(pipefd[0]);
-        close(pipefd[1]);
-        throw std::runtime_error("Error in forking process");
-    }
-    if (pid == 0) {
-        close(pipefd[0]);
-        if (!redirect_stdout(pipefd))
-            throw std::runtime_error("Error");
-        if (!execute_cgi())
-            throw std::runtime_error("Error");
-    } else {
-        close(pipefd[1]);
-        read_output(sockfd, pipefd);
-    }
 }
 
 int redirect_stdout(int pipefd[2]) {
@@ -75,4 +52,28 @@ void read_output(int sockfd, int pipefd[2]) {
     http_response += "\r\n";
     send(sockfd, http_response.c_str(), http_response.length(), 0);
     send(sockfd, response.str().c_str(), response.str().length(), 0);
+}
+
+void create_process(int sockfd, const std::string& query_string) {
+    int pipefd[2];
+    if (pipe(pipefd) == -1)
+        throw std::runtime_error("Error in creating pipe");
+
+    pid_t pid = fork();
+    if (pid == -1) {
+        close(pipefd[0]);
+        close(pipefd[1]);
+        throw std::runtime_error("Error in forking process");
+    }
+    if (pid == 0) {
+        close(pipefd[0]);
+        if (!redirect_stdout(pipefd))
+            throw std::runtime_error("Error");
+        setenv("QUERY_STRING", query_string.c_str(), 1);
+        if (!execute_cgi())
+            throw std::runtime_error("Error");
+    } else {
+        close(pipefd[1]);
+        read_output(sockfd, pipefd);
+    }
 }
