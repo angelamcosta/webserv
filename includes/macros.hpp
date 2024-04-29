@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:19:47 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/24 16:09:33 by anlima           ###   ########.fr       */
+/*   Updated: 2024/04/29 16:18:27 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,6 @@
 #define FLOWER "❀"
 #define PYTHON_EXEC "/usr/bin/python3"
 #define PYTHON_INDEX "/home/anlima/webserv/cgi-bin/script.py"
+#define GET_PORT "listen"
 
 #endif
