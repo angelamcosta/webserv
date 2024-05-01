@@ -6,14 +6,14 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:42:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/29 16:44:53 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/01 18:22:43 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/webserv.hpp"
 
 void handle_request(int sockfd);
-void check_events(std::vector<struct pollfd> &fds, int server_socket);
+void handle_conn(std::vector<struct pollfd> fds);
 
 void handle_request(int sockfd) {
     char buffer[BUFFER_SIZE];
@@ -33,29 +33,33 @@ void handle_request(int sockfd) {
     std::string query_string;
     if (pos != std::string::npos)
         query_string = url.substr(pos + 1);
-    std::cout << query_string << std::endl;
+    std::cout << "Query string: [" << query_string << "]" << std::endl; // Debug print
     create_process(sockfd, query_string);
 }
 
-// TODO : - adapt to multiple servers
-void check_events(std::vector<struct pollfd> &fds, int server_socket) {
-    int nb_events = poll(&fds[0], fds.size(), -1);
-    if (nb_events == -1)
-        throw std::runtime_error("Error in poll");
-    if (fds[0].revents && POLLIN) {
-        struct sockaddr_in client_addr;
-        socklen_t client_len = sizeof(client_addr);
-        int client_socket = accept(
-            server_socket, (struct sockaddr *)&client_addr, &client_len);
-        if (client_socket == -1)
-            throw std::runtime_error("Error accepting client connection");
-        fds.push_back(create_pollfd(client_socket));
-        fds[0].revents = 0;
-    }
-    for (size_t i = 1; i < fds.size(); ++i) {
-        if (fds[i].revents && POLLIN) {
-            handle_request(fds[i].fd);
-            fds[i].revents = 0;
+
+void handle_conn(std::vector<struct pollfd> fds) {
+    while (1) {
+        int ret = poll(fds.data(), fds.size(), -1);
+        if (ret < 0) {
+            perror("poll");
+            exit(EXIT_FAILURE);
+        }
+        for (size_t i = 0; i < fds.size(); ++i) {
+            if (fds[i].revents & POLLIN) {
+                struct sockaddr_in client_addr;
+                socklen_t client_len = sizeof(client_addr);
+                int client_fd = accept(
+                    fds[i].fd, (struct sockaddr *)&client_addr, &client_len);
+                if (client_fd < 0) {
+                    perror("accept");
+                    continue;
+                }
+                handle_request(client_fd);
+                close(client_fd);
+                fds[i].revents = 0;
+                sleep(1);
+            }
         }
     }
 }

@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/29 14:03:02 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/01 18:52:18 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,15 +44,22 @@ void read_output(int sockfd, int pipefd[2]) {
     std::stringstream response;
     char temp_buff[BUFFER_SIZE];
     ssize_t bytes_read;
+
     while ((bytes_read = read(pipefd[0], temp_buff, BUFFER_SIZE)) > 0)
         response.write(temp_buff, bytes_read);
+    if (bytes_read < 0) {
+        perror("read");
+        close(pipefd[0]);
+        return;
+    }
     close(pipefd[0]);
     std::string http_response = "HTTP/1.1 200 OK\r\n";
     http_response += "Content-Type: text/html\r\n";
     http_response += "\r\n";
+    http_response += response.str();
     send(sockfd, http_response.c_str(), http_response.length(), 0);
-    send(sockfd, response.str().c_str(), response.str().length(), 0);
 }
+
 
 void create_process(int sockfd, const std::string& query_string) {
     int pipefd[2];
@@ -67,9 +74,10 @@ void create_process(int sockfd, const std::string& query_string) {
     }
     if (pid == 0) {
         close(pipefd[0]);
+        close(sockfd);
+        setenv("QUERY_STRING", query_string.c_str(), 1);
         if (!redirect_stdout(pipefd))
             throw std::runtime_error("Error");
-        setenv("QUERY_STRING", query_string.c_str(), 1);
         if (!execute_cgi())
             throw std::runtime_error("Error");
     } else {
