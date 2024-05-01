@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-ad/*   Updated: 2024/04/29 16:29:59 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/01 17:51:58 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,14 @@ ad/*   Updated: 2024/04/29 16:29:59 by anlima           ###   ########.fr       
 #include "Directive.hpp"
 #include "Location.hpp"
 #include <iostream>
-#include <vector>
 #include <sstream>
+#include <vector>
+#include <poll.h>
 
 class Server {
   private:
+    int _socket;
+    struct pollfd _fd;
     std::vector<Location> _locations;
     std::vector<Directive> _directives;
     Server &operator=(const Server &copy);
@@ -37,6 +40,12 @@ class Server {
     void addDirective(Directive directive);
 
     int getPort(void);
+
+    int getSocket(void);
+    void setSocket(int socket);
+
+    struct pollfd getPollfd(void);
+    void setPollfd(struct pollfd fd);
 };
 
 #endif

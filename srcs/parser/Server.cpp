@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/29 16:21:47 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/01 17:52:06 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,7 @@ void Server::addDirective(Directive directive) {
     _directives.push_back(directive);
 }
 
-int Server::getPort(void)
-{
+int Server::getPort(void) {
     for (size_t i = 0; i < _directives.size(); ++i) {
         if (_directives[i].getName() == "listen") {
             int port;
@@ -41,3 +40,9 @@ int Server::getPort(void)
     }
     throw std::invalid_argument("Error: Unable find valid port value.");
 }
+
+int Server::getSocket(void) { return (_socket); }
+void Server::setSocket(int socket) { _socket = socket; }
+
+struct pollfd Server::getPollfd(void) { return (_fd); }
+void Server::setPollfd(struct pollfd fd) { _fd = fd; }
