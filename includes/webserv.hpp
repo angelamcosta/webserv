@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:46:57 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/29 16:08:14 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/01 18:16:46 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <vector>
+#include <arpa/inet.h>
 
 std::vector<Server> parse_conf(std::string filename);
 void process_location(const std::string &line, Server &server);
@@ -47,14 +48,13 @@ int execute_cgi(void);
 int redirect_stdout(int pipefd[2]);
 void handle_error(std::string message);
 void read_output(int sockfd, int pipefd[2]);
-void create_process(int sockfd, const std::string& query_string);
+void create_process(int sockfd, const std::string &query_string);
 
 void handle_request(int sockfd);
-void check_events(std::vector<struct pollfd> &fds, int server_socket);
+void handle_conn(std::vector<struct pollfd> fds);
 
+void start_server(int sockfd);
 int create_server_socket(void);
-int bind_socket(int sockfd, int port);
-int start_server(int sockfd, int port);
-void start_server(std::vector<struct pollfd> &fds);
+void bind_socket(int sockfd, int port);
 
 #endif
