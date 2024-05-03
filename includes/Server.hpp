@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/01 17:51:58 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/03 16:39:50 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,22 +16,24 @@
 #include "Directive.hpp"
 #include "Location.hpp"
 #include <iostream>
+#include <poll.h>
 #include <sstream>
 #include <vector>
-#include <poll.h>
 
 class Server {
   private:
-    int _socket;
-    struct pollfd _fd;
+    std::string _root;
+    std::string _index;
     std::vector<Location> _locations;
     std::vector<Directive> _directives;
-    Server &operator=(const Server &copy);
+    int _socket;
+    struct pollfd _fd;
 
   public:
     Server();
     ~Server();
-    Server(const Server &copy);
+    Server(const Server &other);
+    Server &operator=(const Server &other);
 
     std::vector<Location> &getLocations(void);
     std::vector<Directive> &getDirectives(void);
@@ -46,6 +48,12 @@ class Server {
 
     struct pollfd getPollfd(void);
     void setPollfd(struct pollfd fd);
+
+    std::string getRoot(void);
+    void setRoot(std::string root);
+
+    std::string getIndex(void);
+    void setIndex(std::string index);
 };
 
 #endif

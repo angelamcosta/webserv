@@ -12,13 +12,13 @@
 
 #include "../../includes/webserv.hpp"
 
-std::vector<Server> parse_conf(std::string filename);
+std::vector<Server> parse_conf(std::string &filename);
 void process_location(const std::string &line, Server &server);
 void process_directive(const std::string &line, Server &server);
 void process_directive(const std::string &line, Location &location);
 void process_line(const std::string &line, std::vector<Server> &servers);
 
-std::vector<Server> parse_conf(std::string filename) {
+std::vector<Server> parse_conf(const std::string &filename) {
     std::ifstream file(filename.c_str());
 
     if (!file.is_open())
@@ -28,41 +28,43 @@ std::vector<Server> parse_conf(std::string filename) {
     std::string line;
 
     while (std::getline(file, line)) {
-        if (line.empty())
+        if (line.empty() || line[0] == '#')
             continue;
         process_line(line, servers);
     }
+    file.close();
     return (servers);
 }
 
 void process_location(const std::string &line, Server &server) {
     std::istringstream iss(line);
     std::string location, path;
-    iss >> location >> path;
-
+    if (!(iss >> location >> path))
+        throw std::invalid_argument("Error: Invalid location directive.");
     server.addLocation(Location(path));
 }
 
 void process_directive(const std::string &line, Server &server) {
     std::istringstream iss(line);
     std::string name, value;
-    iss >> name >> value;
-
+    if (!(iss >> name >> value))
+        throw std::invalid_argument("Error: Invalid directive.");
     server.addDirective(Directive(name, value));
 }
 
 void process_directive(const std::string &line, Location &location) {
     std::istringstream iss(line);
     std::string name, value;
-    iss >> name >> value;
-
+    if (!(iss >> name >> value))
+        throw std::invalid_argument("Error: Invalid directive.");
     location.addDirective(Directive(name, value));
 }
 
 void process_line(const std::string &line, std::vector<Server> &servers) {
     std::istringstream iss(line);
     std::string token;
-    iss >> token;
+    if (!(iss >> token))
+        return;
 
     if (token == "server")
         servers.push_back(Server());
