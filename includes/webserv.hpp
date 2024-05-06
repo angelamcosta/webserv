@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:46:57 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/01 18:16:46 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/06 17:37:42 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "Server.hpp"
 #include "macros.hpp"
 
+#include <arpa/inet.h>
 #include <cerrno>
 #include <cstdlib>
 #include <cstring>
@@ -33,9 +34,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <vector>
-#include <arpa/inet.h>
 
-std::vector<Server> parse_conf(std::string filename);
+std::vector<Server> parse_conf(const std::string& filename);
 void process_location(const std::string &line, Server &server);
 void process_directive(const std::string &line, Server &server);
 void process_directive(const std::string &line, Location &location);
@@ -50,11 +50,14 @@ void handle_error(std::string message);
 void read_output(int sockfd, int pipefd[2]);
 void create_process(int sockfd, const std::string &query_string);
 
-void handle_request(int sockfd);
-void handle_conn(std::vector<struct pollfd> fds);
+void handle_request(int sockfd, Server server);
+std::string parse_url(const std::string &request);
+void send_response(int sockfd, const std::string &response);
+void handle_conn(std::vector<struct pollfd> &fds, std::vector<Server> &servers);
 
 void start_server(int sockfd);
 int create_server_socket(void);
+void set_non_blocking(int sockfd);
 void bind_socket(int sockfd, int port);
 
 #endif
