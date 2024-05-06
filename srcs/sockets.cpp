@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:54:32 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/01 17:19:36 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/06 16:51:02 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void start_server(int sockfd);
 int create_server_socket(void);
+void set_non_blocking(int sockfd);
 void bind_socket(int sockfd, int port);
 
 void start_server(int sockfd) {
@@ -29,14 +30,27 @@ int create_server_socket(void) {
     int opt = 1;
     if (sockfd < 0) {
         perror("socket failed");
-        exit(EXIT_FAILURE);
+        return (sockfd);
     }
     if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt,
                    sizeof(opt))) {
         perror("setsockopt");
         exit(EXIT_FAILURE);
     }
+    set_non_blocking(sockfd);
     return (sockfd);
+}
+
+void set_non_blocking(int sockfd) {
+    int flags = fcntl(sockfd, F_GETFL, 0);
+    if (flags == -1) {
+        perror("fcntl");
+        exit(EXIT_FAILURE);
+    }
+    if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
+        perror("fcntl");
+        exit(EXIT_FAILURE);
+    }
 }
 
 void bind_socket(int sockfd, int port) {

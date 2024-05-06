@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/01 18:52:18 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/02 18:35:28 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int execute_cgi(void);
 int redirect_stdout(int pipefd[2]);
 void handle_error(std::string message);
 void read_output(int sockfd, int pipefd[2]);
-void create_process(int sockfd, const std::string& query_string);
+void create_process(int sockfd, const std::string &query_string);
 
 int execute_cgi(void) {
     char *args[] = {(char *)PYTHON_EXEC, (char *)PYTHON_INDEX, NULL};
@@ -60,8 +60,7 @@ void read_output(int sockfd, int pipefd[2]) {
     send(sockfd, http_response.c_str(), http_response.length(), 0);
 }
 
-
-void create_process(int sockfd, const std::string& query_string) {
+void create_process(int sockfd, const std::string &query_string) {
     int pipefd[2];
     if (pipe(pipefd) == -1)
         throw std::runtime_error("Error in creating pipe");
