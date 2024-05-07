@@ -13,42 +13,35 @@
 #include "../includes/webserv.hpp"
 
 void handle_request(int sockfd, Server server);
-std::string parse_url(const std::string &request);
 void send_response(int sockfd, const std::string &response);
+std::string parse_url(const std::string &request, const std::string &index);
 void handle_conn(std::vector<struct pollfd> &fds, std::vector<Server> &servers);
+std::string generate_response(const std::string &status, const std::string &file);
 
 void handle_request(int sockfd, Server server) {
     char buffer[BUFFER_SIZE];
     ssize_t bytes_received = recv(sockfd, buffer, BUFFER_SIZE, 0);
     if (bytes_received < 0) {
-        // TODO : - handle EAGAIN and EWOULDBLOCK errors without closing the socket prematurely
-        if (errno == EAGAIN || errno == EWOULDBLOCK)
-            return;
-        handle_error("Error in receiving request");
-        close(sockfd);
-        return;
-    } else if (bytes_received == 0) {
         close(sockfd);
         return;
     }
     buffer[bytes_received] = '\0';
     std::string request(buffer);
-    std::string full_path = server.getRoot() + parse_url(request);
-    std::ifstream file(full_path.c_str(), std::ios::binary);
-    if (!file.is_open()) {
-        std::string response = "HTTP/1.1 404 Not Found\r\n\r\n";
+    std::string full_path =
+        server.getRoot() + parse_url(request, server.getIndex());
+    std::string file = read_file(full_path);
+    if (file == "" || file.empty()) {
+        std::string file_error = read_file(server.getRoot() + ERROR_PAGE);
+        if (file_error == "" || file_error.empty()) {
+            std::string response = "HTTP/1.1 404 Not Found\r\n\r\n";
+            send_response(sockfd, response);
+            return;
+        }
+        std::string response = generate_response("200 OK", file_error);
         send_response(sockfd, response);
         return;
     }
-    std::ostringstream file_content;
-    file_content << file.rdbuf();
-    file.close();
-    std::ostringstream content_size;
-    content_size << file_content.str().size();
-    std::string response = "HTTP/1.1 200 OK\r\nContent-Length: ";
-    response += content_size.str();
-    response += "\r\n\r\n";
-    response += file_content.str();
+    std::string response = generate_response("200 OK", file);
     send_response(sockfd, response);
 }
 
@@ -70,7 +63,6 @@ void handle_conn(std::vector<struct pollfd> &fds,
                     perror("accept");
                     continue;
                 }
-                set_non_blocking(client_fd);
                 handle_request(client_fd, servers[i]);
                 close(client_fd);
                 fds[i].revents = 0;
@@ -86,9 +78,17 @@ void send_response(int sockfd, const std::string &response) {
     close(sockfd);
 }
 
-std::string parse_url(const std::string &request) {
+std::string parse_url(const std::string &request, const std::string &index) {
     std::istringstream iss(request);
     std::string method, url, protocol;
     iss >> method >> url >> protocol;
-    return (url.empty() || url == "/") ? "/index.html" : url;
+    return (url.empty() || url == "/") ? ("/" + index) : url;
+}
+
+std::string generate_response(const std::string &status, const std::string &file) {
+    std::string response = "HTTP/1.1 " + status + "\r\nContent-Length: ";
+    response += file.size();
+    response += "\r\n\r\n";
+    response += file;
+    return (response);
 }
