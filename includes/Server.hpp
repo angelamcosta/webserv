@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/03 16:39:50 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/07 16:38:58 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ class Server {
 
     std::string getIndex(void);
     void setIndex(std::string index);
+
+    std::string getFullPath(const std::string &url);
 };
 
 #endif

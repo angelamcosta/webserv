@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:19:47 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/01 15:36:02 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/07 15:49:38 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,11 @@
 #define PYTHON_EXEC "/usr/bin/python3"
 #define PYTHON_INDEX "/home/anlima/webserv/cgi-bin/script.py"
 #define GET_PORT "listen"
+#define ERROR_PAGE "/error.html"
+#define HTTP_GET "GET"
+#define HTTP_POST "POST"
+#define HTTP_PUT "PUT"
+#define HTTP_DELETE "DELETE"
+#define MAX_BODY_SIZE 1048576
 
 #endif

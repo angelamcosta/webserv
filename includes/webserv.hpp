@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:46:57 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/06 17:37:42 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/07 16:10:02 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,17 @@
 #include <unistd.h>
 #include <vector>
 
-std::vector<Server> parse_conf(const std::string& filename);
+std::vector<Server> parse_conf(const std::string &filename);
 void process_location(const std::string &line, Server &server);
 void process_directive(const std::string &line, Server &server);
 void process_directive(const std::string &line, Location &location);
 void process_line(const std::string &line, std::vector<Server> &servers);
 
-void welcome_text(void);
 struct pollfd create_pollfd(int sock_fd);
+std::string read_file(const std::string &filename);
+
+void get_request(int sockfd, Server server, const std::string &full_path);
+void handle_method(int sockfd, Server server, const std::string &full_path, const std::string &method);
 
 int execute_cgi(void);
 int redirect_stdout(int pipefd[2]);
@@ -51,9 +54,10 @@ void read_output(int sockfd, int pipefd[2]);
 void create_process(int sockfd, const std::string &query_string);
 
 void handle_request(int sockfd, Server server);
-std::string parse_url(const std::string &request);
 void send_response(int sockfd, const std::string &response);
+std::string parse_url(const std::string &url, const std::string &index);
 void handle_conn(std::vector<struct pollfd> &fds, std::vector<Server> &servers);
+std::string generate_response(const std::string &status, const std::string &file);
 
 void start_server(int sockfd);
 int create_server_socket(void);
