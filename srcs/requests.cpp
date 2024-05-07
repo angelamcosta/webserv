@@ -14,35 +14,30 @@
 
 void handle_request(int sockfd, Server server);
 void send_response(int sockfd, const std::string &response);
-std::string parse_url(const std::string &request, const std::string &index);
+std::string parse_url(const std::string &url, const std::string &index);
 void handle_conn(std::vector<struct pollfd> &fds, std::vector<Server> &servers);
 std::string generate_response(const std::string &status, const std::string &file);
 
 void handle_request(int sockfd, Server server) {
     char buffer[BUFFER_SIZE];
     ssize_t bytes_received = recv(sockfd, buffer, BUFFER_SIZE, 0);
+    if (bytes_received > MAX_BODY_SIZE) {
+        std::string response = "HTTP/1.1 413 Request Entity Too Large\r\n\r\n";
+        send_response(sockfd, response);
+        return ;
+    }
     if (bytes_received < 0) {
         close(sockfd);
-        return;
+        return ;
     }
     buffer[bytes_received] = '\0';
     std::string request(buffer);
-    std::string full_path =
-        server.getRoot() + parse_url(request, server.getIndex());
-    std::string file = read_file(full_path);
-    if (file == "" || file.empty()) {
-        std::string file_error = read_file(server.getRoot() + ERROR_PAGE);
-        if (file_error == "" || file_error.empty()) {
-            std::string response = "HTTP/1.1 404 Not Found\r\n\r\n";
-            send_response(sockfd, response);
-            return;
-        }
-        std::string response = generate_response("200 OK", file_error);
-        send_response(sockfd, response);
-        return;
-    }
-    std::string response = generate_response("200 OK", file);
-    send_response(sockfd, response);
+    std::istringstream iss(request);
+    std::string method, url, protocol;
+    iss >> method >> url >> protocol;
+    url = parse_url(url, server.getIndex());
+    std::string full_path = server.getRoot() + url;
+    handle_method(sockfd, server, full_path, method);
 }
 
 void handle_conn(std::vector<struct pollfd> &fds,
@@ -78,14 +73,12 @@ void send_response(int sockfd, const std::string &response) {
     close(sockfd);
 }
 
-std::string parse_url(const std::string &request, const std::string &index) {
-    std::istringstream iss(request);
-    std::string method, url, protocol;
-    iss >> method >> url >> protocol;
+std::string parse_url(const std::string &url, const std::string &index) {
     return (url.empty() || url == "/") ? ("/" + index) : url;
 }
 
-std::string generate_response(const std::string &status, const std::string &file) {
+std::string generate_response(const std::string &status,
+                              const std::string &file) {
     std::string response = "HTTP/1.1 " + status + "\r\nContent-Length: ";
     response += file.size();
     response += "\r\n\r\n";
