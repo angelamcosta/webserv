@@ -6,11 +6,11 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:26:27 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/24 14:32:26 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/09 17:07:07 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/Directive.hpp"
+#include "../includes/Directive.hpp"
 
 Directive::~Directive() {}
 Directive::Directive(const Directive &copy) {

@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:10:30 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/24 14:31:47 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/09 17:14:14 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 #define LOCATION_HPP
 
 #include "Directive.hpp"
-#include <iostream>
-#include <vector>
+#include "macros.hpp"
 
 class Location {
   private:
     std::string _path;
+    std::string _index;
     std::vector<Directive> _directives;
     std::vector<Location> _locations;
 
@@ -31,11 +31,16 @@ class Location {
     Location(const std::string path);
 
     const std::string &getPath(void) const;
+    void setPath(std::string path);
+    
     const std::vector<Directive> &getDirectives(void) const;
     void addDirective(const Directive &directive);
-    void setPath(std::string path);
-    std::vector<Location> &getLocations(void);
+    
+    const std::vector<Location> &getLocations(void) const;
     void addLocation(Location location);
+
+    std::string getIndex(void);
+    void setIndex(std::string index);
 };
 
 #endif

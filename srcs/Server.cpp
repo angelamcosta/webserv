@@ -6,11 +6,11 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/03 16:42:27 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/09 17:28:54 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/Server.hpp"
+#include "../includes/Server.hpp"
 
 Server::Server() {}
 Server::~Server() {}
@@ -28,10 +28,10 @@ Server &Server::operator=(const Server &other) {
         _socket = other._socket;
         _fd = other._fd;
     }
-    return *this;
+    return (*this);
 }
 
-std::vector<Location> &Server::getLocations(void) { return (_locations); }
+const std::vector<Location> &Server::getLocations(void) const { return (_locations); }
 std::vector<Directive> &Server::getDirectives(void) { return (_directives); }
 
 void Server::addLocation(Location location) { _locations.push_back(location); }
@@ -67,3 +67,29 @@ void Server::setRoot(std::string root) { _root = root; }
 
 std::string Server::getIndex(void) { return (_index); }
 void Server::setIndex(std::string index) { _index = index; }
+
+std::string Server::getFullPath(const std::string &url) {
+    if (url.empty() || url == "/")
+        return (_root + "/" + _index);
+    std::string full_path = findUrl(_locations, "", url);
+    if (full_path.empty())
+        return (_root + ERROR_PAGE);
+    return (full_path);
+}
+
+std::string Server::findUrl(const std::vector<Location>& locations, const std::string& curr_path, const std::string& url) {
+    for (std::vector<Location>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
+        const Location& loc = *it;
+        std::string path = curr_path + loc.getPath();
+        if (url.find(path) == 0) {
+            return _root + url;
+        }
+        if (!loc.getLocations().empty()) {
+            std::string sub_path = findUrl(loc.getLocations(), path, url);
+            if (!sub_path.empty()) {
+                return sub_path;
+            }
+        }
+    }
+    return std::string();
+}

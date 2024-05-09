@@ -1,34 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Directive.hpp                                      :+:      :+:    :+:   */
+/*   Sockets.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/23 15:09:44 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/09 17:14:10 by anlima           ###   ########.fr       */
+/*   Created: 2024/05/09 17:22:09 by anlima            #+#    #+#             */
+/*   Updated: 2024/05/09 17:31:58 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef DIRECTIVE_HPP
-#define DIRECTIVE_HPP
+#ifndef SOCKETS_HPP
+#define SOCKETS_HPP
 
 #include "macros.hpp"
 
-class Directive {
+class Sockets {
   private:
-    std::string _name;
-    std::string _value;
-    Directive();
+    Sockets();
 
   public:
-    ~Directive();
-    Directive(const Directive &copy);
-    Directive &operator=(const Directive &copy);
-    Directive(const std::string &name, const std::string value);
-
-    const std::string &getName(void) const;
-    const std::string &getValue(void) const;
+    static void start_server(int sockfd);
+    static int create_server_socket(void);
+    static void set_non_blocking(int sockfd);
+    static void bind_socket(int sockfd, int port);
+    static struct pollfd create_pollfd(int sock_fd);
 };
 
 #endif

@@ -1,24 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   processes.cpp                                      :+:      :+:    :+:   */
+/*   Processes.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/02 18:35:28 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/09 17:42:27 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/webserv.hpp"
+#include "../includes/Processes.hpp"
 
-int execute_cgi(void);
-int redirect_stdout(int pipefd[2]);
-void handle_error(std::string message);
-void read_output(int sockfd, int pipefd[2]);
-void create_process(int sockfd, const std::string &query_string);
-
-int execute_cgi(void) {
+int Processes::execute_cgi(void) {
     char *args[] = {(char *)PYTHON_EXEC, (char *)PYTHON_INDEX, NULL};
     if (execve(PYTHON_EXEC, args, NULL) == -1) {
         handle_error("Error in executing Python cgi script");
@@ -27,7 +21,7 @@ int execute_cgi(void) {
     return (1);
 }
 
-int redirect_stdout(int pipefd[2]) {
+int Processes::redirect_stdout(int pipefd[2]) {
     if (dup2(pipefd[1], STDOUT_FILENO) == -1) {
         handle_error("Error in redirecting stdout");
         return (0);
@@ -36,11 +30,11 @@ int redirect_stdout(int pipefd[2]) {
     return (1);
 }
 
-void handle_error(std::string message) {
+void Processes::handle_error(std::string message) {
     std::cout << PINK << message << CLEAR << std::endl;
 }
 
-void read_output(int sockfd, int pipefd[2]) {
+void Processes::read_output(int sockfd, int pipefd[2]) {
     std::stringstream response;
     char temp_buff[BUFFER_SIZE];
     ssize_t bytes_read;
@@ -60,7 +54,7 @@ void read_output(int sockfd, int pipefd[2]) {
     send(sockfd, http_response.c_str(), http_response.length(), 0);
 }
 
-void create_process(int sockfd, const std::string &query_string) {
+void Processes::create_process(int sockfd, const std::string &query_string) {
     int pipefd[2];
     if (pipe(pipefd) == -1)
         throw std::runtime_error("Error in creating pipe");

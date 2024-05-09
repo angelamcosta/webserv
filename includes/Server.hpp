@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/07 16:38:58 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/09 17:14:29 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,7 @@
 
 #include "Directive.hpp"
 #include "Location.hpp"
-#include <iostream>
-#include <poll.h>
-#include <sstream>
-#include <vector>
+#include "macros.hpp"
 
 class Server {
   private:
@@ -35,7 +32,7 @@ class Server {
     Server(const Server &other);
     Server &operator=(const Server &other);
 
-    std::vector<Location> &getLocations(void);
+    const std::vector<Location> &getLocations(void) const;
     std::vector<Directive> &getDirectives(void);
 
     void addLocation(Location location);
@@ -56,6 +53,7 @@ class Server {
     void setIndex(std::string index);
 
     std::string getFullPath(const std::string &url);
+    std::string findUrl(const std::vector<Location>& locations, const std::string &curr_path, const std::string &url);
 };
 
 #endif

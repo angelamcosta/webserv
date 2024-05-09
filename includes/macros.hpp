@@ -6,12 +6,29 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:19:47 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/07 15:49:38 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/09 17:13:46 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MACROS_HPP
 #define MACROS_HPP
+
+#include <arpa/inet.h>
+#include <cerrno>
+#include <cstdlib>
+#include <cstring>
+#include <fcntl.h>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <netinet/in.h>
+#include <poll.h>
+#include <sstream>
+#include <string>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <vector>
 
 #define PORT 8080
 #define BUFFER_SIZE 1024
@@ -46,5 +63,6 @@
 #define HTTP_PUT "PUT"
 #define HTTP_DELETE "DELETE"
 #define MAX_BODY_SIZE 1048576
+#define UPLOAD_FOLDER "/home/anlima/webserv/public/images"
 
 #endif

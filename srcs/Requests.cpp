@@ -60,8 +60,9 @@ void Requests::handle_conn(std::vector<struct pollfd> &fds,
 }
 
 void Requests::send_response(int sockfd, const std::string &response) {
-    if (send(sockfd, response.c_str(), response.size(), 0) < 0) 
+    if (send(sockfd, response.c_str(), response.size(), 0) < 0) {
         Processes::handle_error("Error sending response");
+    }
     close(sockfd);
 }
 

@@ -6,25 +6,22 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:24:24 by anlima            #+#    #+#             */
-/*   Updated: 2024/04/24 14:32:34 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/09 17:07:10 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/Location.hpp"
+#include "../includes/Location.hpp"
 
 Location::Location() {}
 Location::~Location() {}
-Location::Location(const Location &copy) {
-    _path = copy.getPath();
-    for (size_t i = 0; i < copy._directives.size(); ++i)
-        _directives.push_back(copy._directives[i]);
-}
+Location::Location(const Location &copy) : _path(copy._path), _index(copy._index), _directives(copy._directives), _locations(copy._locations) {}
 
 Location &Location::operator=(const Location &copy) {
     if (this != &copy) {
-        _path = copy.getPath();
-        for (size_t i = 0; i < copy._directives.size(); ++i)
-            _directives.push_back(copy._directives[i]);
+        _path = copy._path;
+        _index = copy._index;
+        _directives = copy._directives;
+        _locations = copy._locations;
     }
     return (*this);
 }
@@ -38,10 +35,16 @@ const std::vector<Directive> &Location::getDirectives(void) const {
 
 void Location::setPath(std::string path) { _path = path; }
 void Location::addDirective(const Directive &directive) {
-    _directives.push_back(directive);
+    if (directive.getName() == "index")
+        setIndex(directive.getValue());
+    else
+        _directives.push_back(directive);
 }
 
-std::vector<Location> &Location::getLocations(void) { return (_locations); }
+const std::vector<Location> &Location::getLocations(void) const { return (_locations); }
 void Location::addLocation(Location location) {
     _locations.push_back(location);
 }
+
+std::string Location::getIndex(void) { return (_index); }
+void Location::setIndex(std::string index) { _index = index; }
