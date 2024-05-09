@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:19:47 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/09 17:13:46 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/09 18:41:21 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,12 @@
 #define HTTP_DELETE "DELETE"
 #define MAX_BODY_SIZE 1048576
 #define UPLOAD_FOLDER "/home/anlima/webserv/public/images"
+#define CONTENT_HEADER "Content-Disposition: form-data;"
+
+typedef struct s_request {
+    std::string url;
+    std::string method;
+    std::string filename;
+} t_request;
 
 #endif

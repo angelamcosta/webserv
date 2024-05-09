@@ -6,15 +6,14 @@ RM			=	rm -rf
 SRCS_FOLDER	=	srcs
 
 SRC			=	main.cpp \
-				$(SRCS_FOLDER)/parser/Directive.cpp \
-				$(SRCS_FOLDER)/parser/Location.cpp \
-				$(SRCS_FOLDER)/parser/Server.cpp \
-				$(SRCS_FOLDER)/parser/parser.cpp \
-				$(SRCS_FOLDER)/aux_funcs.cpp \
-				$(SRCS_FOLDER)/methods.cpp \
-				$(SRCS_FOLDER)/processes.cpp \
-				$(SRCS_FOLDER)/requests.cpp \
-				$(SRCS_FOLDER)/sockets.cpp
+				$(SRCS_FOLDER)/Directive.cpp \
+				$(SRCS_FOLDER)/Location.cpp \
+				$(SRCS_FOLDER)/Methods.cpp \
+				$(SRCS_FOLDER)/Parser.cpp \
+				$(SRCS_FOLDER)/Processes.cpp \
+				$(SRCS_FOLDER)/Requests.cpp \
+				$(SRCS_FOLDER)/Server.cpp \
+				$(SRCS_FOLDER)/Sockets.cpp
 
 OBJ			=	$(SRC:.cpp=.o)
 
