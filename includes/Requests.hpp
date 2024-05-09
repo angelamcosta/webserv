@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:20:33 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/09 17:49:32 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/09 18:33:48 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ class Requests {
     static std::string generate_response(const std::string &status,
                                          const std::string &file);
     static std::string read_file(const std::string &filename);
+    static t_request process_request(const std::string &request);
+    static std::string extract_filename(const std::string &content_type);
 };
 
 #endif
