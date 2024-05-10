@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/09 17:28:54 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/10 14:55:27 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,14 +82,26 @@ std::string Server::findUrl(const std::vector<Location>& locations, const std::s
         const Location& loc = *it;
         std::string path = curr_path + loc.getPath();
         if (url.find(path) == 0) {
-            return _root + url;
+            size_t found = url.find(".html");
+            if (found == std::string::npos && is_dir(_root + url))
+                return (_root + url + "/" + loc.getIndex());
+            return (_root + url + ".html");
         }
         if (!loc.getLocations().empty()) {
             std::string sub_path = findUrl(loc.getLocations(), path, url);
             if (!sub_path.empty()) {
-                return sub_path;
+                return (sub_path);
             }
         }
     }
     return std::string();
+}
+
+int Server::is_dir(const std::string &path) {
+    DIR* dir = opendir(path.c_str());
+    if (dir) {
+        closedir(dir);
+        return (1);
+    }
+    return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:10:30 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/09 17:14:14 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/10 14:42:07 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ class Location {
     const std::vector<Location> &getLocations(void) const;
     void addLocation(Location location);
 
-    std::string getIndex(void);
+    const std::string &getIndex(void) const;
     void setIndex(std::string index);
 };
 

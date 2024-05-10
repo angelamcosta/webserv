@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:19:47 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/09 18:41:21 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/10 15:36:38 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <cerrno>
 #include <cstdlib>
 #include <cstring>
+#include <dirent.h>
 #include <fcntl.h>
 #include <fstream>
 #include <iostream>
@@ -70,6 +71,8 @@ typedef struct s_request {
     std::string url;
     std::string method;
     std::string filename;
+    std::string full_path;
+    std::string error_page;
 } t_request;
 
 #endif

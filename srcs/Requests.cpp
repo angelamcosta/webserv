@@ -27,9 +27,9 @@ void Requests::handle_request(int sockfd, Server server) {
     buffer[bytes_received] = '\0';
     std::string request(buffer);
     t_request data = process_request(request);
-    std::string full_path = server.getFullPath(data.url);
-    std::cout << "DEBUG: url => " << data.url << std::endl;
-    Methods::handle_method(sockfd, server, full_path, data.method);
+    data.full_path = server.getFullPath(data.url);
+    data.error_page = server.getRoot() + ERROR_PAGE;
+    Processes::create_process(sockfd, data);
 }
 
 void Requests::handle_conn(std::vector<struct pollfd> &fds,
@@ -89,8 +89,6 @@ t_request Requests::process_request(const std::string &request) {
     std::istringstream iss(request);
     std::string line;
     std::string method, url, filename;
-
-    std::cout << "DEBUG: entered this function" << std::endl;
 
     while (std::getline(iss, line)) {
         if (line.find(CONTENT_HEADER) != std::string::npos)

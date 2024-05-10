@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/09 17:14:29 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/10 14:54:37 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ class Server {
 
     std::string getFullPath(const std::string &url);
     std::string findUrl(const std::vector<Location>& locations, const std::string &curr_path, const std::string &url);
+    int is_dir(const std::string &path);
 };
 
 #endif

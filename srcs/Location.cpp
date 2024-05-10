@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:24:24 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/09 17:07:10 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/10 14:41:52 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,5 @@ void Location::addLocation(Location location) {
     _locations.push_back(location);
 }
 
-std::string Location::getIndex(void) { return (_index); }
+const std::string &Location::getIndex(void) const { return (_index); }
 void Location::setIndex(std::string index) { _index = index; }
