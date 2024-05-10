@@ -8,7 +8,6 @@ SRCS_FOLDER	=	srcs
 SRC			=	main.cpp \
 				$(SRCS_FOLDER)/Directive.cpp \
 				$(SRCS_FOLDER)/Location.cpp \
-				$(SRCS_FOLDER)/Methods.cpp \
 				$(SRCS_FOLDER)/Parser.cpp \
 				$(SRCS_FOLDER)/Processes.cpp \
 				$(SRCS_FOLDER)/Requests.cpp \
@@ -18,6 +17,7 @@ SRC			=	main.cpp \
 OBJ			=	$(SRC:.cpp=.o)
 
 all:		$(NAME)
+			chmod +x ./cgi-bin/script.py
 
 $(NAME):	$(OBJ)
 			$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
