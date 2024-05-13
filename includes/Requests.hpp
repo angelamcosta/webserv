@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:20:33 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/09 18:33:48 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/10 17:08:43 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 #include "macros.hpp"
 #include "Server.hpp"
-#include "Methods.hpp"
 #include "Processes.hpp"
 
 class Requests {
