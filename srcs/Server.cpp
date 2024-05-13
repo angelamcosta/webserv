@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/10 14:55:27 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/13 15:50:53 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,10 +82,10 @@ std::string Server::findUrl(const std::vector<Location>& locations, const std::s
         const Location& loc = *it;
         std::string path = curr_path + loc.getPath();
         if (url.find(path) == 0) {
-            size_t found = url.find(".html");
+            size_t found = url.find(HTML_EXT);
             if (found == std::string::npos && is_dir(_root + url))
                 return (_root + url + "/" + loc.getIndex());
-            return (_root + url + ".html");
+            return (_root + url);
         }
         if (!loc.getLocations().empty()) {
             std::string sub_path = findUrl(loc.getLocations(), path, url);
