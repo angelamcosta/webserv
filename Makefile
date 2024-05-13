@@ -18,6 +18,7 @@ OBJ			=	$(SRC:.cpp=.o)
 
 all:		$(NAME)
 			chmod +x ./cgi-bin/script.py
+			chmod +x ./cgi-bin/script.pl
 
 $(NAME):	$(OBJ)
 			$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
