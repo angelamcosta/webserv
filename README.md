@@ -3,6 +3,15 @@
 <div align=center>
   
   ![badge](https://raw.githubusercontent.com/angelamcosta/angelamcosta/main/42_badges/webservn.png)
+
+  <table>
+  <tr>
+    <td align="center"><a href="https://github.com/angelamcosta"><img src="https://avatars.githubusercontent.com/u/14792447?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Angela Lima</b></sub></a><br /><a href="https://github.com/angelamcosta" title="Angela Lima"></a></td>
+    <td align="center"><a href="https://github.com/gcssilva"><img src="https://avatars.githubusercontent.com/u/108615291?v=4" width="100px;" alt=""/><br /><sub><b>Gustavo Silva</b></sub></a><br /><a href="https://github.com/gcssilva" title="Gustavo Silva"></a></td>
+    <td align="center"><a href="http://github.com/mgdiogo"><img src="https://avatars.githubusercontent.com/u/109535612?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Miguel Diogo</b></sub></a><br /><a href="https://github.com/mgdiogo/" title="Miguel Diogo"></a></td>
+  </tr>
+</table>
+
 </div>
 
 Webserv is about writing a C++ 98 HTTP server. The subject of the project can be found [here](https://raw.githubusercontent.com/angelamcosta/webserv/main/en.subject.pdf).
