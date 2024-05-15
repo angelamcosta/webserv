@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/10 16:49:29 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/15 16:39:40 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 int Processes::execute_cgi(const t_request &data) {
     std::vector<char *> args = get_args(data);
     
-    if (execve(PYTHON_EXEC, args.data(), NULL) == -1) {
-        handle_error("Error in executing Python cgi script");
+    if (execve(CPP_INDEX, args.data(), environ) == -1) {
+        handle_error("Error in executing cgi script");
         return (0);
     }
     return (1);
@@ -36,6 +36,7 @@ void Processes::handle_error(std::string message) {
     std::cout << PINK << message << CLEAR << std::endl;
 }
 
+
 void Processes::read_output(int sockfd, int pipefd[2]) {
     std::stringstream http_response;
     char temp_buff[BUFFER_SIZE];
@@ -49,8 +50,7 @@ void Processes::read_output(int sockfd, int pipefd[2]) {
         return;
     }
     close(pipefd[0]);
-    std::string response = Requests::generate_response("200 OK", http_response.str());
-    Requests::send_response(sockfd, response);
+    Requests::send_response(sockfd, http_response.str());
 }
 
 void Processes::create_process(int sockfd, const t_request &data) {
@@ -81,8 +81,7 @@ void Processes::create_process(int sockfd, const t_request &data) {
 std::vector<char *> Processes::get_args(const t_request &data) {
     std::vector<char *> args;
     
-    args.push_back(const_cast<char*>(PYTHON_EXEC));
-    args.push_back(const_cast<char*>(PYTHON_INDEX));
+    args.push_back(const_cast<char*>(CPP_INDEX));
     args.push_back(const_cast<char*>(data.url.c_str()));
     args.push_back(const_cast<char*>(data.method.c_str()));
     args.push_back(const_cast<char*>(data.filename.c_str()));

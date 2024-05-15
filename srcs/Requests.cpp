@@ -71,8 +71,7 @@ std::string Requests::generate_response(const std::string &status,
     std::stringstream ss;
 
     ss << file.size();
-    std::string content_length_str = ss.str();
-    response += content_length_str;
+    response += ss.str();
     response += "\r\n\r\n";
     response += file;
     return (response);
@@ -80,10 +79,10 @@ std::string Requests::generate_response(const std::string &status,
 
 std::string Requests::read_file(const std::string &filename) {
     std::ifstream file(filename.c_str(), std::ios::binary);
-    if (!file.is_open()) {
-        return "";
-    }
     std::ostringstream file_content;
+
+    if (!file.is_open())
+        return ("");
     file_content << file.rdbuf();
     file.close();
     return (file_content.str());
