@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:19:47 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/13 15:23:02 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/15 15:56:20 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@
 #define PYTHON_INDEX "/home/anlima/webserv/cgi-bin/script.py"
 #define PERL_EXEC "/usr/bin/perl"
 #define PERL_INDEX "/home/anlima/webserv/cgi-bin/script.pl"
+#define CPP_EXEC "/usr/bin/g++"
+#define CPP_INDEX "/home/anlima/webserv/cgi-bin/script"
 #define GET_PORT "listen"
 #define ERROR_PAGE "/error.html"
 #define HTTP_GET "GET"
@@ -75,6 +77,7 @@ typedef struct s_request {
     std::string filename;
     std::string full_path;
     std::string error_page;
+    std::string allowed_methods;
 } t_request;
 
 #endif
