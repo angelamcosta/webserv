@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/09 17:31:58 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/15 19:37:07 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@ class Sockets {
     Sockets();
 
   public:
-    static void start_server(int sockfd);
-    static int create_server_socket(void);
-    static void set_non_blocking(int sockfd);
-    static void bind_socket(int sockfd, int port);
-    static struct pollfd create_pollfd(int sock_fd);
+    static void startServer(int sockfd);
+    static int createServerSocket(void);
+    static void setNonBlocking(int sockfd);
+    static void bindSocket(int sockfd, int port);
+    static struct pollfd createPollfd(int sock_fd);
 };
 
 #endif

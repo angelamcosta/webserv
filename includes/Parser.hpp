@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 16:58:47 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/09 17:14:22 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/15 19:38:29 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,11 @@ class Parser {
     Parser();
 
   public:
-    static std::vector<Server> parse_conf(const std::string &filename);
-    static void process_location(const std::string &line, Server &server);
-    static void process_directive(const std::string &line, Server &server);
-    static void process_directive(const std::string &line, Location &location);
-    static void process_line(const std::string &line,
+    static std::vector<Server> parseConf(const std::string &filename);
+    static void processLocation(const std::string &line, Server &server);
+    static void processDirective(const std::string &line, Server &server);
+    static void processDirective(const std::string &line, Location &location);
+    static void processLine(const std::string &line,
                              std::vector<Server> &servers);
 };
 

@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:17:50 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/10 16:35:53 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/15 20:19:39 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,12 @@ class Processes {
     Processes();
 
   public:
-    static int execute_cgi(const t_request &data);
-    static int redirect_stdout(int pipefd[2]);
-    static void handle_error(std::string message);
-    static void read_output(int sockfd, int pipefd[2]);
-    static void create_process(int sockfd, const t_request &data);
-    static std::vector<char *> get_args(const t_request &data);
+    static int executeCgi(const t_request &data);
+    static int redirectStdout(int pipefd[2]);
+    static void handleError(std::string message);
+    static void readOutput(int sockfd, int pipefd[2]);
+    static void createProcess(int sockfd, const t_request &data);
+    static std::vector<char *> getArgs(const t_request &data);
 };
 
 #endif

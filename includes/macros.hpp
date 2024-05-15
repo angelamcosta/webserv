@@ -73,7 +73,9 @@
 
 typedef struct s_request {
     std::string url;
+    std::string body;
     std::string method;
+    std::string request;
     std::string filename;
     std::string full_path;
     std::string error_page;
