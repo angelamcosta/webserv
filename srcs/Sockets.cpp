@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sockets.cpp                                        :+:      :+:    :+:   */
+/*   Sockets.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:54:32 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/09 17:31:45 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/15 19:37:07 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Sockets.hpp"
 
-void Sockets::start_server(int sockfd) {
+void Sockets::startServer(int sockfd) {
     if (listen(sockfd, SOMAXCONN) < 0) {
         close(sockfd);
         perror("listen");
@@ -20,7 +20,7 @@ void Sockets::start_server(int sockfd) {
     }
 }
 
-int Sockets::create_server_socket(void) {
+int Sockets::createServerSocket(void) {
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     int opt = 1;
     if (sockfd < 0) {
@@ -32,11 +32,11 @@ int Sockets::create_server_socket(void) {
         perror("setsockopt");
         exit(EXIT_FAILURE);
     }
-    set_non_blocking(sockfd);
+    setNonBlocking(sockfd);
     return (sockfd);
 }
 
-void Sockets::set_non_blocking(int sockfd) {
+void Sockets::setNonBlocking(int sockfd) {
     int flags = fcntl(sockfd, F_GETFL, 0);
     if (flags == -1) {
         perror("fcntl");
@@ -48,7 +48,7 @@ void Sockets::set_non_blocking(int sockfd) {
     }
 }
 
-void Sockets::bind_socket(int sockfd, int port) {
+void Sockets::bindSocket(int sockfd, int port) {
     struct sockaddr_in socket_addr;
     socklen_t addr_len = sizeof(socket_addr);
 
@@ -62,7 +62,7 @@ void Sockets::bind_socket(int sockfd, int port) {
     }
 }
 
-struct pollfd Sockets::create_pollfd(int sock_fd) {
+struct pollfd Sockets::createPollfd(int sock_fd) {
     struct pollfd sock_pollfd;
     sock_pollfd.fd = sock_fd;
     sock_pollfd.events = POLLIN;

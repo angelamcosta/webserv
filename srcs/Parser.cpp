@@ -12,7 +12,7 @@
 
 #include "../includes/Parser.hpp"
 
-std::vector<Server> Parser::parse_conf(const std::string &filename) {
+std::vector<Server> Parser::parseConf(const std::string &filename) {
     std::ifstream file(filename.c_str());
 
     if (!file.is_open())
@@ -24,13 +24,13 @@ std::vector<Server> Parser::parse_conf(const std::string &filename) {
     while (std::getline(file, line)) {
         if (line.empty() || line[0] == '#')
             continue;
-        process_line(line, servers);
+        processLine(line, servers);
     }
     file.close();
     return (servers);
 }
 
-void Parser::process_location(const std::string &line, Server &server) {
+void Parser::processLocation(const std::string &line, Server &server) {
     std::istringstream iss(line);
     std::string location, path;
     if (!(iss >> location >> path))
@@ -38,7 +38,7 @@ void Parser::process_location(const std::string &line, Server &server) {
     server.addLocation(Location(path));
 }
 
-void Parser::process_directive(const std::string &line, Server &server) {
+void Parser::processDirective(const std::string &line, Server &server) {
     std::istringstream iss(line);
     std::string name, value;
     if (!(iss >> name >> value))
@@ -46,7 +46,7 @@ void Parser::process_directive(const std::string &line, Server &server) {
     server.addDirective(Directive(name, value));
 }
 
-void Parser::process_directive(const std::string &line, Location &location) {
+void Parser::processDirective(const std::string &line, Location &location) {
     std::istringstream iss(line);
     std::string name, value;
     if (!(iss >> name >> value))
@@ -54,7 +54,7 @@ void Parser::process_directive(const std::string &line, Location &location) {
     location.addDirective(Directive(name, value));
 }
 
-void Parser::process_line(const std::string &line, std::vector<Server> &servers) {
+void Parser::processLine(const std::string &line, std::vector<Server> &servers) {
     std::istringstream iss(line);
     std::string token;
     if (!(iss >> token))
@@ -66,7 +66,7 @@ void Parser::process_line(const std::string &line, std::vector<Server> &servers)
         if (servers.empty())
             throw std::invalid_argument(
                 "Error: Location block outside server block.");
-        process_location(line, servers.back());
+        processLocation(line, servers.back());
     } else if (token != "}") {
         if (servers.empty())
             throw std::invalid_argument(
@@ -76,9 +76,9 @@ void Parser::process_line(const std::string &line, std::vector<Server> &servers)
         const std::vector<Location> &locations = last_server.getLocations();
         if (!locations.empty()) {
             const Location &last_location = locations.back();
-            process_directive(line, const_cast<Location &>(last_location));
+            processDirective(line, const_cast<Location &>(last_location));
         } else {
-            process_directive(line, last_server);
+            processDirective(line, last_server);
         }
     }
 }

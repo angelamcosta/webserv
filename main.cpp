@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:46:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/10 17:08:34 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/15 19:39:32 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,21 +21,21 @@
 
 int main(int argc, char **argv) {
     if (argc != 2) {
-        Processes::handle_error("Error! Usage => ./webserv <config filename>");
+        Processes::handleError("Error! Usage => ./webserv <config filename>");
         return (1);
     }
     try {
         std::vector<struct pollfd> fds;
-        std::vector<Server> servers = Parser::parse_conf(argv[1]);
+        std::vector<Server> servers = Parser::parseConf(argv[1]);
 
         for (size_t i = 0; i < servers.size(); ++i) {
-            servers[i].setSocket(Sockets::create_server_socket());
-            Sockets::bind_socket(servers[i].getSocket(), servers[i].getPort());
-            Sockets::start_server(servers[i].getSocket());
-            servers[i].setPollfd(Sockets::create_pollfd(servers[i].getSocket()));
+            servers[i].setSocket(Sockets::createServerSocket());
+            Sockets::bindSocket(servers[i].getSocket(), servers[i].getPort());
+            Sockets::startServer(servers[i].getSocket());
+            servers[i].setPollfd(Sockets::createPollfd(servers[i].getSocket()));
             fds.push_back(servers[i].getPollfd());
         }
-        Requests::handle_conn(fds, servers);
+        Requests::handleConn(fds, servers);
     } catch (const std::exception &e) {
         std::cerr << e.what() << '\n';
     }

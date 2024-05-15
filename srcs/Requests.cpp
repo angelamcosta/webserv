@@ -12,12 +12,12 @@
 
 #include "../includes/Requests.hpp"
 
-void Requests::handle_request(int sockfd, Server server) {
+void Requests::handleRequest(int sockfd, Server server) {
     char buffer[BUFFER_SIZE];
     ssize_t bytes_received = recv(sockfd, buffer, BUFFER_SIZE, 0);
     if (bytes_received > MAX_BODY_SIZE) {
         std::string response = "HTTP/1.1 413 Request Entity Too Large\r\n\r\n";
-        send_response(sockfd, response);
+        sendResponse(sockfd, response);
         return;
     }
     if (bytes_received < 0) {
@@ -26,13 +26,16 @@ void Requests::handle_request(int sockfd, Server server) {
     }
     buffer[bytes_received] = '\0';
     std::string request(buffer);
-    t_request data = process_request(request);
+
+    t_request data = processRequest(request);
+    data.body = extractBody(request);
+    data.request = request;
     data.full_path = server.getFullPath(data.url);
     data.error_page = server.getRoot() + ERROR_PAGE;
-    Processes::create_process(sockfd, data);
+    Processes::createProcess(sockfd, data);
 }
 
-void Requests::handle_conn(std::vector<struct pollfd> &fds,
+void Requests::handleConn(std::vector<struct pollfd> &fds,
                            std::vector<Server> &servers) {
     while (1) {
         int ret = poll(fds.data(), fds.size(), -1);
@@ -50,7 +53,7 @@ void Requests::handle_conn(std::vector<struct pollfd> &fds,
                     perror("accept");
                     continue;
                 }
-                handle_request(client_fd, servers[i]);
+                handleRequest(client_fd, servers[i]);
                 close(client_fd);
                 fds[i].revents = 0;
             }
@@ -58,14 +61,14 @@ void Requests::handle_conn(std::vector<struct pollfd> &fds,
     }
 }
 
-void Requests::send_response(int sockfd, const std::string &response) {
+void Requests::sendResponse(int sockfd, const std::string &response) {
     if (send(sockfd, response.c_str(), response.size(), 0) < 0) {
-        Processes::handle_error("Error sending response");
+        Processes::handleError("Error sending response");
     }
     close(sockfd);
 }
 
-std::string Requests::generate_response(const std::string &status,
+std::string Requests::generateResponse(const std::string &status,
                                         const std::string &file) {
     std::string response = "HTTP/1.1 " + status + "\r\nContent-Length: ";
     std::stringstream ss;
@@ -77,7 +80,7 @@ std::string Requests::generate_response(const std::string &status,
     return (response);
 }
 
-std::string Requests::read_file(const std::string &filename) {
+std::string Requests::readFile(const std::string &filename) {
     std::ifstream file(filename.c_str(), std::ios::binary);
     std::ostringstream file_content;
 
@@ -88,14 +91,14 @@ std::string Requests::read_file(const std::string &filename) {
     return (file_content.str());
 }
 
-t_request Requests::process_request(const std::string &request) {
+t_request Requests::processRequest(const std::string &request) {
     std::istringstream iss(request);
     std::string line;
     std::string method, url, filename;
 
     while (std::getline(iss, line)) {
         if (line.find(CONTENT_HEADER) != std::string::npos)
-            filename = extract_filename(line);
+            filename = extractFilename(line);
         else if (line.find("HTTP/") != std::string::npos) {
             std::istringstream line_stream(line);
             line_stream >> method >> url;
@@ -108,7 +111,7 @@ t_request Requests::process_request(const std::string &request) {
     return (data);
 }
 
-std::string Requests::extract_filename(const std::string &content_type) {
+std::string Requests::extractFilename(const std::string &content_type) {
     std::string filename;
     std::size_t pos = content_type.find("filename=");
     if (pos != std::string::npos) {
@@ -118,4 +121,15 @@ std::string Requests::extract_filename(const std::string &content_type) {
             filename = filename.substr(0, pos);
     }
     return filename;
+}
+
+std::string Requests::extractBody(const std::string &request) {
+    std::string body;
+    size_t body_start = request.find("\r\n\r\n");
+
+    if (body_start != std::string::npos) {
+        body = request.substr(body_start + 4);
+        return (body);
+    }
+    return ("empty");
 }
