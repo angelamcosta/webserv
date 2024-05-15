@@ -13,9 +13,7 @@
 #include "../includes/Cgi.hpp"
 
 int main(int argc, char **argv) {
-    if (argc == 6) {
-        Cgi cgi(argv[1], argv[2], argv[3], argv[4], argv[5]);
-        cgi.readFile();
-    }
+    if (argc == 8)
+        Cgi cgi(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7]);
     return (0);
 }
