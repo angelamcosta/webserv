@@ -1,2 +1,5 @@
 *.o
 test.config
+test.cpp
+webserv
+script
