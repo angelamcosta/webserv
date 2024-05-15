@@ -24,3 +24,5 @@ if (os.path.isfile(file_path)):
         print_error()
 else:
     print_error()
+
+# implement methods
