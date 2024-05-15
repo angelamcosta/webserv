@@ -68,7 +68,11 @@ void Requests::send_response(int sockfd, const std::string &response) {
 std::string Requests::generate_response(const std::string &status,
                                         const std::string &file) {
     std::string response = "HTTP/1.1 " + status + "\r\nContent-Length: ";
-    response += file.size();
+    std::stringstream ss;
+
+    ss << file.size();
+    std::string content_length_str = ss.str();
+    response += content_length_str;
     response += "\r\n\r\n";
     response += file;
     return (response);
