@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/10 14:54:37 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/17 16:05:46 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,12 @@ class Server {
   private:
     std::string _root;
     std::string _index;
+    std::string _server_name;
     std::vector<Location> _locations;
     std::vector<Directive> _directives;
+    int _port;
     int _socket;
+    int _body_size;
     struct pollfd _fd;
 
   public:
@@ -39,6 +42,7 @@ class Server {
     void addDirective(Directive directive);
 
     int getPort(void);
+    void setPort(std::string port);
 
     int getSocket(void);
     void setSocket(int socket);
@@ -46,14 +50,21 @@ class Server {
     struct pollfd getPollfd(void);
     void setPollfd(struct pollfd fd);
 
+    int getBodySize(void);
+    void setBodySize(std::string body_size);
+
     std::string getRoot(void);
     void setRoot(std::string root);
 
     std::string getIndex(void);
     void setIndex(std::string index);
 
+    std::string getServerName(void);
+    void setServerName(std::string server_name);
+
     std::string getFullPath(const std::string &url);
-    std::string findUrl(const std::vector<Location>& locations, const std::string &curr_path, const std::string &url);
+    std::string findUrl(const std::vector<Location> &locations,
+                        const std::string &curr_path, const std::string &url);
     int is_dir(const std::string &path);
 };
 

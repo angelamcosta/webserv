@@ -67,9 +67,9 @@
 #define HTTP_POST "POST"
 #define HTTP_PUT "PUT"
 #define HTTP_DELETE "DELETE"
-#define MAX_BODY_SIZE 1048576
 #define UPLOAD_FOLDER "/home/anlima/webserv/public/images"
 #define CONTENT_HEADER "Content-Disposition: form-data;"
+#define TIMEOUT 5000
 
 typedef struct s_request {
     std::string url;
