@@ -15,7 +15,7 @@
 void Requests::handleRequest(int sockfd, Server server) {
     char buffer[BUFFER_SIZE];
     ssize_t bytes_received = recv(sockfd, buffer, BUFFER_SIZE, 0);
-    if (bytes_received > MAX_BODY_SIZE) {
+    if (bytes_received > server.getBodySize()) {
         std::string response = "HTTP/1.1 413 Request Entity Too Large\r\n\r\n";
         sendResponse(sockfd, response);
         return;
@@ -38,7 +38,7 @@ void Requests::handleRequest(int sockfd, Server server) {
 void Requests::handleConn(std::vector<struct pollfd> &fds,
                            std::vector<Server> &servers) {
     while (1) {
-        int ret = poll(fds.data(), fds.size(), -1);
+        int ret = poll(fds.data(), fds.size(), TIMEOUT);
         if (ret < 0) {
             perror("poll");
             exit(EXIT_FAILURE);
