@@ -13,6 +13,7 @@
 #include "../includes/Parser.hpp"
 
 std::vector<Server> Parser::parseConf(const std::string &filename) {
+    int flag = 0;
     std::ifstream file(filename.c_str());
 
     if (!file.is_open())
@@ -24,7 +25,7 @@ std::vector<Server> Parser::parseConf(const std::string &filename) {
     while (std::getline(file, line)) {
         if (line.empty() || line[0] == '#')
             continue;
-        processLine(line, servers);
+        processLine(line, servers, flag);
     }
     file.close();
     return (servers);
@@ -32,8 +33,8 @@ std::vector<Server> Parser::parseConf(const std::string &filename) {
 
 void Parser::processLocation(const std::string &line, Server &server) {
     std::istringstream iss(line);
-    std::string location, path;
-    if (!(iss >> location >> path))
+    std::string location, path, signal;
+    if (!(iss >> location >> path >> signal) || (signal != "{"))
         throw std::invalid_argument("Error: Invalid location directive.");
     server.addLocation(Location(path));
 }
@@ -54,20 +55,28 @@ void Parser::processDirective(const std::string &line, Location &location) {
     location.addDirective(Directive(name, value));
 }
 
-void Parser::processLine(const std::string &line, std::vector<Server> &servers) {
+void Parser::processLine(const std::string &line, std::vector<Server> &servers,
+                         int &flag) {
     std::istringstream iss(line);
     std::string token;
+
     if (!(iss >> token))
         return;
-
-    if (token == "server")
+    if (token == "server" && !flag) {
         servers.push_back(Server());
-    else if (token == "location") {
+        if ((iss >> token) && (token != "{"))
+            throw std::invalid_argument("Error: Invalid server definition.");
+    } else if (token == "server" && flag)
+        throw std::invalid_argument("Error: Invalid server definition.");
+    if (token == "{")
+        flag++;
+    else if (token == "location" && flag) {
         if (servers.empty())
             throw std::invalid_argument(
                 "Error: Location block outside server block.");
         processLocation(line, servers.back());
-    } else if (token != "}") {
+        flag++;
+    } else if (token != "}" && flag) {
         if (servers.empty())
             throw std::invalid_argument(
                 "Error: Directive block outside server block.");
@@ -80,5 +89,6 @@ void Parser::processLine(const std::string &line, std::vector<Server> &servers) 
         } else {
             processDirective(line, last_server);
         }
-    }
+    } else if (token == "}")
+        flag--;
 }
