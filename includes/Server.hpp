@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/17 16:05:46 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/20 17:45:28 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ class Server {
     std::string _server_name;
     std::vector<Location> _locations;
     std::vector<Directive> _directives;
-    int _port;
+    std::string _port;
     int _socket;
     int _body_size;
     struct pollfd _fd;
@@ -41,7 +41,7 @@ class Server {
     void addLocation(Location location);
     void addDirective(Directive directive);
 
-    int getPort(void);
+    std::string getPort(void);
     void setPort(std::string port);
 
     int getSocket(void);

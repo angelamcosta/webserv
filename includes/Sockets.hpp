@@ -20,11 +20,12 @@ class Sockets {
     Sockets();
 
   public:
-    static void startServer(int sockfd);
-    static int createServerSocket(void);
     static void setNonBlocking(int sockfd);
-    static void bindSocket(int sockfd, int port);
+    static int createSocket(struct addrinfo *res);
     static struct pollfd createPollfd(int sock_fd);
+    static void bindSocket(int sockfd, struct addrinfo *res);
+    static void startServer(int sockfd, struct addrinfo *res);
+    static int createServer(const std::string &serverName, const std::string &port);
 };
 
 #endif

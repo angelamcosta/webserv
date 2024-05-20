@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/17 16:23:26 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/20 17:45:58 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,17 +64,8 @@ void Server::addDirective(Directive directive) {
         _directives.push_back(directive);
 }
 
-int Server::getPort(void) { return (_port); }
-void Server::setPort(std::string port) {
-    int value = 0;
-    std::istringstream iss(port);
-
-    if (!(iss >> value))
-        throw std::invalid_argument("Error: Invalid port number: " + port);
-    if (value < 0 || value > 65535)
-        throw std::invalid_argument("Error: Invalid port number: " + port);
-    _port = value;
-}
+std::string Server::getPort(void) { return (_port); }
+void Server::setPort(std::string port) { _port = port; }
 
 int Server::getSocket(void) { return (_socket); }
 void Server::setSocket(int socket) { _socket = socket; }

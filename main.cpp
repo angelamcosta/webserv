@@ -29,9 +29,7 @@ int main(int argc, char **argv) {
         std::vector<Server> servers = Parser::parseConf(argv[1]);
 
         for (size_t i = 0; i < servers.size(); ++i) {
-            servers[i].setSocket(Sockets::createServerSocket());
-            Sockets::bindSocket(servers[i].getSocket(), servers[i].getPort());
-            Sockets::startServer(servers[i].getSocket());
+            servers[i].setSocket(Sockets::createServer(servers[i].getServerName(), servers[i].getPort()));
             servers[i].setPollfd(Sockets::createPollfd(servers[i].getSocket()));
             fds.push_back(servers[i].getPollfd());
         }

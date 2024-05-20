@@ -22,6 +22,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <poll.h>
 #include <sstream>
