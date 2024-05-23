@@ -1,34 +1,38 @@
 #!/usr/bin/python3
 
 import sys
-import os
+from methods import handle_get, handle_post, not_allowed
 
-url = sys.argv[1] if sys.argv[1] != "/" else "/index.html"
-body = sys.argv[2]
-method = sys.argv[3]
-request = sys.argv[4]
-filename = sys.argv[5]
+url = sys.argv[1]
+request = sys.argv[2]
+index = sys.argv[3]
+method = sys.argv[4]
+PATH_INFO = sys.argv[5]
 error_page = sys.argv[6]
-# allowed_methods = sys.argv[7]
-PATH_INFO = "./public"
+dir_listing = sys.argv[7]
+allowed_methods = sys.argv[8]
+UPLOAD_DIR = PATH_INFO + "images" if PATH_INFO[-1] == "/" else PATH_INFO + "/images"
 
-def generate_response(status, file):
-    print (f"HTTP/1.1 {status} \r\nContent-Length: {len(file)}\r\n\r\n{file}")
-    
-def print_error():
-    try:
-        with open(error_page, "r") as f:
-            generate_response("404 Not found", f.read())
-    except OSError:
-        generate_response("404 Not found", "<h1>ERROR: Could not find the specified file</h1>")
+if (url == "/"):
+    url = "/" + index
 
-if (os.path.isfile(PATH_INFO + url)):
-    try:
-        with open(PATH_INFO + url, "r") as f:
-            generate_response("200 OK", f.read())
-    except OSError:
-        print_error()
+if (PATH_INFO[-1] == "/" and url[0] == "/"):
+    full_path = PATH_INFO + url[1:]
+elif (PATH_INFO[-1] == "/" and url[0] != "/") or (PATH_INFO[-1] != "/" and url[0] == "/"):
+    full_path = PATH_INFO + url
 else:
-    print_error()
+    full_path = PATH_INFO + "/" + url
 
-# implement methods
+error_path = PATH_INFO + error_page
+
+def main():
+    if method == "GET" and method in allowed_methods:
+        handle_get(full_path, dir_listing, error_path)
+    elif method == "POST" and method in allowed_methods:
+        handle_post()
+    # elif method == "DELETE" and method in allowed_methods:
+    else:
+        not_allowed()
+
+if __name__ == "__main__":
+    main()
