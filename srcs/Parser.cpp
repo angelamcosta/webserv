@@ -42,17 +42,22 @@ void Parser::processLocation(const std::string &line, Server &server) {
 void Parser::processDirective(const std::string &line, Server &server) {
     std::istringstream iss(line);
     std::string name, value;
-    if (!(iss >> name >> value))
+
+    if (!(iss >> name))
         throw std::invalid_argument("Error: Invalid directive.");
-    server.addDirective(Directive(name, value));
+    std::getline(iss, value);
+    value = trim(value);
+    server.addDirective(Directive(trim(name), trim(value)));
 }
 
 void Parser::processDirective(const std::string &line, Location &location) {
     std::istringstream iss(line);
     std::string name, value;
-    if (!(iss >> name >> value))
+
+    if (!(iss >> name))
         throw std::invalid_argument("Error: Invalid directive.");
-    location.addDirective(Directive(name, value));
+    std::getline(iss, value);
+    location.addDirective(Directive(trim(name), trim(value)));
 }
 
 void Parser::processLine(const std::string &line, std::vector<Server> &servers,
@@ -91,4 +96,13 @@ void Parser::processLine(const std::string &line, std::vector<Server> &servers,
         }
     } else if (token == "}")
         flag--;
+}
+
+std::string Parser::trim(const std::string &str) {
+    size_t first = str.find_first_not_of(' ');
+    if (std::string::npos == first) {
+        return str;
+    }
+    size_t last = str.find_last_not_of(' ');
+    return (str.substr(first, (last - first + 1)));
 }

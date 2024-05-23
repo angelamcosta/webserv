@@ -6,24 +6,28 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/20 17:45:58 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/23 16:48:29 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 
-Server::Server() {}
+Server::Server()
+    : _root(""), _index(""), _error_page(""), _server_name(""), _port(""),
+      _socket(0), _body_size(0), _dir_listing("on") {}
 Server::~Server() {}
 
 Server::Server(const Server &other) {
     _root = other._root;
     _index = other._index;
+    _error_page = other._error_page;
     _server_name = other._server_name;
     _locations = other._locations;
     _directives = other._directives;
     _port = other._port;
     _socket = other._socket;
     _body_size = other._body_size;
+    _dir_listing = other._dir_listing;
     _fd = other._fd;
 }
 
@@ -31,12 +35,14 @@ Server &Server::operator=(const Server &other) {
     if (this != &other) {
         _root = other._root;
         _index = other._index;
+        _error_page = other._error_page;
         _server_name = other._server_name;
         _locations = other._locations;
         _directives = other._directives;
         _port = other._port;
         _socket = other._socket;
         _body_size = other._body_size;
+        _dir_listing = other._dir_listing;
         _fd = other._fd;
     }
     return (*this);
@@ -60,18 +66,22 @@ void Server::addDirective(Directive directive) {
         setServerName(directive.getValue());
     else if (directive.getName() == "client_max_body_size")
         setBodySize(directive.getValue());
+    else if (directive.getName() == "autoindex")
+        setDirListing(directive.getValue());
+    else if (directive.getName() == "error_page")
+        setErrorPage(directive.getValue());
     else
         _directives.push_back(directive);
 }
 
-std::string Server::getPort(void) { return (_port); }
-void Server::setPort(std::string port) { _port = port; }
+const std::string &Server::getPort(void) { return (_port); }
+void Server::setPort(const std::string &port) { _port = port; }
 
 int Server::getSocket(void) { return (_socket); }
 void Server::setSocket(int socket) { _socket = socket; }
 
 int Server::getBodySize(void) { return (_body_size); }
-void Server::setBodySize(std::string body_size) {
+void Server::setBodySize(const std::string &body_size) {
     int value = 0;
     std::istringstream iss(body_size);
 
@@ -82,57 +92,56 @@ void Server::setBodySize(std::string body_size) {
     _body_size = value;
 }
 
+const std::string &Server::getDirListing(void) const { return (_dir_listing); }
+void Server::setDirListing(const std::string &dir_listing) {
+    if (dir_listing == "on" || dir_listing == "off")
+        _dir_listing = dir_listing;
+    else
+        throw std::invalid_argument("Error: Invalid autoindex option: " +
+                                    dir_listing);
+}
+
 struct pollfd Server::getPollfd(void) { return (_fd); }
 void Server::setPollfd(struct pollfd fd) { _fd = fd; }
 
-std::string Server::getRoot(void) { return (_root); }
-void Server::setRoot(std::string root) { _root = root; }
+const std::string &Server::getRoot(void) { return (_root); }
+void Server::setRoot(const std::string &root) { _root = root; }
 
-std::string Server::getIndex(void) { return (_index); }
-void Server::setIndex(std::string index) { _index = index; }
+const std::string &Server::getIndex(void) { return (_index); }
+void Server::setIndex(const std::string &index) { _index = index; }
 
-std::string Server::getServerName(void) { return (_server_name); }
-void Server::setServerName(std::string server_name) {
+const std::string &Server::getServerName(void) { return (_server_name); }
+void Server::setServerName(const std::string &server_name) {
     _server_name = server_name;
 }
 
-std::string Server::getFullPath(const std::string &url) {
-    if (url.empty() || url == "/")
-        return (_root + "/" + _index);
-    std::string full_path = findUrl(_locations, "", url);
-    if (full_path.empty())
-        return (_root + ERROR_PAGE);
-    return (full_path);
+const std::string Server::getErrorPage(void) {
+    return (_error_page != "" ? _error_page : "/error.html");
+}
+void Server::setErrorPage(const std::string &error_page) {
+    _error_page = error_page;
 }
 
-std::string Server::findUrl(const std::vector<Location> &locations,
-                            const std::string &curr_path,
-                            const std::string &url) {
-    for (std::vector<Location>::const_iterator it = locations.begin();
-         it != locations.end(); ++it) {
-        const Location &loc = *it;
-        std::string path = curr_path + loc.getPath();
-        if (url.find(path) == 0) {
-            size_t found = url.find(HTML_EXT);
-            if (found == std::string::npos && is_dir(_root + url))
-                return (_root + url + "/" + loc.getIndex());
-            return (_root + url);
-        }
-        if (!loc.getLocations().empty()) {
-            std::string sub_path = findUrl(loc.getLocations(), path, url);
-            if (!sub_path.empty()) {
-                return (sub_path);
-            }
-        }
-    }
-    return std::string();
+const std::string Server::getUrlMethods(const std::string &url) {
+    if (url.empty())
+        return ("Not found");
+    size_t pos = url.find_last_of('/');
+    if (pos == std::string::npos)
+        return ("Not found");
+    std::string path = url.substr(pos);
+    const Location *location = findLocation(path, _locations);
+    if (location)
+        return (location->getMethods());
+    return ("GET");
 }
 
-int Server::is_dir(const std::string &path) {
-    DIR *dir = opendir(path.c_str());
-    if (dir) {
-        closedir(dir);
-        return (1);
+const Location *Server::findLocation(const std::string &path, const std::vector<Location> &locations) {
+    for (std::vector<Location>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
+        if (it->getPath() == path)
+            return &(*it);
+        const Location *subLocation = findLocation(path, it->getLocations());
+        if (subLocation)
+            return (subLocation);
     }
-    return (0);
+    return (NULL);
 }

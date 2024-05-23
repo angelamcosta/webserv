@@ -16,7 +16,7 @@
 int Processes::executeCgi(const t_request &data) {
     std::vector<char *> args = getArgs(data);
 
-    if (execve(PYTHON_INDEX, args.data(), environ) == -1) {
+    if (execve(PYTHON_INDEX, args.data(), NULL) == -1) {
         handleError("Error in executing cgi script");
         return (0);
     }
@@ -36,8 +36,6 @@ void Processes::handleError(std::string message) {
     std::cout << PINK << message << CLEAR << std::endl;
 }
 
-// Same things for the output of the CGI. If no content_length is
-// returned from the CGI, EOF will mark the end of the returned data.
 void Processes::readOutput(int sockfd, int pipefd[2]) {
     std::stringstream http_response;
     char temp_buff[BUFFER_SIZE];
@@ -68,7 +66,6 @@ void Processes::createProcess(int sockfd, const t_request &data) {
     if (pid == 0) {
         close(pipefd[0]);
         close(sockfd);
-
         if (!redirectStdout(pipefd))
             throw std::runtime_error("Error");
         if (!executeCgi(data))
@@ -79,17 +76,18 @@ void Processes::createProcess(int sockfd, const t_request &data) {
     }
 }
 
-// TODO: - Your program should call the CGI with the file requested as first argument
 std::vector<char *> Processes::getArgs(const t_request &data) {
     std::vector<char *> args;
 
     args.push_back(const_cast<char *>(PYTHON_INDEX));
     args.push_back(const_cast<char *>(data.url.c_str()));
-    args.push_back(const_cast<char *>(data.body.c_str()));
-    args.push_back(const_cast<char *>(data.method.c_str()));
     args.push_back(const_cast<char *>(data.request.c_str()));
-    args.push_back(const_cast<char *>(data.filename.c_str()));
+    args.push_back(const_cast<char *>(data.index.c_str()));
+    args.push_back(const_cast<char *>(data.method.c_str()));
+    args.push_back(const_cast<char *>(data.path_info.c_str()));
     args.push_back(const_cast<char *>(data.error_page.c_str()));
+    args.push_back(const_cast<char *>(data.dir_listing.c_str()));
+    args.push_back(const_cast<char *>(data.allowed_methods.c_str()));
     args.push_back(NULL);
 
     return (args);

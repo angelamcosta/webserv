@@ -12,7 +12,7 @@
 
 #include "../includes/Requests.hpp"
 
-void Requests::handleRequest(int sockfd, Server server) {
+void Requests::handleRequest(int sockfd, Server &server) {
     char buffer[BUFFER_SIZE];
     ssize_t bytes_received = recv(sockfd, buffer, BUFFER_SIZE, 0);
     if (bytes_received > server.getBodySize()) {
@@ -26,23 +26,21 @@ void Requests::handleRequest(int sockfd, Server server) {
     }
     buffer[bytes_received] = '\0';
     std::string request(buffer);
-
     t_request data = processRequest(request);
-    data.body = extractBody(request);
-    data.request = request;
-    data.full_path = server.getFullPath(data.url);
-    data.error_page = server.getRoot() + ERROR_PAGE;
+    setData(data, server, request);
+    printRequest(data);
     Processes::createProcess(sockfd, data);
 }
 
 void Requests::handleConn(std::vector<struct pollfd> &fds,
-                           std::vector<Server> &servers) {
+                          std::vector<Server> &servers) {
     while (1) {
         int ret = poll(fds.data(), fds.size(), TIMEOUT);
         if (ret < 0) {
             perror("poll");
             exit(EXIT_FAILURE);
-        }
+        } else if (ret == 0)
+            continue;
         for (size_t i = 0; i < fds.size(); ++i) {
             if (fds[i].revents & POLLIN) {
                 struct sockaddr_in client_addr;
@@ -68,38 +66,13 @@ void Requests::sendResponse(int sockfd, const std::string &response) {
     close(sockfd);
 }
 
-std::string Requests::generateResponse(const std::string &status,
-                                        const std::string &file) {
-    std::string response = "HTTP/1.1 " + status + "\r\nContent-Length: ";
-    std::stringstream ss;
-
-    ss << file.size();
-    response += ss.str();
-    response += "\r\n\r\n";
-    response += file;
-    return (response);
-}
-
-std::string Requests::readFile(const std::string &filename) {
-    std::ifstream file(filename.c_str(), std::ios::binary);
-    std::ostringstream file_content;
-
-    if (!file.is_open())
-        return ("");
-    file_content << file.rdbuf();
-    file.close();
-    return (file_content.str());
-}
-
 t_request Requests::processRequest(const std::string &request) {
     std::istringstream iss(request);
     std::string line;
-    std::string method, url, filename;
+    std::string method, url;
 
     while (std::getline(iss, line)) {
-        if (line.find(CONTENT_HEADER) != std::string::npos)
-            filename = extractFilename(line);
-        else if (line.find("HTTP/") != std::string::npos) {
+        if (line.find("HTTP/") != std::string::npos) {
             std::istringstream line_stream(line);
             line_stream >> method >> url;
         }
@@ -107,29 +80,25 @@ t_request Requests::processRequest(const std::string &request) {
     t_request data;
     data.url = url;
     data.method = method;
-    data.filename = filename;
     return (data);
 }
 
-std::string Requests::extractFilename(const std::string &content_type) {
-    std::string filename;
-    std::size_t pos = content_type.find("filename=");
-    if (pos != std::string::npos) {
-        filename = content_type.substr(pos + 10);
-        pos = filename.find_first_of("\r\n;");
-        if (pos != std::string::npos)
-            filename = filename.substr(0, pos);
-    }
-    return filename;
+void Requests::setData(t_request &data, Server &server, const std::string &request) {
+    data.index = server.getIndex();
+    data.request = request;
+    data.path_info = server.getRoot();
+    data.error_page = server.getErrorPage();
+    data.dir_listing = server.getDirListing();
+    data.allowed_methods = server.getUrlMethods(data.url);
 }
 
-std::string Requests::extractBody(const std::string &request) {
-    std::string body;
-    size_t body_start = request.find("\r\n\r\n");
-
-    if (body_start != std::string::npos) {
-        body = request.substr(body_start + 4);
-        return (body);
-    }
-    return ("empty");
+void Requests::printRequest(const t_request& req) {
+    std::cout << "\n------\nURL: " << req.url << std::endl;
+    std::cout << "Request: " << req.request << std::endl;
+    std::cout << "Index: " << req.index << std::endl;
+    std::cout << "Method: " << req.method << std::endl;
+    std::cout << "Path Info: " << req.path_info << std::endl;
+    std::cout << "Error Page: " << req.error_page << std::endl;
+    std::cout << "Directory Listing: " << req.dir_listing << std::endl;
+    std::cout << "Allowed Methods: " << req.allowed_methods << "\n------\n" << std::endl;
 }
