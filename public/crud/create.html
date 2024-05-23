@@ -12,20 +12,40 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <div class="error-template">
+                <div class="error-template mb-3">
                     <h1>CREATE</h1>
-                    <form>
-                        <label for="avatar">Selecione uma imagem para fazer upload:
-                        </label>
-                        <br />
-                        <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" />
-                        <input type="submit" value="Submeter" />
+                    <form method="POST" enctype="multipart/form-data" accept="/cgi-bin/script.py">
+                        <label for="file">Select a file to upload:</label><br>
+                        <input type="file" name="file" id="file"><br>
+                        <input type="submit" value="Upload File">
                     </form>
+
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                        <a href="read.html"><button type="button" class="btn btn-primary btn-lg px-4 gap-3">See all
+                                images</button></a>
+                        <a href="delete.html"><button type="button" class="btn btn-outline-secondary btn-lg px-4">Remove
+                                an image</button></a>
+                    </div>
+                    {{placeholder}}
                 </div>
             </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function validateForm() {
+            var fileInput = document.getElementById('file');
+            if (fileInput.files.length > 0) {
+                var maxFileSize = 1024 * 1024;
+                var fileSize = fileInput.files[0].size;
+                if (fileSize > maxFileSize) {
+                    alert('File size exceeds the maximum limit (1MB). Please select a smaller file.');
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
 </body>
 
 </html>
