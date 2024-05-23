@@ -3,3 +3,6 @@ test.config
 test.cpp
 webserv
 script
+/test
+/__pycache__
+*.pyc
