@@ -29,7 +29,7 @@ def main():
     if method == "GET" and method in allowed_methods:
         handle_get(full_path, dir_listing, error_path)
     elif method == "POST" and method in allowed_methods:
-        handle_post()
+        handle_post(UPLOAD_DIR, full_path, dir_listing, error_path)
     # elif method == "DELETE" and method in allowed_methods:
     else:
         not_allowed()
