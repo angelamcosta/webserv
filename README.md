@@ -14,10 +14,9 @@
 
 </div>
 
-Webserv is about writing a C++ 98 HTTP server. The subject of the project can be found [here](https://raw.githubusercontent.com/angelamcosta/webserv/main/en.subject.pdf).
+Webserv is a C++ 98 HTTP server. The subject of the project can be found [here](https://raw.githubusercontent.com/angelamcosta/webserv/main/en.subject.pdf).
 
 ## 📜 Mandatory Features
-Before delving into the specifics of the **webserv** project, it's crucial to understand and adhere to the general rules outlined below:
 
 - The program must never crash or quit unexpectedly.
 - A Makefile must be provided, adhering to specific rules.
