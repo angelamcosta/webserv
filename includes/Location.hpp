@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:10:30 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/10 14:42:07 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/21 14:52:53 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ class Location {
   private:
     std::string _path;
     std::string _index;
+    std::string _allow_methods;
     std::vector<Directive> _directives;
     std::vector<Location> _locations;
 
@@ -28,10 +29,10 @@ class Location {
     ~Location();
     Location(const Location &copy);
     Location &operator=(const Location &copy);
-    Location(const std::string path);
+    Location(const std::string &path);
 
     const std::string &getPath(void) const;
-    void setPath(std::string path);
+    void setPath(const std::string &path);
     
     const std::vector<Directive> &getDirectives(void) const;
     void addDirective(const Directive &directive);
@@ -40,7 +41,10 @@ class Location {
     void addLocation(Location location);
 
     const std::string &getIndex(void) const;
-    void setIndex(std::string index);
+    void setIndex(const std::string &index);
+    
+    const std::string &getMethods(void) const;
+    void setMethods(const std::string &methods);
 };
 
 #endif

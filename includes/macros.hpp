@@ -14,7 +14,6 @@
 #define MACROS_HPP
 
 #include <arpa/inet.h>
-#include <cerrno>
 #include <cstdlib>
 #include <cstring>
 #include <dirent.h>
@@ -33,7 +32,7 @@
 #include <vector>
 
 #define PORT 8080
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 2097152
 #define RES                                                                    \
     "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html><body><h1>Hello, "      \
     "World!</h1></body></html>\n"
@@ -74,12 +73,12 @@
 
 typedef struct s_request {
     std::string url;
-    std::string body;
-    std::string method;
     std::string request;
-    std::string filename;
-    std::string full_path;
+    std::string index;
+    std::string method;
+    std::string path_info;
     std::string error_page;
+    std::string dir_listing;
     std::string allowed_methods;
 } t_request;
 

@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/20 17:45:28 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/21 16:46:15 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,14 @@ class Server {
   private:
     std::string _root;
     std::string _index;
+    std::string _error_page;
     std::string _server_name;
     std::vector<Location> _locations;
     std::vector<Directive> _directives;
     std::string _port;
     int _socket;
     int _body_size;
+    std::string _dir_listing;
     struct pollfd _fd;
 
   public:
@@ -41,31 +43,35 @@ class Server {
     void addLocation(Location location);
     void addDirective(Directive directive);
 
-    std::string getPort(void);
-    void setPort(std::string port);
+    struct pollfd getPollfd(void);
+    void setPollfd(struct pollfd fd);
 
     int getSocket(void);
     void setSocket(int socket);
 
-    struct pollfd getPollfd(void);
-    void setPollfd(struct pollfd fd);
-
     int getBodySize(void);
-    void setBodySize(std::string body_size);
+    void setBodySize(const std::string &body_size);
 
-    std::string getRoot(void);
-    void setRoot(std::string root);
+    const std::string &getDirListing(void) const;
+    void setDirListing(const std::string &dir_listing);
 
-    std::string getIndex(void);
-    void setIndex(std::string index);
+    const std::string &getPort(void);
+    void setPort(const std::string &port);
 
-    std::string getServerName(void);
-    void setServerName(std::string server_name);
+    const std::string &getRoot(void);
+    void setRoot(const std::string &root);
 
-    std::string getFullPath(const std::string &url);
-    std::string findUrl(const std::vector<Location> &locations,
-                        const std::string &curr_path, const std::string &url);
-    int is_dir(const std::string &path);
+    const std::string &getIndex(void);
+    void setIndex(const std::string &index);
+
+    const std::string getErrorPage(void);
+    void setErrorPage(const std::string &error_page);
+
+    const std::string &getServerName(void);
+    void setServerName(const std::string &server_name);
+
+    const std::string getUrlMethods(const std::string &url);
+    const Location *findLocation(const std::string &path, const std::vector<Location> &locations);
 };
 
 #endif
