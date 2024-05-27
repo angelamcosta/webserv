@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:19:47 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/15 15:56:20 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/27 16:40:26 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,12 @@
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <typeinfo>
 #include <unistd.h>
 #include <vector>
 
 #define PORT 8080
-#define BUFFER_SIZE 2097152
+#define BUFFER_SIZE 1024
 #define RES                                                                    \
     "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html><body><h1>Hello, "      \
     "World!</h1></body></html>\n"
@@ -73,11 +74,13 @@
 
 typedef struct s_request {
     std::string url;
-    std::string request;
     std::string index;
     std::string method;
+    std::string request;
+    std::string filename;
     std::string path_info;
     std::string error_page;
+    std::string image_data;
     std::string dir_listing;
     std::string allowed_methods;
 } t_request;

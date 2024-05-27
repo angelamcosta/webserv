@@ -35,6 +35,8 @@ all:		$(NAME)
 $(NAME):	out_obj $(OBJ)
 			@echo "$(PEACH)$(HEART) Creating all resources $(HEART)$(CLEAR)"
 			@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
+			@cd cgi-bin && chmod 777 *.py
+			@cd public/images && chmod 644 *
 
 clean:
 			@$(RM) $(OBJ)
