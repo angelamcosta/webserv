@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/15 16:39:40 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/27 16:39:32 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,13 +81,14 @@ std::vector<char *> Processes::getArgs(const t_request &data) {
 
     args.push_back(const_cast<char *>(PYTHON_INDEX));
     args.push_back(const_cast<char *>(data.url.c_str()));
-    args.push_back(const_cast<char *>(data.request.c_str()));
     args.push_back(const_cast<char *>(data.index.c_str()));
     args.push_back(const_cast<char *>(data.method.c_str()));
     args.push_back(const_cast<char *>(data.path_info.c_str()));
     args.push_back(const_cast<char *>(data.error_page.c_str()));
     args.push_back(const_cast<char *>(data.dir_listing.c_str()));
     args.push_back(const_cast<char *>(data.allowed_methods.c_str()));
+    args.push_back(const_cast<char *>(data.image_data.c_str()));
+    args.push_back(const_cast<char *>(data.filename.c_str()));
     args.push_back(NULL);
 
     return (args);
