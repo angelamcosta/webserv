@@ -6,3 +6,4 @@ script
 /test
 /__pycache__
 *.pyc
+/images
