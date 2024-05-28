@@ -54,3 +54,4 @@ To get started with **webserv**, follow these steps:
 ## 📚 Glossary
 
 - [Perl and CGI](https://www.perl.com/article/perl-and-cgi/)
+- [Base64 Encode Algorithm](https://base64.guru/learn/base64-algorithm/encode)
