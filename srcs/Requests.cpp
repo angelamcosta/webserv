@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:42:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/27 21:25:54 by anlima           ###   ########.fr       */
+/*   Updated: 2024/05/28 16:57:03 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,33 @@ void Requests::handleRequest(int sockfd, Server &server) {
     }
     t_request data = processRequest(request, server);
     Processes::createProcess(sockfd, data);
+}
+
+void Requests::find_header_end(const std::string &request, int &read_header,
+                               int &content_length) {
+    size_t pos = request.find("\r\n\r\n");
+
+    if (pos != std::string::npos) {
+        read_header = 1;
+        size_t start = request.find("Content-Length: ", 0);
+        if (start != std::string::npos) {
+            size_t end = request.find("\r\n", start);
+            std::string len_str = request.substr(start + 16, end - start + 16);
+            std::stringstream(len_str) >> content_length;
+        }
+    }
+}
+
+int Requests::read_all(const std::string &request, int content_length) {
+    size_t pos = request.find("\r\n\r\n");
+    if (pos != std::string::npos) {
+        if (content_length == -1)
+            return (1);
+        std::string subs = request.substr(pos + 4);
+        if (static_cast<int>(subs.size()) >= content_length)
+            return (1);
+    }
+    return (0);
 }
 
 void Requests::handleConn(std::vector<struct pollfd> &fds,
@@ -100,23 +127,6 @@ void Requests::setData(t_request &data, Server &server,
     handleImagePost(data);
 }
 
-void Requests::printRequest(const t_request &data) {
-    std::cout << "\n------\nURL: " << data.url << std::endl;
-    std::cout << "Request: " << data.request << std::endl;
-    std::cout << "Index: " << data.index << std::endl;
-    std::cout << "Method: " << data.method << std::endl;
-    std::cout << "Path Info: " << data.path_info << std::endl;
-    std::cout << "Error Page: " << data.error_page << std::endl;
-    std::cout << "Directory Listing: " << data.dir_listing << std::endl;
-    std::cout << "Allowed Methods: " << data.allowed_methods << std::endl;
-    std::cout << "Encoded image: " << data.image_data << std::endl;
-    std::cout << "Filename: " << data.filename << "\n------\n" << std::endl;
-    std::cout << "Data type of image_data: " << typeid(data.image_data).name()
-              << std::endl;
-    std::cout << "Image data: " << data.image_data.substr(0, 100)
-              << std::endl;
-}
-
 void Requests::handleImagePost(t_request &data) {
     size_t boundary_start = data.request.find("boundary=");
     if (boundary_start == std::string::npos)
@@ -142,31 +152,60 @@ void Requests::handleImagePost(t_request &data) {
     data.image_data = base64_encode(image_data);
 }
 
-void Requests::find_header_end(const std::string &request, int &read_header,
-                               int &content_length) {
-    size_t pos = request.find("\r\n\r\n");
+std::string Requests::base64_encode(const std::string &data) {
+    std::string set = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                      "abcdefghijklmnopqrstuvwxyz"
+                      "0123456789+/";
+    const unsigned char *binary =
+        reinterpret_cast<const unsigned char *>(data.c_str());
+    size_t data_size = data.size();
+    std::vector<unsigned char> encoded_data;
+    int i = 0;
+    unsigned char block[3];
+    unsigned char group[4];
 
-    if (pos != std::string::npos) {
-        read_header = 1;
-        size_t start = request.find("Content-Length: ", 0);
-        if (start != std::string::npos) {
-            size_t end = request.find("\r\n", start);
-            std::string len_str = request.substr(start + 16, end - start + 16);
-            std::stringstream(len_str) >> content_length;
+    while (data_size--) {
+        block[i++] = *(binary++);
+        if (i == 3) {
+            group[0] = (block[0] & 0xFC) >> 2;
+            group[1] = ((block[0] & 0x03) << 4) + ((block[1] & 0xF0) >> 4);
+            group[2] = ((block[1] & 0x0F) << 2) + ((block[2] & 0xC0) >> 6);
+            group[3] = block[2] & 0x3F;
+            for (i = 0; i < 4; ++i)
+                encoded_data.push_back(set[group[i]]);
+            i = 0;
         }
     }
-}
-
-int Requests::read_all(const std::string &request, int content_length) {
-    size_t pos = request.find("\r\n\r\n");
-    if (pos != std::string::npos) {
-        if (content_length == -1)
-            return (1);
-        std::string subs = request.substr(pos + 4);
-        if (static_cast<int>(subs.size()) >= content_length)
-            return (1);
+    if (i) {
+        for (int j = i; j < 3; ++j)
+            block[j] = '\0';
+        group[0] = (block[0] & 0xFC) >> 2;
+        group[1] = ((block[0] & 0x03) << 4) + ((block[1] & 0xF0) >> 4);
+        group[2] = ((block[1] & 0x0F) << 2) + ((block[2] & 0xC0) >> 6);
+        for (int j = 0; j < i + 1; ++j)
+            encoded_data.push_back(set[group[j]]);
+        while ((i++ < 3))
+            encoded_data.push_back('=');
     }
-    return (0);
+    return std::string(encoded_data.begin(), encoded_data.end());
 }
 
-// TODO : - base64_encode implementation
+void Requests::printRequest(const t_request &data) {
+    std::cout << "\n------\nURL: " << data.url << std::endl;
+    std::cout << "Request: " << data.request << std::endl;
+    std::cout << "Index: " << data.index << std::endl;
+    std::cout << "Method: " << data.method << std::endl;
+    std::cout << "Path Info: " << data.path_info << std::endl;
+    std::cout << "Error Page: " << data.error_page << std::endl;
+    std::cout << "Directory Listing: " << data.dir_listing << std::endl;
+    std::cout << "Allowed Methods: " << data.allowed_methods << std::endl;
+    std::cout << "Encoded image: " << data.image_data << std::endl;
+    std::cout << "Filename: " << data.filename << "\n------\n" << std::endl;
+    std::cout << "Data type of image_data: " << typeid(data.image_data).name()
+              << std::endl;
+    std::cout << "Image data: " << data.image_data.substr(0, 100) << std::endl;
+}
+
+// TODO : - handle big images
+// are we not reading all body when the image is a larger size?
+// do we need to handle big images differently?
