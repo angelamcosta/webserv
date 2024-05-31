@@ -3,7 +3,7 @@
 import os
 import uuid
 import base64
-from utils import generate_response, print_error, generate_cards
+from utils import generate_response, generate_cards, load_template_file
 
 def success_upload():
     message = """
@@ -38,28 +38,48 @@ def dir_missing():
     return message
 
 def handle_get(full_path, dir_listing, error_path, path_info, message=""):
-    if os.path.isdir(full_path):
-        if dir_listing == "on":
-            arr = os.listdir(full_path)
-            file_list = "\n".join([f"<li>{file}</li>" for file in arr])
-            directory_listing_html = f"<h1>{full_path}</h1><ul>{file_list}</ul>"
-            generate_response("200 OK", directory_listing_html, path_info, full_path)
-        else:
-            generate_response("403 Forbidden", "<h1>ERROR: You don't have permission to access this page.</h1>", path_info, full_path)
-    elif os.path.isfile(full_path):
-        if full_path.endswith(('.png', '.jpg', '.jpeg', '.gif')):
-            with open(full_path, "rb") as f:
-                image_data = f.read()
-            generate_response("200 OK", image_data, path_info, full_path)
-        else:
-            with open(full_path, "r") as f:
-                text = f.read()
-            text = text.replace("{{alert}}", message)
-            if "{{images}}" in text:
-                text = text.replace("{{images}}", generate_cards(path_info + "images"))
-            generate_response("200 OK", text, path_info, full_path)
+    if os.path.exists(full_path):
+        if os.path.isdir(full_path):
+            if dir_listing == "on":
+                get_directories(full_path, path_info)
+            else:
+                get_file(path_info + "forbidden.html", path_info, message, "403 Forbidden")
+        elif os.path.isfile(full_path):
+            get_file(full_path, path_info, message)
     else:
-        print_error(error_path, path_info, full_path)
+        get_file(error_path, path_info, message, "404 Not found")
+
+
+def get_directories(full_path, path_info):
+    template = load_template_file(path_info)
+    arr = os.listdir(full_path)
+    file_list = "\n".join([f"<li>{file}</li>" for file in arr])
+    directory_listing_html = f"""<div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="error-template">
+                            <h1>{full_path}</h1>
+                            <div class="error-details">
+                                <ul>{file_list}</ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    """
+    generate_response("200 OK", directory_listing_html, path_info + "index.html", template)
+
+def get_file(full_path, path_info, message="", status="200 OK"):
+    template = load_template_file(path_info)
+    try:
+        with open(full_path, "r") as f:
+            text = f.read()
+        text = text.replace("{{alert}}", message)
+        if "{{images}}" in text:
+            text = text.replace("{{images}}", generate_cards(path_info + "images"))
+        generate_response(status, text, full_path, template)
+    except OSError:
+        generate_response("404 Not found", "<h1>ERROR: Could not find the specified file</h1>", full_path, template)
 
 def handle_post(upload_dir, image_data):
     if not image_data:
@@ -72,3 +92,8 @@ def handle_post(upload_dir, image_data):
 
 def not_allowed(path_info, full_path):
     generate_response("405 Not Allowed", f"<h1>ERROR: Method not allowed.</h1>", path_info, full_path)
+
+def get_image(full_path):
+    with open(full_path, "rb") as f:
+        image_data = f.read()
+    generate_response("200 OK", image_data, full_path)

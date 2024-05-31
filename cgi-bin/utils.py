@@ -1,24 +1,35 @@
 #!/usr/bin/python3
 
 import os
+import datetime
 
-def generate_response(status, file, path_info, full_path):
+def generate_response(status, file, full_path, template=""):
+    template = template.replace("{{placeholder}}", file)
     filename = os.path.basename(full_path)
-    if isinstance(file, str):
-        template = load_template_file(path_info)
-        template = template.replace("{{placeholder}}", file)
-        print(f"HTTP/1.1 {status} \r\nContent-Length: {len(template)}\r\nContent-Type: {get_mime_type(filename)}\r\n\r\n{template}")
-    else:
-        res = f"HTTP/1.1 {status} \r\nContent-Length: {len(file)}\r\nContent-Type: {get_mime_type(filename)}\r\n\r\n"
-        print(res.encode('utf-8') + file)
+    headers = generate_headers(status, template, filename)
+    print(headers + template)
 
-    
-def print_error(path, path_info, full_path):
-    try:
-        with open(path, "r") as f:
-            generate_response("404 Not found", f.read(), path_info, full_path)
-    except OSError:
-        generate_response("404 Not found", "<h1>ERROR: Could not find the specified file</h1>", path_info, full_path)
+def get_mime_type(filename):
+    mime_types = {
+        '.html': 'text/html',
+        '.css': 'text/css',
+        '.js': 'application/javascript',
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.png': 'image/png',
+        '.gif': 'image/gif',
+    }
+    ext = os.path.splitext(filename)[1]
+    return(mime_types.get(ext, 'application/octet-stream'))
+
+def generate_headers(status, template, filename):
+    headers = f"HTTP/1.1 {status}\r\n"
+    current_date = datetime.datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+    headers += f"Date: {current_date}\r\n"
+    headers += f"Content-Length: {len(template)}\r\n"
+    headers += f"Content-Type: {get_mime_type(filename)}\r\n"
+    headers += "\r\n"
+    return headers
 
 def get_upload_dir(path_info):
     upload_dir = path_info + "images/" if path_info[-1] == "/" else path_info + "/images/"
@@ -26,10 +37,10 @@ def get_upload_dir(path_info):
 
 def get_full_path(url, path_info, index):
     if ".py" in url:
-        full_path = path_info + index if path_info[-1] == "/" else path_info + "/" + index
-    elif (path_info[-1] == "/" and url[0] == "/"):
+        full_path = path_info + index if path_info.endswith("/") else path_info + "/" + index
+    elif url.startswith("/") and path_info.endswith("/"):
         full_path = path_info + url[1:]
-    elif (path_info[-1] == "/" and url[0] != "/") or (path_info[-1] != "/" and url[0] == "/"):
+    elif url.startswith("/") or path_info.endswith("/"):
         full_path = path_info + url
     else:
         full_path = path_info + "/" + url
@@ -62,17 +73,3 @@ def generate_cards(directory):
             </div>
         """
     return (cards)
-
-
-def get_mime_type(filename):
-    mime_types = {
-        '.html': 'text/html',
-        '.css': 'text/css',
-        '.js': 'application/javascript',
-        '.jpg': 'image/jpeg',
-        '.jpeg': 'image/jpeg',
-        '.png': 'image/png',
-        '.gif': 'image/gif',
-    }
-    ext = os.path.splitext(filename)[1]
-    return(mime_types.get(ext, 'application/octet-stream'))

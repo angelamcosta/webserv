@@ -19,9 +19,7 @@ def main():
     full_path = get_full_path(url, path_info, index)
     error_path = path_info + error_page
 
-    if not url:
-        return
-    if os.path.isdir(full_path) or (method == "GET" and method in allowed_methods):
+    if method == "GET":
         handle_get(full_path, dir_listing, error_path, path_info)
     elif method == "POST" and method in allowed_methods:
         message = handle_post(upload_dir, image_data)
