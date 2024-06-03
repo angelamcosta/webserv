@@ -2,33 +2,25 @@
 
 import os
 import datetime
+import mimetypes
 
-def generate_response(status, file, full_path, template=""):
-    template = template.replace("{{placeholder}}", file)
+def generate_response(status, content, full_path, template=""):
+    template = template.replace("{{placeholder}}", content)
     filename = os.path.basename(full_path)
-    headers = generate_headers(status, template, filename)
-    print(headers + template)
+    content_length = len(template)
+    headers = generate_headers(status, content_length, filename)
+    print(headers + '\r\n' + template)
 
-def get_mime_type(filename):
-    mime_types = {
-        '.html': 'text/html',
-        '.css': 'text/css',
-        '.js': 'application/javascript',
-        '.jpg': 'image/jpeg',
-        '.jpeg': 'image/jpeg',
-        '.png': 'image/png',
-        '.gif': 'image/gif',
-    }
-    ext = os.path.splitext(filename)[1]
-    return(mime_types.get(ext, 'application/octet-stream'))
-
-def generate_headers(status, template, filename):
+def generate_headers(status, content_length, filename):
     headers = f"HTTP/1.1 {status}\r\n"
     current_date = datetime.datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
     headers += f"Date: {current_date}\r\n"
-    headers += f"Content-Length: {len(template)}\r\n"
-    headers += f"Content-Type: {get_mime_type(filename)}\r\n"
-    headers += "\r\n"
+    headers += f"Content-Length: {content_length}\r\n"
+    content_type, _ = mimetypes.guess_type(filename)
+    if content_type is None:
+        content_type = 'application/octet-stream'
+    headers += f"Content-Type: {content_type}\r\n"
+    headers += "Connection: close\r\n"
     return headers
 
 def get_upload_dir(path_info):
@@ -55,6 +47,12 @@ def load_template_file(path_info):
 def generate_cards(directory):
     images = os.listdir(directory)
     cards = ''
+    if not images:
+        res = """<div class="alert alert-secondary" role="alert">
+                    The pond is empty right now.
+                </div>
+"""
+        return res
     for filename in images:
         path = os.path.join("/images/", filename)
         cards += f"""

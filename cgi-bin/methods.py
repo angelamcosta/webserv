@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 
 import os
+import sys
 import uuid
 import base64
-from utils import generate_response, generate_cards, load_template_file
+import imghdr
+from utils import generate_response, generate_cards, load_template_file, generate_headers
 
 def success_upload():
     message = """
@@ -45,7 +47,10 @@ def handle_get(full_path, dir_listing, error_path, path_info, message=""):
             else:
                 get_file(path_info + "forbidden.html", path_info, message, "403 Forbidden")
         elif os.path.isfile(full_path):
-            get_file(full_path, path_info, message)
+            if full_path.endswith(('.png', '.jpg', '.jpeg', '.gif')):
+                get_image(full_path, path_info, error_path)
+            else:
+                get_file(full_path, path_info, message)
     else:
         get_file(error_path, path_info, message, "404 Not found")
 
@@ -72,7 +77,7 @@ def get_directories(full_path, path_info):
 def get_file(full_path, path_info, message="", status="200 OK"):
     template = load_template_file(path_info)
     try:
-        with open(full_path, "r") as f:
+        with open(full_path, "r", encoding="iso-8859-1") as f:
             text = f.read()
         text = text.replace("{{alert}}", message)
         if "{{images}}" in text:
@@ -84,8 +89,11 @@ def get_file(full_path, path_info, message="", status="200 OK"):
 def handle_post(upload_dir, image_data):
     if not image_data:
         return file_missing()
-    filename = str(uuid.uuid4()) + '.jpg'
     binary_image_data = base64.b64decode(image_data)
+    extension = imghdr.what(None, binary_image_data)
+    if not extension:
+        return upload_failed()
+    filename = str(uuid.uuid4()) + '.' + extension
     with open(upload_dir + filename, 'wb') as f:
         f.write(binary_image_data)
     return success_upload()
@@ -93,7 +101,15 @@ def handle_post(upload_dir, image_data):
 def not_allowed(path_info, full_path):
     generate_response("405 Not Allowed", f"<h1>ERROR: Method not allowed.</h1>", path_info, full_path)
 
-def get_image(full_path):
-    with open(full_path, "rb") as f:
-        image_data = f.read()
-    generate_response("200 OK", image_data, full_path)
+def get_image(full_path, path_info, error_path, message="", status="200 OK"):
+    try:
+        with open(full_path, "rb") as f:
+            content = f.read()
+        filename = os.path.basename(full_path)
+        content_length = os.path.getsize(full_path)
+        headers = generate_headers(status, content_length, filename)
+        sys.stdout.buffer.write(headers.encode())
+        sys.stdout.buffer.write(b"\r\n")
+        sys.stdout.buffer.write(content)
+    except OSError:
+        get_file(error_path, path_info, message, "404 Not found")
