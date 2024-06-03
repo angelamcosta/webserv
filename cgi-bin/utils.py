@@ -55,15 +55,16 @@ def generate_cards(directory):
         return res
     for filename in images:
         path = os.path.join("/images/", filename)
+        delete = os.path.join("/delete/", filename)
         cards += f"""
             <div class="col">
                 <div class="card shadow-sm">
-                    <img src="{path}" class="bd-placeholder-img card-img-top" width="100%" height="225">
+                    <img src="{path}" class="card-img-top" width="100%" height="225" style="object-fit: cover;">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary">Delete</button>
+                                <a class="btn btn-outline-primary" href="{path}" role="button">View</a>
+                                <a class="btn btn-outline-secondary" href="{delete}" role="button">Delete</a>
                             </div>
                         </div>
                     </div>
