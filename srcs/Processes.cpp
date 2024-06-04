@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2024/06/04 17:17:43 by anlima           ###   ########.fr       */
+/*   Updated: 2024/06/04 18:48:10 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ void Processes::writeInput(int pipefd[2], const t_request &data) {
     input_stream << data.dir_listing << "\n";
     input_stream << data.allowed_methods << "\n";
     input_stream << data.image_data << "\n";
+    input_stream << data.filename << "\n";
 
     std::string input_data = input_stream.str();
     write(pipefd[1], input_data.c_str(), input_data.size());

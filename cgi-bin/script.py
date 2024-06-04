@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import sys
-from methods import handle_get, handle_post, not_allowed
+from methods import handle_get, handle_post, handle_delete, not_allowed
 from utils import get_upload_dir, get_full_path
 
 
@@ -16,17 +16,20 @@ def main():
     dir_listing = args[5]
     allowed_methods = args[6]
     image_data = args[7]
+    filename = args[8]
     upload_dir = get_upload_dir(path_info)
     url = "/" + index if url == "/" else url
     full_path = get_full_path(url, path_info, index)
     error_path = path_info + error_page
 
     if method == "GET":
-        handle_get(full_path, dir_listing, error_path, path_info)
+        handle_get(full_path, dir_listing, error_path, path_info, url)
     elif method == "POST" and method in allowed_methods:
         message = handle_post(upload_dir, image_data)
-        handle_get(full_path, dir_listing, error_path, path_info, message)
-    # elif method == "DELETE" and method in allowed_methods:
+        handle_get(full_path, dir_listing, error_path, path_info, url, message)
+    elif method == "DELETE" and method in allowed_methods:
+        message = handle_delete(url, upload_dir, filename)
+        handle_get(full_path, dir_listing, error_path, path_info, url, message)
     else:
         not_allowed(path_info, full_path)
 

@@ -44,7 +44,7 @@ def load_template_file(path_info):
         template = f.read()
     return (template)
 
-def generate_cards(directory):
+def generate_cards(directory, url):
     images = os.listdir(directory)
     cards = ''
     if not images:
@@ -54,17 +54,20 @@ def generate_cards(directory):
 """
         return res
     for filename in images:
-        path = os.path.join("/images/", filename)
-        delete = os.path.join("/delete/", filename)
+        path = os.path.join("../images/", filename)
         cards += f"""
             <div class="col">
                 <div class="card shadow-sm">
                     <img src="{path}" class="card-img-top" width="100%" height="225" style="object-fit: cover;">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
-                            <div class="btn-group">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <a class="btn btn-outline-primary" href="{path}" role="button">View</a>
-                                <a class="btn btn-outline-secondary" href="{delete}" role="button">Delete</a>
+                                <form method="post" action="{url}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_filename" value="{filename}">
+                                    <button type="submit" class="btn btn-outline-secondary" role="button">Delete</button>
+                                </form>
                             </div>
                         </div>
                     </div>

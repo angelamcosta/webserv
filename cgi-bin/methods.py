@@ -31,28 +31,36 @@ def file_missing():
 """
     return message
 
-def dir_missing():
+def success_delete():
     message = """
-        <div class="alert alert-light mt-3" role="alert">
-            The server couldn't find a directory to save the images to.
+        <div class="alert alert-success mt-3" role="alert">
+            File delete successfully!
         </div>
 """
     return message
 
-def handle_get(full_path, dir_listing, error_path, path_info, message=""):
+def delete_failed(file):
+    message = f"""
+        <div class="alert alert-danger mt-3" role="alert">
+            File delete failed.
+        </div>
+"""
+    return message
+
+def handle_get(full_path, dir_listing, error_path, path_info, url, message=""):
     if os.path.exists(full_path):
         if os.path.isdir(full_path):
             if dir_listing == "on":
                 get_directories(full_path, path_info)
             else:
-                get_file(path_info + "forbidden.html", path_info, message, "403 Forbidden")
+                get_file(path_info + "forbidden.html", path_info, url, message, "403 Forbidden")
         elif os.path.isfile(full_path):
             if full_path.endswith(('.png', '.jpg', '.jpeg', '.gif')):
-                get_image(full_path, path_info, error_path)
+                get_image(full_path, path_info, error_path, url)
             else:
-                get_file(full_path, path_info, message)
+                get_file(full_path, path_info, url, message)
     else:
-        get_file(error_path, path_info, message, "404 Not found")
+        get_file(error_path, path_info, url, message, "404 Not found")
 
 
 def get_directories(full_path, path_info):
@@ -74,14 +82,14 @@ def get_directories(full_path, path_info):
     """
     generate_response("200 OK", directory_listing_html, path_info + "index.html", template)
 
-def get_file(full_path, path_info, message="", status="200 OK"):
+def get_file(full_path, path_info, url, message="", status="200 OK"):
     template = load_template_file(path_info)
     try:
         with open(full_path, "r", encoding="iso-8859-1") as f:
             text = f.read()
         text = text.replace("{{alert}}", message)
         if "{{images}}" in text:
-            text = text.replace("{{images}}", generate_cards(path_info + "images"))
+            text = text.replace("{{images}}", generate_cards(path_info + "images", url))
         generate_response(status, text, full_path, template)
     except OSError:
         generate_response("404 Not found", "<h1>ERROR: Could not find the specified file</h1>", full_path, template)
@@ -101,7 +109,7 @@ def handle_post(upload_dir, image_data):
 def not_allowed(path_info, full_path):
     generate_response("405 Not Allowed", f"<h1>ERROR: Method not allowed.</h1>", path_info, full_path)
 
-def get_image(full_path, path_info, error_path, message="", status="200 OK"):
+def get_image(full_path, path_info, error_path, url, message="", status="200 OK"):
     try:
         with open(full_path, "rb") as f:
             content = f.read()
@@ -112,4 +120,11 @@ def get_image(full_path, path_info, error_path, message="", status="200 OK"):
         sys.stdout.buffer.write(b"\r\n")
         sys.stdout.buffer.write(content)
     except OSError:
-        get_file(error_path, path_info, message, "404 Not found")
+        get_file(error_path, path_info, url, message, "404 Not found")
+
+def handle_delete(url, upload_dir, filename):
+    try:
+        os.remove(upload_dir + filename)
+        return success_delete()
+    except OSError:
+        return delete_failed(url)

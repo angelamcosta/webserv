@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:20:33 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/27 15:56:00 by anlima           ###   ########.fr       */
+/*   Updated: 2024/06/04 18:50:01 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class Requests {
                                 int &content_length);
     static int read_all(const std::string &request, int content_length);
     static std::string base64_encode(const std::string &data);
+    static std::string getFilename(const std::string &request);
 };
 
 #endif

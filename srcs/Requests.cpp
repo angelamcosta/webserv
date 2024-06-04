@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:42:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/06/04 17:22:56 by anlima           ###   ########.fr       */
+/*   Updated: 2024/06/04 18:58:58 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,10 @@ void Requests::handleRequest(int sockfd, Server &server) {
         }
     }
     t_request data = processRequest(request, server);
+    if (request.find("DELETE") != std::string::npos)
+        data.method = "DELETE";
+    if (request.find("_filename") != std::string::npos)
+        data.filename = getFilename(request);
     Processes::createProcess(sockfd, data);
 }
 
@@ -188,6 +192,20 @@ std::string Requests::base64_encode(const std::string &data) {
             encoded_data.push_back('=');
     }
     return std::string(encoded_data.begin(), encoded_data.end());
+}
+
+std::string Requests::getFilename(const std::string &request) {
+    std::istringstream iss(request);
+    std::string token;
+    std::string filename;
+
+    while (std::getline(iss, token, '&')) {
+        if (token.find("_filename=") != std::string::npos) {
+            filename = token.substr(token.find('=') + 1);
+            break;
+        }
+    }
+    return (filename);
 }
 
 void Requests::printRequest(const t_request &data) {
