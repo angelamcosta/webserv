@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:42:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/28 16:57:03 by anlima           ###   ########.fr       */
+/*   Updated: 2024/06/04 17:22:56 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,7 +205,3 @@ void Requests::printRequest(const t_request &data) {
               << std::endl;
     std::cout << "Image data: " << data.image_data.substr(0, 100) << std::endl;
 }
-
-// TODO : - handle big images
-// are we not reading all body when the image is a larger size?
-// do we need to handle big images differently?

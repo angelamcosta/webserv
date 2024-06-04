@@ -3,18 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   Processes.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2024/06/04 12:33:29 by anlima           ###   ########.fr       */
+/*   Updated: 2024/06/04 17:17:43 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Processes.hpp"
 #include "../includes/Requests.hpp"
 
-int Processes::executeCgi(const t_request &data) {
-    std::vector<char *> args = getArgs(data);
+int Processes::executeCgi(void) {
+    std::vector<char *> args;
+    args.push_back(const_cast<char *>(PYTHON_INDEX));
+    args.push_back(NULL);
 
     if (execve(PYTHON_INDEX, args.data(), NULL) == -1) {
         handleError("Error in executing cgi script");
@@ -32,8 +34,17 @@ int Processes::redirectStdout(int pipefd[2]) {
     return (1);
 }
 
+int Processes::redirectStdin(int pipefd[2]) {
+    if (dup2(pipefd[0], STDIN_FILENO) == -1) {
+        handleError("Error in redirecting stdin");
+        return (0);
+    }
+    close(pipefd[0]);
+    return (1);
+}
+
 void Processes::handleError(std::string message) {
-    std::cout << PINK << message << CLEAR << std::endl;
+    std::cout << message << std::endl;
 }
 
 void Processes::readOutput(int sockfd, int pipefd[2]) {
@@ -52,45 +63,50 @@ void Processes::readOutput(int sockfd, int pipefd[2]) {
     Requests::sendResponse(sockfd, http_response.str());
 }
 
+void Processes::writeInput(int pipefd[2], const t_request &data) {
+    std::stringstream input_stream;
+
+    input_stream << data.url << "\n";
+    input_stream << data.index << "\n";
+    input_stream << data.method << "\n";
+    input_stream << data.path_info << "\n";
+    input_stream << data.error_page << "\n";
+    input_stream << data.dir_listing << "\n";
+    input_stream << data.allowed_methods << "\n";
+    input_stream << data.image_data << "\n";
+
+    std::string input_data = input_stream.str();
+    write(pipefd[1], input_data.c_str(), input_data.size());
+    close(pipefd[1]);
+}
+
 void Processes::createProcess(int sockfd, const t_request &data) {
-    int pipefd[2];
-    if (pipe(pipefd) == -1)
+    int stdout_pipefd[2];
+    int stdin_pipefd[2];
+
+    if (pipe(stdout_pipefd) == -1 || pipe(stdin_pipefd) == -1)
         throw std::runtime_error("Error in creating pipe");
 
     pid_t pid = fork();
     if (pid == -1) {
-        close(pipefd[0]);
-        close(pipefd[1]);
+        close(stdout_pipefd[0]);
+        close(stdout_pipefd[1]);
+        close(stdin_pipefd[0]);
+        close(stdin_pipefd[1]);
         throw std::runtime_error("Error in forking process");
     }
     if (pid == 0) {
-        close(pipefd[0]);
+        close(stdout_pipefd[0]);
+        close(stdin_pipefd[1]);
         close(sockfd);
-        if (!redirectStdout(pipefd))
+        if (!redirectStdout(stdout_pipefd) || !redirectStdin(stdin_pipefd))
             throw std::runtime_error("Error");
-        if (!executeCgi(data))
+        if (!executeCgi())
             throw std::runtime_error("Error");
-            // TODO : - write the images to the stdin in the post request
     } else {
-        close(pipefd[1]);
-        readOutput(sockfd, pipefd);
+        close(stdout_pipefd[1]);
+        close(stdin_pipefd[0]);
+        writeInput(stdin_pipefd, data);
+        readOutput(sockfd, stdout_pipefd);
     }
-}
-
-std::vector<char *> Processes::getArgs(const t_request &data) {
-    std::vector<char *> args;
-
-    args.push_back(const_cast<char *>(PYTHON_INDEX));
-    args.push_back(const_cast<char *>(data.url.c_str()));
-    args.push_back(const_cast<char *>(data.index.c_str()));
-    args.push_back(const_cast<char *>(data.method.c_str()));
-    args.push_back(const_cast<char *>(data.path_info.c_str()));
-    args.push_back(const_cast<char *>(data.error_page.c_str()));
-    args.push_back(const_cast<char *>(data.dir_listing.c_str()));
-    args.push_back(const_cast<char *>(data.allowed_methods.c_str()));
-    args.push_back(const_cast<char *>(data.image_data.c_str()));
-    args.push_back(const_cast<char *>(data.filename.c_str()));
-    args.push_back(NULL);
-
-    return (args);
 }

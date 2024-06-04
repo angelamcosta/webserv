@@ -1,19 +1,21 @@
 #!/usr/bin/python3
 
-import os
 import sys
 from methods import handle_get, handle_post, not_allowed
 from utils import get_upload_dir, get_full_path
 
+
 def main():
-    url = sys.argv[1]
-    index = sys.argv[2]
-    method = sys.argv[3]
-    path_info = sys.argv[4]
-    error_page = sys.argv[5]
-    dir_listing = sys.argv[6]
-    allowed_methods = sys.argv[7]
-    image_data = sys.argv[8]
+    data = sys.stdin.read()
+    args = data.splitlines()
+    url = args[0]
+    index = args[1]
+    method = args[2]
+    path_info = args[3]
+    error_page = args[4]
+    dir_listing = args[5]
+    allowed_methods = args[6]
+    image_data = args[7]
     upload_dir = get_upload_dir(path_info)
     url = "/" + index if url == "/" else url
     full_path = get_full_path(url, path_info, index)
@@ -27,6 +29,7 @@ def main():
     # elif method == "DELETE" and method in allowed_methods:
     else:
         not_allowed(path_info, full_path)
+
 
 if __name__ == "__main__":
     main()
