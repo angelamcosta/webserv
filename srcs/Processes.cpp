@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Processes.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/27 16:39:32 by anlima           ###   ########.fr       */
+/*   Updated: 2024/06/04 12:33:29 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ void Processes::createProcess(int sockfd, const t_request &data) {
             throw std::runtime_error("Error");
         if (!executeCgi(data))
             throw std::runtime_error("Error");
+            // TODO : - write the images to the stdin in the post request
     } else {
         close(pipefd[1]);
         readOutput(sockfd, pipefd);
