@@ -1,9 +1,8 @@
 *.o
-test.config
-test.cpp
-webserv
-script
-/test
-/__pycache__
 *.pyc
-/images
+script
+images/
+webserv
+test.cpp
+test.config
+__pycache__/
