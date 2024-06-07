@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:46:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/15 19:39:32 by anlima           ###   ########.fr       */
+/*   Updated: 2024/06/07 14:00:10 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,9 @@ int main(int argc, char **argv) {
         }
         Requests::handleConn(fds, servers);
     } catch (const std::exception &e) {
-        std::cerr << e.what() << '\n';
+        std::cout << e.what() << '\n';
     }
     return (0);
 }
+
+// TODO : - for all read/recv/write/send on a socket and check that, if an error is returned, the client is removed.

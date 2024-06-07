@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:54:32 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/17 13:22:09 by anlima           ###   ########.fr       */
+/*   Updated: 2024/06/07 14:01:14 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,8 @@ int Sockets::createServer(const std::string &serverName,
     hints.ai_flags = AI_PASSIVE;
     hints.ai_protocol = 0;
     int status = getaddrinfo(name.c_str(), port.c_str(), &hints, &res);
-    if (status != 0) {
-        std::string errorMessage = "getaddrinfo error: ";
-        errorMessage += gai_strerror(status);
-        std::cerr << errorMessage << std::endl;
-        throw std::runtime_error(errorMessage);
-    }
+    if (status != 0)
+        throw std::runtime_error("getaddrinfo error");
     int sockfd = createSocket(res);
     bindSocket(sockfd, res);
     startServer(sockfd, res);
@@ -93,7 +89,7 @@ struct pollfd Sockets::createPollfd(int sock_fd) {
     struct pollfd sock_pollfd;
 
     sock_pollfd.fd = sock_fd;
-    sock_pollfd.events = POLLIN;
+    sock_pollfd.events = POLLIN | POLLOUT;;
     sock_pollfd.revents = 0;
     return (sock_pollfd);
 }

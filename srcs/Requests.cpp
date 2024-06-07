@@ -6,13 +6,16 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:42:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/06/04 18:58:58 by anlima           ###   ########.fr       */
+/*   Updated: 2024/06/07 14:57:03 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Requests.hpp"
 
-void Requests::handleRequest(int sockfd, Server &server) {
+// TODO : - handle max body size
+
+void Requests::handleRequest(int sockfd, Server &server,
+                             std::string &response) {
     int read_header = 0;
     std::string request;
     ssize_t bytes_received;
@@ -23,13 +26,14 @@ void Requests::handleRequest(int sockfd, Server &server) {
         bytes_received = recv(sockfd, buffer, BUFFER_SIZE, 0);
         if (bytes_received <= 0) {
             close(sockfd);
+            response.clear();
             return;
         }
         if (bytes_received > 0) {
             request.append(buffer, bytes_received);
             if (!read_header)
-                find_header_end(request, read_header, content_length);
-            if (read_header && read_all(request, content_length))
+                findHeaderEnd(request, read_header, content_length);
+            if (read_header && readAll(request, content_length))
                 break;
         }
     }
@@ -38,11 +42,11 @@ void Requests::handleRequest(int sockfd, Server &server) {
         data.method = "DELETE";
     if (request.find("_filename") != std::string::npos)
         data.filename = getFilename(request);
-    Processes::createProcess(sockfd, data);
+    response = Processes::createProcess(data);
 }
 
-void Requests::find_header_end(const std::string &request, int &read_header,
-                               int &content_length) {
+void Requests::findHeaderEnd(const std::string &request, int &read_header,
+                             int &content_length) {
     size_t pos = request.find("\r\n\r\n");
 
     if (pos != std::string::npos) {
@@ -56,7 +60,7 @@ void Requests::find_header_end(const std::string &request, int &read_header,
     }
 }
 
-int Requests::read_all(const std::string &request, int content_length) {
+int Requests::readAll(const std::string &request, int content_length) {
     size_t pos = request.find("\r\n\r\n");
     if (pos != std::string::npos) {
         if (content_length == -1)
@@ -70,25 +74,50 @@ int Requests::read_all(const std::string &request, int content_length) {
 
 void Requests::handleConn(std::vector<struct pollfd> &fds,
                           std::vector<Server> &servers) {
+    std::map<int, std::string> responses;
+
     while (1) {
-        int ret = poll(fds.data(), fds.size(), TIMEOUT);
+        int ret = poll(&fds[0], fds.size(), TIMEOUT);
         if (ret < 0) {
             perror("poll");
             exit(EXIT_FAILURE);
         } else if (ret == 0)
             continue;
         for (size_t i = 0; i < fds.size(); ++i) {
-            if (fds[i].revents & POLLIN) {
-                struct sockaddr_in client_addr;
-                socklen_t client_len = sizeof(client_addr);
-                int client_fd = accept(
-                    fds[i].fd, (struct sockaddr *)&client_addr, &client_len);
-                if (client_fd < 0) {
-                    perror("accept");
-                    continue;
+            if (fds[i].revents & (POLLIN | POLLOUT)) {
+                if (fds[i].revents & POLLIN) {
+                    struct sockaddr_in client_addr;
+                    socklen_t client_len = sizeof(client_addr);
+                    int client_fd =
+                        accept(fds[i].fd, (struct sockaddr *)&client_addr,
+                               &client_len);
+                    if (client_fd < 0) {
+                        perror("accept");
+                        continue;
+                    }
+                    std::string response;
+                    handleRequest(client_fd, servers[i], response);
+                    if (!response.empty()) {
+                        struct pollfd new_fd;
+                        new_fd.fd = client_fd;
+                        new_fd.events = POLLOUT;
+                        new_fd.revents = 0;
+                        fds.push_back(new_fd);
+                        responses[client_fd] = response;
+                    } else {
+                        close(client_fd);
+                    }
                 }
-                handleRequest(client_fd, servers[i]);
-                close(client_fd);
+                if (fds[i].revents & POLLOUT) {
+                    int client_fd = fds[i].fd;
+                    if (responses.find(client_fd) != responses.end()) {
+                        Requests::sendResponse(client_fd, responses[client_fd]);
+                        responses.erase(client_fd);
+                        close(client_fd);
+                        fds.erase(fds.begin() + i);
+                        --i;
+                    }
+                }
                 fds[i].revents = 0;
             }
         }
@@ -96,10 +125,18 @@ void Requests::handleConn(std::vector<struct pollfd> &fds,
 }
 
 void Requests::sendResponse(int sockfd, const std::string &response) {
-    if (send(sockfd, response.c_str(), response.size(), 0) < 0) {
-        Processes::handleError("Error sending response");
+    size_t length = response.size();
+    const char *data = response.data();
+
+    size_t total_sent = 0;
+    while (total_sent < length) {
+        ssize_t sent = send(sockfd, data + total_sent, length - total_sent, 0);
+        if (sent < 0) {
+            perror("send");
+            break;
+        }
+        total_sent += sent;
     }
-    close(sockfd);
 }
 
 t_request Requests::processRequest(const std::string &request, Server &server) {
@@ -146,14 +183,13 @@ void Requests::handleImagePost(t_request &data) {
         return;
     data_start += 4;
     std::string image_data = data.request.substr(data_start);
+    data.image_data = base64_encode(image_data);
     if (filename_start == std::string::npos)
         return;
     filename_start += 10;
     size_t filename_end = data.request.find("\"", filename_start);
-    std::string filename =
+    data.filename =
         data.request.substr(filename_start, filename_end - filename_start);
-    data.filename = filename;
-    data.image_data = base64_encode(image_data);
 }
 
 std::string Requests::base64_encode(const std::string &data) {

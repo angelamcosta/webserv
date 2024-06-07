@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2024/06/04 18:48:10 by anlima           ###   ########.fr       */
+/*   Updated: 2024/06/07 14:00:30 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,24 +47,24 @@ void Processes::handleError(std::string message) {
     std::cout << message << std::endl;
 }
 
-void Processes::readOutput(int sockfd, int pipefd[2]) {
-    std::stringstream http_response;
-    char temp_buff[BUFFER_SIZE];
+std::string Processes::readOutput(int pipefd[2]) {
     ssize_t bytes_read;
+    char temp_buff[BUFFER_SIZE];
+    std::ostringstream http_response;
+    size_t total_bytes_read = 0;
 
-    while ((bytes_read = read(pipefd[0], temp_buff, BUFFER_SIZE)) > 0)
+    while ((bytes_read = read(pipefd[0], temp_buff, BUFFER_SIZE)) > 0) {
         http_response.write(temp_buff, bytes_read);
-    if (bytes_read < 0) {
-        perror("read");
-        close(pipefd[0]);
-        return;
+        total_bytes_read += bytes_read;
     }
+    if (bytes_read < 0)
+        perror("read");
     close(pipefd[0]);
-    Requests::sendResponse(sockfd, http_response.str());
+    return (http_response.str());
 }
 
 void Processes::writeInput(int pipefd[2], const t_request &data) {
-    std::stringstream input_stream;
+    std::ostringstream input_stream;
 
     input_stream << data.url << "\n";
     input_stream << data.index << "\n";
@@ -81,13 +81,14 @@ void Processes::writeInput(int pipefd[2], const t_request &data) {
     close(pipefd[1]);
 }
 
-void Processes::createProcess(int sockfd, const t_request &data) {
-    int stdout_pipefd[2];
+std::string Processes::createProcess(const t_request &data) {
     int stdin_pipefd[2];
+    int stdout_pipefd[2];
+    std::string response;
 
-    if (pipe(stdout_pipefd) == -1 || pipe(stdin_pipefd) == -1)
+    if (pipe(stdout_pipefd) == -1 || pipe(stdin_pipefd) == -1) {
         throw std::runtime_error("Error in creating pipe");
-
+    }
     pid_t pid = fork();
     if (pid == -1) {
         close(stdout_pipefd[0]);
@@ -99,15 +100,17 @@ void Processes::createProcess(int sockfd, const t_request &data) {
     if (pid == 0) {
         close(stdout_pipefd[0]);
         close(stdin_pipefd[1]);
-        close(sockfd);
         if (!redirectStdout(stdout_pipefd) || !redirectStdin(stdin_pipefd))
-            throw std::runtime_error("Error");
+            throw std::runtime_error("Error in redirecting stdout or stdin");
         if (!executeCgi())
-            throw std::runtime_error("Error");
+            throw std::runtime_error("Error in executing CGI script");
     } else {
         close(stdout_pipefd[1]);
         close(stdin_pipefd[0]);
         writeInput(stdin_pipefd, data);
-        readOutput(sockfd, stdout_pipefd);
+        response = readOutput(stdout_pipefd);
+        int status;
+        waitpid(pid, &status, 0);
     }
+    return (response);
 }

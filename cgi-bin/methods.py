@@ -113,8 +113,12 @@ def get_image(full_path, path_info, error_path, url, message="", status="200 OK"
     try:
         with open(full_path, "rb") as f:
             content = f.read()
+        
         filename = os.path.basename(full_path)
         content_length = os.path.getsize(full_path)
+        if len(content) != content_length:
+            get_file(error_path, path_info, url, message, "404 Not found")
+            return
         headers = generate_headers(status, content_length, filename)
         sys.stdout.buffer.write(headers.encode())
         sys.stdout.buffer.write(b"\r\n")
