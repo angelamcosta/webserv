@@ -12,6 +12,8 @@
   </tr>
 </table>
 
+<img alt="GitHub Language Count" src="https://img.shields.io/github/languages/count/angelamcosta/webserv" /> <img alt="GitHub Top Language" src="https://img.shields.io/github/languages/top/angelamcosta/webserv" /> <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/angelamcosta/webserv" /> <img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/angelamcosta/webserv" /> <a href="https://wakatime.com/badge/user/0c29d5b3-c30b-4e1a-ad07-2da3bd4f7e05/project/018e8011-e2e3-4db8-b722-5fdd0683bfaf"><img src="https://wakatime.com/badge/user/0c29d5b3-c30b-4e1a-ad07-2da3bd4f7e05/project/018e8011-e2e3-4db8-b722-5fdd0683bfaf.svg" alt="wakatime"></a>
+
 </div>
 
 Webserv is a C++ 98 HTTP server. The subject of the project can be found [here](https://raw.githubusercontent.com/angelamcosta/webserv/main/en.subject.pdf).
@@ -53,5 +55,5 @@ To get started with **webserv**, follow these steps:
 
 ## 📚 Glossary
 
-- [Perl and CGI](https://www.perl.com/article/perl-and-cgi/)
 - [Base64 Encode Algorithm](https://base64.guru/learn/base64-algorithm/encode)
+- [I/O Multiplexing: The select and poll Functions](https://notes.shichao.io/unp/ch6/)
