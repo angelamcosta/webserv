@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/23 16:48:29 by anlima           ###   ########.fr       */
+/*   Updated: 2024/06/12 13:45:07 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,9 @@ void Server::addDirective(Directive directive) {
         _directives.push_back(directive);
 }
 
-const std::string &Server::getPort(void) { return (_port); }
+const std::string Server::getPort(void) {
+    return (_port != "" ? _port : "8080");
+}
 void Server::setPort(const std::string &port) { _port = port; }
 
 int Server::getSocket(void) { return (_socket); }
@@ -85,6 +87,7 @@ void Server::setBodySize(const std::string &body_size) {
     int value = 0;
     std::istringstream iss(body_size);
 
+    checkBodySize(body_size);
     if (!(iss >> value))
         throw std::invalid_argument("Error: Invalid body size: " + body_size);
     if (value < 0)
@@ -144,4 +147,11 @@ const Location *Server::findLocation(const std::string &path, const std::vector<
             return (subLocation);
     }
     return (NULL);
+}
+
+void Server::checkBodySize(const std::string &body_size) {
+    for (size_t i = 0; i < body_size.length(); ++i) {
+        if (!isdigit(body_size[i]))
+            throw std::invalid_argument("Error: Invalid char in body size: " + body_size);
+    }
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/21 16:46:15 by anlima           ###   ########.fr       */
+/*   Updated: 2024/06/12 13:44:14 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ class Server {
     const std::string &getDirListing(void) const;
     void setDirListing(const std::string &dir_listing);
 
-    const std::string &getPort(void);
+    const std::string getPort(void);
     void setPort(const std::string &port);
 
     const std::string &getRoot(void);
@@ -72,6 +72,8 @@ class Server {
 
     const std::string getUrlMethods(const std::string &url);
     const Location *findLocation(const std::string &path, const std::vector<Location> &locations);
+
+    void checkBodySize(const std::string &body_size);
 };
 
 #endif
