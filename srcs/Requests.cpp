@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Requests.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:42:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/06/07 14:57:03 by anlima           ###   ########.fr       */
+/*   Updated: 2024/08/23 17:55:48 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,10 @@ void Requests::handleRequest(int sockfd, Server &server,
                 break;
         }
     }
+
     t_request data = processRequest(request, server);
+	if (server.getBodySize() < (int)request.length())
+		data.method = "invalid_size";
     if (request.find("DELETE") != std::string::npos)
         data.method = "DELETE";
     if (request.find("_filename") != std::string::npos)

@@ -22,7 +22,9 @@ def main():
     full_path = get_full_path(url, path_info, index)
     error_path = path_info + error_page
 
-    if method == "GET":
+    if method == "invalid_size":
+        handle_get(full_path, dir_listing, error_path, path_info, url, method)
+    elif method == "GET":
         handle_get(full_path, dir_listing, error_path, path_info, url)
     elif method == "POST" and method in allowed_methods:
         message = handle_post(upload_dir, image_data)
