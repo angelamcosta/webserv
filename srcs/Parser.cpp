@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:33:13 by anlima            #+#    #+#             */
-/*   Updated: 2024/06/12 14:16:53 by anlima           ###   ########.fr       */
+/*   Updated: 2024/08/26 17:14:28 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ std::vector<Server> Parser::parseConf(const std::string &filename) {
             continue;
         processLine(line, servers, flag);
     }
+    if (flag)
+        throw std::invalid_argument("Error: Invalid server definition.");
     file.close();
     checkServers(servers);
     return (servers);
@@ -63,6 +65,8 @@ void Parser::processDirective(const std::string &line, Location &location) {
     location.addDirective(Directive(trim(name), trim(value)));
 }
 
+// TODO - : Handle { } 
+
 void Parser::processLine(const std::string &line, std::vector<Server> &servers,
                          int &flag) {
     std::stringstream iss(line);
@@ -71,20 +75,24 @@ void Parser::processLine(const std::string &line, std::vector<Server> &servers,
     if (!(iss >> token))
         return;
     if (token == "server" && !flag) {
-        servers.push_back(Server());
-        if ((iss >> token) && (token != "{"))
+        if (((!(iss >> token)) || token != "{"))
             throw std::invalid_argument("Error: Invalid server definition.");
-    } else if (token == "server" && flag)
+        servers.push_back(Server());
+    }
+    if (token == "{" && (iss >> token))
         throw std::invalid_argument("Error: Invalid server definition.");
-    if (token == "{")
+    else if (token == "{")
         flag++;
+    else if (token == "}" && (iss >> token))
+        throw std::invalid_argument("Error: Invalid server definition.");
     else if (token == "location" && flag) {
         if (servers.empty())
             throw std::invalid_argument(
                 "Error: Location block outside server block.");
         processLocation(line, servers.back());
         flag++;
-    } else if (token != "}" && flag) {
+    }
+    else if (token != "}" && flag) {
         if (servers.empty())
             throw std::invalid_argument("Error: Directive block outside server block.");
         Server &last_server = servers.back();
@@ -92,9 +100,11 @@ void Parser::processLine(const std::string &line, std::vector<Server> &servers,
         if (!locations.empty()) {
             const Location &last_location = locations.back();
             processDirective(line, const_cast<Location &>(last_location));
-        } else
+        }
+        else
             processDirective(line, last_server);
-    } else if (token == "}")
+    }
+    else if (token == "}")
         flag--;
 }
 

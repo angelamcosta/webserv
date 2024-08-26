@@ -6,13 +6,11 @@
 /*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:42:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/08/23 17:55:48 by mpedroso         ###   ########.fr       */
+/*   Updated: 2024/08/26 17:16:03 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Requests.hpp"
-
-// TODO : - handle max body size
 
 void Requests::handleRequest(int sockfd, Server &server,
                              std::string &response) {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2024/06/12 13:45:07 by anlima           ###   ########.fr       */
+/*   Updated: 2024/08/26 17:16:14 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void Server::addDirective(Directive directive) {
     else if (directive.getName() == "error_page")
         setErrorPage(directive.getValue());
     else
-        _directives.push_back(directive);
+        throw std::invalid_argument("Error: Invalid directive.");
 }
 
 const std::string Server::getPort(void) {

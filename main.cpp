@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:46:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/06/07 14:00:10 by anlima           ###   ########.fr       */
+/*   Updated: 2024/08/26 15:49:12 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,3 @@ int main(int argc, char **argv) {
     }
     return (0);
 }
-
-// TODO : - for all read/recv/write/send on a socket and check that, if an error is returned, the client is removed.
