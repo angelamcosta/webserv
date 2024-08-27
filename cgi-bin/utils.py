@@ -4,12 +4,14 @@ import os
 import datetime
 import mimetypes
 
+
 def generate_response(status, content, full_path, template=""):
     template = template.replace("{{placeholder}}", content)
     filename = os.path.basename(full_path)
     content_length = len(template)
     headers = generate_headers(status, content_length, filename)
     print(headers + '\r\n' + template)
+
 
 def generate_headers(status, content_length, filename):
     headers = f"HTTP/1.1 {status}\r\n"
@@ -23,13 +25,17 @@ def generate_headers(status, content_length, filename):
     headers += "Connection: close\r\n"
     return headers
 
+
 def get_upload_dir(path_info):
-    upload_dir = path_info + "images/" if path_info[-1] == "/" else path_info + "/images/"
+    upload_dir = path_info + \
+        "images/" if path_info[-1] == "/" else path_info + "/images/"
     return upload_dir
+
 
 def get_full_path(url, path_info, index):
     if ".py" in url:
-        full_path = path_info + index if path_info.endswith("/") else path_info + "/" + index
+        full_path = path_info + \
+            index if path_info.endswith("/") else path_info + "/" + index
     elif url.startswith("/") and path_info.endswith("/"):
         full_path = path_info + url[1:]
     elif url.startswith("/") or path_info.endswith("/"):
@@ -38,11 +44,15 @@ def get_full_path(url, path_info, index):
         full_path = path_info + "/" + url
     return full_path
 
+
 def load_template_file(path_info):
-    path_info = path_info + "template.html" if path_info[-1] == "/" else path_info + "/template.html"
+    path_info = path_info + \
+        "template.html" if path_info[-1] == "/" else path_info + \
+        "/template.html"
     with open(path_info, 'r') as f:
         template = f.read()
     return (template)
+
 
 def generate_cards(directory, url):
     images = os.listdir(directory)

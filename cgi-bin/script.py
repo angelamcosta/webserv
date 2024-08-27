@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import sys
-from methods import handle_get, handle_post, handle_delete, not_allowed
+from methods import handle_get, handle_post, handle_delete, get_file
 from utils import get_upload_dir, get_full_path
 
 
@@ -21,19 +21,23 @@ def main():
     url = "/" + index if url == "/" else url
     full_path = get_full_path(url, path_info, index)
     error_path = path_info + error_page
-
-    if method == "invalid_size":
-        handle_get(full_path, dir_listing, error_path, path_info, url, method)
-    elif method == "GET":
-        handle_get(full_path, dir_listing, error_path, path_info, url)
-    elif method == "POST" and method in allowed_methods:
-        message = handle_post(upload_dir, image_data)
-        handle_get(full_path, dir_listing, error_path, path_info, url, message)
-    elif method == "DELETE" and method in allowed_methods:
-        message = handle_delete(url, upload_dir, filename)
-        handle_get(full_path, dir_listing, error_path, path_info, url, message)
+    if method in allowed_methods:
+        if method == "invalid_size":
+            handle_get(full_path, dir_listing,
+                       error_path, path_info, url, method)
+        elif method == "GET":
+            handle_get(full_path, dir_listing, error_path, path_info, url)
+        elif method == "POST" and method in allowed_methods:
+            message = handle_post(upload_dir, image_data)
+            handle_get(full_path, dir_listing, error_path,
+                       path_info, url, message)
+        elif method == "DELETE" and method in allowed_methods:
+            message = handle_delete(url, upload_dir, filename)
+            handle_get(full_path, dir_listing, error_path,
+                       path_info, url, message)
     else:
-        not_allowed(path_info, full_path)
+        get_file(path_info + "not_allowed.html", path_info,
+                 url, message="", status="405 Not Allowed")
 
 
 if __name__ == "__main__":
