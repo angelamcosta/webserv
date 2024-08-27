@@ -6,7 +6,7 @@
 /*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:33:13 by anlima            #+#    #+#             */
-/*   Updated: 2024/08/26 17:14:28 by mpedroso         ###   ########.fr       */
+/*   Updated: 2024/08/27 16:17:37 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 std::vector<Server> Parser::parseConf(const std::string &filename) {
     int flag = 0;
     std::ifstream file(filename.c_str());
+    Stack   stack = Stack();
 
     if (!file.is_open())
         throw std::invalid_argument("Error: Unable to open config file.");
@@ -27,7 +28,7 @@ std::vector<Server> Parser::parseConf(const std::string &filename) {
     while (std::getline(file, line)) {
         if (line.empty() || line[0] == '#')
             continue;
-        processLine(line, servers, flag);
+        processLine(line, servers, flag, stack);
     }
     if (flag)
         throw std::invalid_argument("Error: Invalid server definition.");
@@ -36,12 +37,24 @@ std::vector<Server> Parser::parseConf(const std::string &filename) {
     return (servers);
 }
 
-void Parser::processLocation(const std::string &line, Server &server) {
+void Parser::processLocation(const std::string &line, Server &server, Stack &stack) {
     std::stringstream iss(line);
     std::string location, path, signal;
+    Location return_location = Location(path);
     if (!(iss >> location >> path >> signal) || (signal != "{"))
         throw std::invalid_argument("Error: Invalid location directive.");
-    server.addLocation(Location(path));
+    stack.addToStack(return_location);
+    server.addLocation(return_location);
+}
+
+void Parser::processLocation(const std::string &line, Location &location, Stack &stack) {
+    std::stringstream iss(line);
+    std::string new_location, path, signal;
+    Location return_location = Location(path);
+    if (!(iss >> new_location >> path >> signal) || (signal != "{"))
+        throw std::invalid_argument("Error: Invalid location directive.");
+    stack.addToStack(return_location);
+    location.addLocation(return_location);
 }
 
 void Parser::processDirective(const std::string &line, Server &server) {
@@ -67,8 +80,7 @@ void Parser::processDirective(const std::string &line, Location &location) {
 
 // TODO - : Handle { } 
 
-void Parser::processLine(const std::string &line, std::vector<Server> &servers,
-                         int &flag) {
+void Parser::processLine(const std::string &line, std::vector<Server> &servers, int &flag, Stack &stack) {
     std::stringstream iss(line);
     std::string token;
 
@@ -78,6 +90,7 @@ void Parser::processLine(const std::string &line, std::vector<Server> &servers,
         if (((!(iss >> token)) || token != "{"))
             throw std::invalid_argument("Error: Invalid server definition.");
         servers.push_back(Server());
+        stack.addToStack();
     }
     if (token == "{" && (iss >> token))
         throw std::invalid_argument("Error: Invalid server definition.");
@@ -89,23 +102,24 @@ void Parser::processLine(const std::string &line, std::vector<Server> &servers,
         if (servers.empty())
             throw std::invalid_argument(
                 "Error: Location block outside server block.");
-        processLocation(line, servers.back());
+        if (!stack.getType())
+            processLocation(line, servers.back(), stack);
+        else
+            processLocation(line, stack.getLocation(), stack);
         flag++;
     }
     else if (token != "}" && flag) {
         if (servers.empty())
             throw std::invalid_argument("Error: Directive block outside server block.");
-        Server &last_server = servers.back();
-        const std::vector<Location> &locations = last_server.getLocations();
-        if (!locations.empty()) {
-            const Location &last_location = locations.back();
-            processDirective(line, const_cast<Location &>(last_location));
-        }
+        if (stack.getType())
+            processDirective(line, const_cast<Location &>(stack.getLocation()));
         else
-            processDirective(line, last_server);
+            processDirective(line, const_cast<Server &>(servers.back()));
     }
-    else if (token == "}")
+    else if (token == "}") {
+        stack.remove();
         flag--;
+    }
 }
 
 std::string Parser::trim(const std::string &str) {

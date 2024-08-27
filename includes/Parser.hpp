@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 16:58:47 by anlima            #+#    #+#             */
-/*   Updated: 2024/06/12 13:34:40 by anlima           ###   ########.fr       */
+/*   Updated: 2024/08/27 15:26:00 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "Server.hpp"
 #include "macros.hpp"
+#include "Stack.hpp"
 
 class Parser {
   private:
@@ -22,10 +23,11 @@ class Parser {
 
   public:
     static std::vector<Server> parseConf(const std::string &filename);
-    static void processLocation(const std::string &line, Server &server);
+    static void processLocation(const std::string &line, Server &server, Stack &stack);
+	static void processLocation(const std::string &line, Location &location, Stack &stack);
     static void processDirective(const std::string &line, Server &server);
     static void processDirective(const std::string &line, Location &location);
-    static void processLine(const std::string &line, std::vector<Server> &servers, int &flag);
+    static void processLine(const std::string &line, std::vector<Server> &servers, int &flag, Stack &stack);
     static std::string trim(const std::string &str);
     static void checkServers(std::vector<Server> &servers);
 };

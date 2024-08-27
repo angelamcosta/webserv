@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Processes.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2024/06/07 14:00:30 by anlima           ###   ########.fr       */
+/*   Updated: 2024/08/27 14:17:31 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,8 @@ int Processes::executeCgi(void) {
     args.push_back(const_cast<char *>(PYTHON_INDEX));
     args.push_back(NULL);
 
-    if (execve(PYTHON_INDEX, args.data(), NULL) == -1) {
-        handleError("Error in executing cgi script");
+    if (execve(PYTHON_INDEX, args.data(), NULL) == -1)
         return (0);
-    }
     return (1);
 }
 

@@ -23,7 +23,9 @@ SRC			=	main.cpp \
 				$(SRCS_FOLDER)/Processes.cpp \
 				$(SRCS_FOLDER)/Requests.cpp \
 				$(SRCS_FOLDER)/Server.cpp \
-				$(SRCS_FOLDER)/Sockets.cpp
+				$(SRCS_FOLDER)/Sockets.cpp \
+				$(SRCS_FOLDER)/Stack.cpp
+
 
 OBJ			=	$(SRC:.cpp=.o)
 

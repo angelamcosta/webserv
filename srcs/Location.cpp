@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:24:24 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/23 15:05:55 by anlima           ###   ########.fr       */
+/*   Updated: 2024/08/27 16:34:37 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,16 @@ void Location::addLocation(Location location) {
 
 const std::string &Location::getMethods(void) const { return (_allow_methods); }
 void Location::setMethods(const std::string &methods) {
-    _allow_methods = methods; 
+	std::stringstream iss(methods);
+	std::string     method;
+	
+	if (methods.empty())
+		throw std::invalid_argument("Error: Methods not specified.");
+	while (iss >> method) {
+		if (method != "GET" && method != "POST" && method != "DELETE")
+			throw std::invalid_argument("Error: Method not allowed.");
+    }
+    _allow_methods = methods;
 }
 
 const std::string &Location::getIndex(void) const { return (_index); }
