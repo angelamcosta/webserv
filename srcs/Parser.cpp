@@ -6,13 +6,11 @@
 /*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:33:13 by anlima            #+#    #+#             */
-/*   Updated: 2024/08/27 16:17:37 by mpedroso         ###   ########.fr       */
+/*   Updated: 2024/08/30 15:52:23 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Parser.hpp"
-
-// TODO - : Make parser sturdier! Change config logic
 
 std::vector<Server> Parser::parseConf(const std::string &filename) {
     int flag = 0;
@@ -78,7 +76,7 @@ void Parser::processDirective(const std::string &line, Location &location) {
     location.addDirective(Directive(trim(name), trim(value)));
 }
 
-// TODO - : Handle { } 
+// TODO - : Handle duplicate directives
 
 void Parser::processLine(const std::string &line, std::vector<Server> &servers, int &flag, Stack &stack) {
     std::stringstream iss(line);

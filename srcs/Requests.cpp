@@ -6,7 +6,7 @@
 /*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:42:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/08/26 17:16:03 by mpedroso         ###   ########.fr       */
+/*   Updated: 2024/08/30 15:51:47 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,10 +73,9 @@ int Requests::readAll(const std::string &request, int content_length) {
     return (0);
 }
 
-void Requests::handleConn(std::vector<struct pollfd> &fds,
-                          std::vector<Server> &servers) {
+// TODO : - handle fds and its respective server
+void Requests::handleConn(std::vector<struct pollfd> fds, Server &server) {
     std::map<int, std::string> responses;
-
     while (1) {
         int ret = poll(&fds[0], fds.size(), TIMEOUT);
         if (ret < 0) {
@@ -97,7 +96,7 @@ void Requests::handleConn(std::vector<struct pollfd> &fds,
                         continue;
                     }
                     std::string response;
-                    handleRequest(client_fd, servers[i], response);
+                    handleRequest(client_fd, server, response);
                     if (!response.empty()) {
                         struct pollfd new_fd;
                         new_fd.fd = client_fd;

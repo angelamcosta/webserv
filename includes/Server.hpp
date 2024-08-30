@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2024/06/12 13:44:14 by anlima           ###   ########.fr       */
+/*   Updated: 2024/08/30 15:31:50 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,10 @@ class Server {
     std::vector<Location> _locations;
     std::vector<Directive> _directives;
     std::string _port;
-    int _socket;
+    std::vector<int> _socket;
     int _body_size;
     std::string _dir_listing;
-    struct pollfd _fd;
+    std::vector<struct pollfd> _fds;
 
   public:
     Server();
@@ -43,11 +43,11 @@ class Server {
     void addLocation(Location location);
     void addDirective(Directive directive);
 
-    struct pollfd getPollfd(void);
+    std::vector<struct pollfd> getPollfd(void);
     void setPollfd(struct pollfd fd);
 
-    int getSocket(void);
-    void setSocket(int socket);
+    std::vector<int> getSocket(void);
+    void setSocket(const std::vector<int> &socket);
 
     int getBodySize(void);
     void setBodySize(const std::string &body_size);

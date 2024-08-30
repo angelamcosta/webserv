@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Sockets.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:54:32 by anlima            #+#    #+#             */
-/*   Updated: 2024/06/07 14:01:14 by anlima           ###   ########.fr       */
+/*   Updated: 2024/08/30 15:53:49 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Sockets.hpp"
 
-int Sockets::createServer(const std::string &serverName,
+std::vector<int> Sockets::createServer(const std::string &serverName,
                           const std::string &port) {
     struct addrinfo hints, *res;
     std::string name = serverName.empty() ? "localhost" : serverName;
@@ -22,15 +22,23 @@ int Sockets::createServer(const std::string &serverName,
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
     hints.ai_protocol = 0;
-    int status = getaddrinfo(name.c_str(), port.c_str(), &hints, &res);
-    if (status != 0)
-        throw std::runtime_error("getaddrinfo error");
-    int sockfd = createSocket(res);
-    bindSocket(sockfd, res);
-    startServer(sockfd, res);
-    freeaddrinfo(res);
-    setNonBlocking(sockfd);
-    return (sockfd);
+
+    std::vector<int> sockets;
+    std::stringstream portsStream(port.c_str());
+    std::string singlePort;
+
+    while (portsStream >> singlePort) {
+        int status = getaddrinfo(name.c_str(), singlePort.c_str(), &hints, &res);
+        if (status != 0)
+            throw std::runtime_error("getaddrinfo error");
+        int sockfd = createSocket(res);
+        bindSocket(sockfd, res);
+        startServer(sockfd, res);
+        freeaddrinfo(res);
+        setNonBlocking(sockfd);
+        sockets.push_back(sockfd);
+    }
+    return (sockets);
 }
 
 int Sockets::createSocket(struct addrinfo *res) {

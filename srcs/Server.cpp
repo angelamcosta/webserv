@@ -6,7 +6,7 @@
 /*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2024/08/26 17:16:14 by mpedroso         ###   ########.fr       */
+/*   Updated: 2024/08/30 15:33:18 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ Server::Server(const Server &other) {
     _socket = other._socket;
     _body_size = other._body_size;
     _dir_listing = other._dir_listing;
-    _fd = other._fd;
+    _fds = other._fds;
 }
 
 Server &Server::operator=(const Server &other) {
@@ -43,7 +43,7 @@ Server &Server::operator=(const Server &other) {
         _socket = other._socket;
         _body_size = other._body_size;
         _dir_listing = other._dir_listing;
-        _fd = other._fd;
+        _fds = other._fds;
     }
     return (*this);
 }
@@ -77,10 +77,17 @@ void Server::addDirective(Directive directive) {
 const std::string Server::getPort(void) {
     return (_port != "" ? _port : "8080");
 }
-void Server::setPort(const std::string &port) { _port = port; }
 
-int Server::getSocket(void) { return (_socket); }
-void Server::setSocket(int socket) { _socket = socket; }
+// _port = "8080 8081"
+void Server::setPort(const std::string &port) {
+    if (_port == "")
+        _port = port;
+    else 
+        _port += " " + port;
+}
+
+std::vector<int> Server::getSocket(void) { return (_socket); }
+void Server::setSocket(const std::vector<int> &socket) { _socket = socket; }
 
 int Server::getBodySize(void) { return (_body_size); }
 void Server::setBodySize(const std::string &body_size) {
@@ -104,8 +111,8 @@ void Server::setDirListing(const std::string &dir_listing) {
                                     dir_listing);
 }
 
-struct pollfd Server::getPollfd(void) { return (_fd); }
-void Server::setPollfd(struct pollfd fd) { _fd = fd; }
+std::vector<struct pollfd> Server::getPollfd(void) { return (_fds); }
+void Server::setPollfd(struct pollfd fd) { _fds.push_back(fd); }
 
 const std::string &Server::getRoot(void) { return (_root); }
 void Server::setRoot(const std::string &root) { _root = root; }
