@@ -162,3 +162,13 @@ void Server::checkBodySize(const std::string &body_size) {
             throw std::invalid_argument("Error: Invalid char in body size: " + body_size);
     }
 }
+
+size_t Server::getServerByFd(pollfd fd, std::vector<Server> &servers) {
+    for (size_t i = 0; i < servers.size(); ++i) {
+        for (size_t j = 0; j < servers[i].getPollfd().size(); ++j) {
+            if (fd.fd == servers[i].getPollfd()[j].fd)
+                return i;
+        }
+    }
+    return -1;
+}

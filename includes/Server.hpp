@@ -73,6 +73,7 @@ class Server {
     const std::string getUrlMethods(const std::string &url);
     const Location *findLocation(const std::string &path, const std::vector<Location> &locations);
 
+    static size_t getServerByFd(pollfd fd, std::vector<Server> &servers);
     void checkBodySize(const std::string &body_size);
 };
 

@@ -73,8 +73,7 @@ int Requests::readAll(const std::string &request, int content_length) {
     return (0);
 }
 
-// TODO : - handle fds and its respective server
-void Requests::handleConn(std::vector<struct pollfd> fds, Server &server) {
+void Requests::handleConn(std::vector<struct pollfd> fds, std::vector<Server> &servers) {
     std::map<int, std::string> responses;
     while (1) {
         int ret = poll(&fds[0], fds.size(), TIMEOUT);
@@ -95,8 +94,9 @@ void Requests::handleConn(std::vector<struct pollfd> fds, Server &server) {
                         perror("accept");
                         continue;
                     }
+                    size_t server = Server::getServerByFd(fds[i], servers);
                     std::string response;
-                    handleRequest(client_fd, server, response);
+                    handleRequest(client_fd, servers[server], response);
                     if (!response.empty()) {
                         struct pollfd new_fd;
                         new_fd.fd = client_fd;

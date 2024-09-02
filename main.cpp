@@ -30,8 +30,11 @@ int main(int argc, char **argv) {
 
         for (size_t i = 0; i < servers.size(); ++i) {
             servers[i].setSocket(Sockets::createServer(servers[i].getServerName(), servers[i].getPort()));
-            servers[i].setPollfd(Sockets::createPollfd(servers[i].getSocket()));
-            fds.push_back(servers[i].getPollfd());
+            for (size_t j = 0; j < servers[i].getSocket().size(); ++j) {
+                servers[i].setPollfd(Sockets::createPollfd(servers[i].getSocket()[j]));
+                Sockets::setNonBlocking(servers[i].getPollfd()[j].fd);
+                fds.push_back(servers[i].getPollfd()[j]);
+            }
         }
         Requests::handleConn(fds, servers);
     } catch (const std::exception &e) {
