@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:24:24 by anlima            #+#    #+#             */
-/*   Updated: 2024/08/27 16:34:37 by mpedroso         ###   ########.fr       */
+/*   Updated: 2024/09/11 15:36:55 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,7 @@ void Location::addDirective(const Directive &directive) {
         setIndex(directive.getValue());
     else if (directive.getName() == "allow_methods")
         setMethods(directive.getValue());
-    else
-        _directives.push_back(directive);
+    _directives.push_back(directive);
 }
 
 const std::vector<Location> &Location::getLocations(void) const {
@@ -69,3 +68,11 @@ void Location::setMethods(const std::string &methods) {
 
 const std::string &Location::getIndex(void) const { return (_index); }
 void Location::setIndex(const std::string &index) { _index = index; }
+
+size_t  Location::checkDirectives(const std::string &name) {
+    for (size_t i = 0; i < _directives.size(); ++i) {
+        if (name == _directives[i].getName())
+            return 1;
+    }
+    return 0;
+}

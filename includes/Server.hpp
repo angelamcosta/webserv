@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2024/08/30 15:31:50 by mpedroso         ###   ########.fr       */
+/*   Updated: 2024/09/11 15:05:44 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,9 @@ class Server {
     const std::string getUrlMethods(const std::string &url);
     const Location *findLocation(const std::string &path, const std::vector<Location> &locations);
 
-    static size_t getServerByFd(pollfd fd, std::vector<Server> &servers);
     void checkBodySize(const std::string &body_size);
+    size_t  checkDirectives(const std::string &name);
+    static size_t getServerByFd(pollfd fd, std::vector<Server> &servers);
 };
 
 #endif

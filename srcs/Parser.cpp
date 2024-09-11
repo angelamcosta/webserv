@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:33:13 by anlima            #+#    #+#             */
-/*   Updated: 2024/08/30 15:52:23 by mpedroso         ###   ########.fr       */
+/*   Updated: 2024/09/11 15:40:07 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ void Parser::processDirective(const std::string &line, Server &server) {
 
     if (!(iss >> name))
         throw std::invalid_argument("Error: Invalid directive.");
+    if (name != static_cast<std::string>("listen") && server.checkDirectives(trim(name)))
+        throw std::invalid_argument("Error: Invalid directive.");
     std::getline(iss, value);
     value = trim(value);
     server.addDirective(Directive(trim(name), trim(value)));
@@ -72,11 +74,11 @@ void Parser::processDirective(const std::string &line, Location &location) {
 
     if (!(iss >> name))
         throw std::invalid_argument("Error: Invalid directive.");
+    if (name != static_cast<std::string>("listen") && location.checkDirectives(trim(name)))
+        throw std::invalid_argument("Error: Invalid directive.");
     std::getline(iss, value);
     location.addDirective(Directive(trim(name), trim(value)));
 }
-
-// TODO - : Handle duplicate directives
 
 void Parser::processLine(const std::string &line, std::vector<Server> &servers, int &flag, Stack &stack) {
     std::stringstream iss(line);

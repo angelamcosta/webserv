@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:10:30 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/21 14:52:53 by anlima           ###   ########.fr       */
+/*   Updated: 2024/09/11 15:12:53 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ class Location {
     
     const std::string &getMethods(void) const;
     void setMethods(const std::string &methods);
+    size_t  checkDirectives(const std::string &name);
 };
 
 #endif

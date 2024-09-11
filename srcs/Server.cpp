@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2024/08/30 15:33:18 by mpedroso         ###   ########.fr       */
+/*   Updated: 2024/09/11 15:33:33 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ void Server::addDirective(Directive directive) {
         setErrorPage(directive.getValue());
     else
         throw std::invalid_argument("Error: Invalid directive.");
+    _directives.push_back(directive);
 }
 
 const std::string Server::getPort(void) {
@@ -171,4 +172,12 @@ size_t Server::getServerByFd(pollfd fd, std::vector<Server> &servers) {
         }
     }
     return -1;
+}
+
+size_t  Server::checkDirectives(const std::string &name) {
+    for (size_t i = 0; i < _directives.size(); ++i) {
+        if (name == _directives[i].getName())
+            return 1;
+    }
+    return 0;
 }
