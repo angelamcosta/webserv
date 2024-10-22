@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 16:14:05 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/14 16:58:46 by anlima           ###   ########.fr       */
+/*   Updated: 2024/10/22 16:08:34 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,39 +15,36 @@
 
 #include "macros.hpp"
 
-class Cgi {
-  private:
-    std::string _url;
-    std::string _body;
-    std::string _method;
-    std::string _request;
-    std::string _filename;
-    std::string _file_path;
-    std::string _mime_type;
-    std::string _error_page;
-    Cgi();
+class Cgi
+{
+private:
+  s_request _data;
+  std::string _upload_dir;
+  std::string _url;
+  std::string _full_path;
+  std::string _error_path;
+  Cgi();
 
-  public:
-    ~Cgi();
-    Cgi(std::string url, std::string body, std::string method,
-        std::string request, std::string filename, std::string file_path,
-        std::string error_page);
-    Cgi(const Cgi &copy);
-    Cgi &operator=(const Cgi &copy);
+public:
+  ~Cgi();
+  Cgi(const s_request &data, const std::string &upload_dir, const std::string &url, const std::string &full_path, const std::string &error_path);
+  Cgi(const Cgi &copy);
+  Cgi &operator=(const Cgi &copy);
 
-    const std::string &getUrl(void) const;
-    const std::string &getBody(void) const;
-    const std::string &getMethod(void) const;
-    const std::string &getFilename(void) const;
-    const std::string &getFilePath(void) const;
-    const std::string &getErrorPage(void) const;
+  const std::string &getUrl(void) const;
+  const std::string &getBody(void) const;
+  const std::string &getMethod(void) const;
+  const std::string &getFilename(void) const;
+  const std::string &getFilePath(void) const;
+  const std::string &getErrorPage(void) const;
 
-    void handleMethods(const std::string &method);
-    void handlePost(void);
-    void handlePut(void);
-    void handleDelete(void);
+  void handleMethods(const std::string &method);
+  void handlePost(void);
+  void handlePut(void);
+  void handleDelete(void);
+  const std::string &getFile(const std::string &full_path);
 
-    void sendResponse(void);
+  void sendResponse(void);
 };
 
 #endif
