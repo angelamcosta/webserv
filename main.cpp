@@ -6,7 +6,7 @@
 /*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:46:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/08/26 15:49:12 by mpedroso         ###   ########.fr       */
+/*   Updated: 2024/10/24 18:09:16 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int main(int argc, char **argv) {
                 Sockets::setNonBlocking(servers[i].getPollfd()[j].fd);
                 fds.push_back(servers[i].getPollfd()[j]);
             }
+			servers[i].checkCgi(servers[i].getLocations());
         }
         Requests::handleConn(fds, servers);
     } catch (const std::exception &e) {

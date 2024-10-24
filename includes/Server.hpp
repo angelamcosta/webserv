@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2024/09/11 15:05:44 by gsilva           ###   ########.fr       */
+/*   Updated: 2024/10/24 18:06:46 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class Server {
     int _body_size;
     std::string _dir_listing;
     std::vector<struct pollfd> _fds;
+	bool _cgi;
 
   public:
     Server();
@@ -52,6 +53,9 @@ class Server {
     int getBodySize(void);
     void setBodySize(const std::string &body_size);
 
+	bool getCgi(void);
+	void setCgi(void);
+	
     const std::string &getDirListing(void) const;
     void setDirListing(const std::string &dir_listing);
 
@@ -74,6 +78,7 @@ class Server {
     const Location *findLocation(const std::string &path, const std::vector<Location> &locations);
 
     void checkBodySize(const std::string &body_size);
+	void checkCgi(const std::vector<Location> &locations);
     size_t  checkDirectives(const std::string &name);
     static size_t getServerByFd(pollfd fd, std::vector<Server> &servers);
 };

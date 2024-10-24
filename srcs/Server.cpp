@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2024/09/11 15:33:33 by gsilva           ###   ########.fr       */
+/*   Updated: 2024/10/24 18:10:35 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,14 @@ void Server::setDirListing(const std::string &dir_listing) {
                                     dir_listing);
 }
 
+bool Server::getCgi(void) {
+	return (_cgi);
+}
+
+void Server::setCgi(void) {
+	_cgi = true;
+}
+
 std::vector<struct pollfd> Server::getPollfd(void) { return (_fds); }
 void Server::setPollfd(struct pollfd fd) { _fds.push_back(fd); }
 
@@ -149,9 +157,9 @@ const std::string Server::getUrlMethods(const std::string &url) {
 const Location *Server::findLocation(const std::string &path, const std::vector<Location> &locations) {
     for (std::vector<Location>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
         if (it->getPath() == path)
-            return &(*it);
+        	return &(*it);
         const Location *subLocation = findLocation(path, it->getLocations());
-        if (subLocation)
+        if (subLocation) 
             return (subLocation);
     }
     return (NULL);
@@ -162,6 +170,14 @@ void Server::checkBodySize(const std::string &body_size) {
         if (!isdigit(body_size[i]))
             throw std::invalid_argument("Error: Invalid char in body size: " + body_size);
     }
+}
+
+void Server::checkCgi(const std::vector<Location> &locations) {
+	std::string path = "/cgi-bin";
+	for (std::vector<Location>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
+        if (it->getPath() == path)
+			setCgi();
+	}
 }
 
 size_t Server::getServerByFd(pollfd fd, std::vector<Server> &servers) {
