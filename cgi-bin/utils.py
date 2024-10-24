@@ -33,10 +33,7 @@ def get_upload_dir(path_info):
 
 
 def get_full_path(url, path_info, index):
-    if ".py" in url:
-        full_path = path_info + \
-            index if path_info.endswith("/") else path_info + "/" + index
-    elif url.startswith("/") and path_info.endswith("/"):
+    if url.startswith("/") and path_info.endswith("/"):
         full_path = path_info + url[1:]
     elif url.startswith("/") or path_info.endswith("/"):
         full_path = path_info + url

@@ -19,32 +19,36 @@ class Cgi
 {
 private:
   s_request _data;
-  std::string _upload_dir;
   std::string _url;
   std::string _full_path;
+  std::string _upload_dir;
   std::string _error_path;
   Cgi();
 
 public:
   ~Cgi();
-  Cgi(const s_request &data, const std::string &upload_dir, const std::string &url, const std::string &full_path, const std::string &error_path);
+  Cgi(const s_request &data);
   Cgi(const Cgi &copy);
   Cgi &operator=(const Cgi &copy);
 
-  const std::string &getUrl(void) const;
-  const std::string &getBody(void) const;
-  const std::string &getMethod(void) const;
-  const std::string &getFilename(void) const;
-  const std::string &getFilePath(void) const;
-  const std::string &getErrorPage(void) const;
+  const s_request &getData(void);
+  const std::string &getUrl(void);
+  const std::string &getFullPath(void);
+  const std::string &getUploadDir(void);
+  const std::string &getErrorPath(void);
 
-  void handleMethods(const std::string &method);
-  void handlePost(void);
-  void handlePut(void);
-  void handleDelete(void);
-  const std::string &getFile(const std::string &full_path);
+  void setFullPath(const std::string path_info) const;
+  void setUploadDir(const std::string path_info) const;
+  void setUrl(const std::string url, const std::string index) const;
+  void setErrorPath(const std::string path_info, const std::string error_page) const;
 
-  void sendResponse(void);
+  void handleRequest(void);
+
+  const std::string success_upload(void) const;
+  const std::string upload_failed(void) const;
+  const std::string file_missing(void) const;
+  const std::string success_delete(void) const;
+  const std::string delete_failed(void) const;
 };
 
 #endif
