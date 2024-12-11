@@ -13,13 +13,28 @@
 #include "../includes/Cgi.hpp"
 #include "../includes/Requests.hpp"
 
-// Cgi::Cgi(const s_request &data, const std::string &upload_dir, const std::string &url, const std::string &full_path, const std::string &error_path) {}
+Cgi::Cgi(const s_request &data) : _data(data) {}
 
-// Cgi::~Cgi() {}
+Cgi::~Cgi() {}
 
-// const std::string &Cgi::getUrl(void) const { return (_url); }
-// const std::string &Cgi::getBody(void) const { return (_body); }
-// const std::string &Cgi::getMethod(void) const { return (_method); }
-// const std::string &Cgi::getFilename(void) const { return (_filename); }
-// const std::string &Cgi::getFilePath(void) const { return (_file_path); }
-// const std::string &Cgi::getErrorPage(void) const { return (_error_page); }
+const std::string &Cgi::getIndex(void) const { return (_data.index); }
+const std::string &Cgi::getMethod(void) const { return (_data.method); }
+const std::string &Cgi::getPathInfo(void) const { return (_data.path_info); }
+const std::string &Cgi::getImageData(void) const { return (_data.image_data); }
+const std::string &Cgi::getDirListing(void) const { return (_data.dir_listing); }
+const std::string &Cgi::getAllowedMethods(void) const { return (_data.allowed_methods); }
+
+const std::string &Cgi::getUrl(void) const { return (_data.url); }
+void  Cgi::setUrl(void) {
+    //converter do script
+}
+
+const std::string &Cgi::getErrorPage(void) const { return (_data.error_page); }
+void  Cgi::setErrorPage(void) {
+    // converter do script
+}
+
+const std::string &Cgi::getUploadDir(void) const { return _upload_dir; }
+void  Cgi::setUploadDir(const std::string upload_dir) {
+    // converter do script
+}
