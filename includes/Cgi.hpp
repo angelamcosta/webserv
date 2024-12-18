@@ -32,23 +32,26 @@ public:
   Cgi &operator=(const Cgi &copy);
 
   const s_request &getData(void);
-  const std::string &getUrl(void);
-  const std::string &getFullPath(void);
-  const std::string &getUploadDir(void);
-  const std::string &getErrorPath(void);
 
+  const std::string &getUrl(void);
+  void setUrl(void)const;
+
+  const std::string &getFullPath(void);
   void setFullPath(const std::string path_info) const;
+
+  const std::string &getUploadDir(void);
   void setUploadDir(const std::string path_info) const;
-  void setUrl(const std::string url, const std::string index) const;
+
+  const std::string &getErrorPath(void);
   void setErrorPath(const std::string path_info, const std::string error_page) const;
 
   void handleRequest(void);
 
-  const std::string success_upload(void) const;
-  const std::string upload_failed(void) const;
-  const std::string file_missing(void) const;
-  const std::string success_delete(void) const;
-  const std::string delete_failed(void) const;
+  const std::string &successUpload(void) const;
+  const std::string &uploadFailed(void) const;
+  const std::string &fileMissing(void) const;
+  const std::string &successDelete(void) const;
+  const std::string &deleteFailed(void) const;
 };
 
 #endif
