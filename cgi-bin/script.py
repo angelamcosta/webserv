@@ -21,20 +21,23 @@ def main():
     url = "/" + index if url == "/" else url
     full_path = get_full_path(url, path_info, index)
     error_path = path_info + error_page
-    if method in allowed_methods:
-        if method == "invalid_size":
-            handle_get(full_path, dir_listing,
-                       error_path, path_info, url, method)
-        elif method == "GET":
+    if method == "invalid_size":
+        handle_get(full_path, dir_listing,
+                    error_path, path_info, url, method)
+    elif method in allowed_methods:
+        if method == "GET":
             handle_get(full_path, dir_listing, error_path, path_info, url)
-        elif method == "POST" and method in allowed_methods:
+        elif method == "POST":
             message = handle_post(upload_dir, image_data)
             handle_get(full_path, dir_listing, error_path,
                        path_info, url, message)
-        elif method == "DELETE" and method in allowed_methods:
+        elif method == "DELETE":
             message = handle_delete(url, upload_dir, filename)
             handle_get(full_path, dir_listing, error_path,
                        path_info, url, message)
+        else:
+            get_file(path_info + "not_allowed.html", path_info,
+                 url, message="", status="405 Not Allowed")
     else:
         get_file(path_info + "not_allowed.html", path_info,
                  url, message="", status="405 Not Allowed")
