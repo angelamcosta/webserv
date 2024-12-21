@@ -42,78 +42,35 @@ Cgi &Cgi::operator=(const Cgi &copy)
 }
 
 const s_request &Cgi::getData(void) { return (_data); }
+
 const std::string &Cgi::getUrl(void) { return (_url); }
+void Cgi::setUrl(void)
+{
+    _url = (_data.url == "/") ? '/' + _data.index : _data.index;
+}
+
 const std::string &Cgi::getFullPath(void) { return (_full_path); }
+void Cgi::setFullPath(void) {
+    if (!_url.empty() && _url.front() == '/' && !_data.path_info.empty() && _data.path_info.back() == '/')
+        _full_path = _data.path_info + _url.substr(1);
+    else if ((!_url.empty() && _url.front() == '/') || (!_data.path_info.empty() && _data.path_info.back() == '/'))
+        _full_path = _data.path_info + _url;
+    else
+        _full_path = _data.path_info + "/" + _url;
+}
+
 const std::string &Cgi::getUploadDir(void) { return (_upload_dir); }
+void Cgi::setUploadDir(void) {
+    if (!_data.path_info.empty()) {
+        _upload_dir = _data.path_info.back() == '/' ? _data.path_info + "images/" : _data.path_info + "/images/";
+    }
+}
+
 const std::string &Cgi::getErrorPath(void) { return (_error_path); }
-
-// void Cgi::setUrl(void) const
-// {
-//     _url = _data.url == "/" ? "/" + _data.index : _data.index;
-// }
-
-// void Cgi::setFullPath(const std::string path_info) const
-// {
-//     if (_url[0] == "/" && path_info[-1] == "/")
-//         _full_path = path_info + _url[1:];
-//     else if (url.startswith("/") or path_info.endswith("/"))
-//         _full_path = path_info + _url;
-//     else:
-//         _full_path = path_info + "/" + _url;
-// }
-
-// void Cgi::setUploadDir(const std::string path_info) const
-// {
-//     _upload_dir = path_info.back == '/' ? path_info + "images/" : path_info + "/images/";
-// }
-
-// void Cgi::setErrorPath(const std::string path_info, const std::string error_page) const
-// {
-//     _error_path = path_info + error_page;
-// }
-
-// void Cgi::handleRequest(void)
-// {
-//     if (_data.method == "invalid_size")
-//         handleGet("");
-//     else if (_data.method in _data.allowed_methods)
-//     {
-//         else if (_data.method == "GET")
-//             handleGet("");
-//         else if (_data.method == "POST")
-//             message = handlePost(upload_dir, image_data);
-//             handleGet(message);
-//         else if (_data.method == "DELETE"):
-//             message = handleDelete(url, upload_dir, filename)
-//             handleGet(full_path, dir_listing, error_path,
-//                        path_info, url, message);
-//         else
-//             getFile(path_info + "not_allowed.html", path_info,
-//                  url, message="", status="405 Not Allowed");
-//     }
-//     else
-//         getFile(path_info + "not_allowed.html", path_info,
-//                  url, message="", status="405 Not Allowed");
-// }
-
-// void Cgi::handleGet(const std::string message):
-//     if message == "invalid_size":
-//         message = upload_failed()
-//         getFile(full_path, path_info, url, message)
-//     elif os.path.exists(full_path):
-//         if os.path.isdir(full_path):
-//             if dir_listing == "on":
-//                 get_directories(full_path, path_info)
-//             else:
-//                 getFile(path_info + "forbidden.html", path_info,
-//                          url, message, "403 Forbidden")
-//         elif os.path.isfile(full_path):
-//             if full_path.endswith(('.png', '.jpg', '.jpeg', '.gif')):
-//                 get_image(full_path, path_info, error_path, url)
-//             else:
-//                 getFile(full_path, path_info, url, message)
-//     else:
-//         getFile(error_path, path_info, url, message, "404 Not found");
+void Cgi::setErrorPath(void)
+{
+    _error_path = _data.path_info + _data.error_page;
+}
 
 const std::string &Cgi::successUpload(void) const {
     std::string message = R"(

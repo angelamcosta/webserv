@@ -34,18 +34,16 @@ public:
   const s_request &getData(void);
 
   const std::string &getUrl(void);
-  void setUrl(void)const;
+  void setUrl(void);
 
   const std::string &getFullPath(void);
-  void setFullPath(const std::string path_info) const;
+  void setFullPath(void);
 
   const std::string &getUploadDir(void);
-  void setUploadDir(const std::string path_info) const;
+  void Cgi::setUploadDir(void);
 
   const std::string &getErrorPath(void);
-  void setErrorPath(const std::string path_info, const std::string error_page) const;
-
-  void handleRequest(void);
+  void setErrorPath(void);
 
   const std::string &successUpload(void) const;
   const std::string &uploadFailed(void) const;
