@@ -50,6 +50,11 @@ public:
   const std::string &fileMissing(void) const;
   const std::string &successDelete(void) const;
   const std::string &deleteFailed(void) const;
+
+  void handleMethod(std::string message);
+  const std::string loadTemplateFile(const std::string path, const std::string message, const std::string status);
+  void getFile(const std::string path, const std::string message, const std::string status);
+  void getDirectories(void);
 };
 
 #endif

@@ -116,3 +116,32 @@ const std::string &Cgi::deleteFailed(void) const {
     )";
     return (message);
 }
+
+void Cgi::handleMethod(std::string message) {
+    if (message == "invalid_size") {
+        message = uploadFailed();
+        getFile(_data.path_info, message, "403 Forbidden");
+    // TODO : - check what status fits the most
+    } else if (std::filesystem::exists(_full_path)) {
+        if (std::filesystem::is_directory(_full_path)) {
+            if (_data.dir_listing == "on")
+                getDirectories();
+            else {
+                getFile(_data.path_info + "forbidden.html",message, "403 Forbidden");
+            }
+        } else if (std::filesystem::is_regular_file(_full_path)) {
+            if (_full_path.substr(_full_path.size() - 4) == ".png" ||
+                _full_path.substr(_full_path.size() - 4) == ".jpg" ||
+                _full_path.substr(_full_path.size() - 5) == ".jpeg" ||
+                _full_path.substr(_full_path.size() - 4) == ".gif") {
+                
+            } else
+                getFile(_full_path, message, "200 OK");
+        }
+    } else
+        getFile(_error_path, message, "404 Not found");
+}
+
+const std::string Cgi::loadTemplateFile(const std::string path, const std::string message, const std::string status) {
+    
+}
