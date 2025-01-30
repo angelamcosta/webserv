@@ -13,7 +13,8 @@
 #include "../includes/Processes.hpp"
 #include "../includes/Requests.hpp"
 
-int Processes::executeCgi(void) {
+int Processes::executeCgi(void)
+{
     std::vector<char *> args;
     args.push_back(const_cast<char *>(PYTHON_INDEX));
     args.push_back(NULL);
@@ -23,8 +24,10 @@ int Processes::executeCgi(void) {
     return (1);
 }
 
-int Processes::redirectStdout(int pipefd[2]) {
-    if (dup2(pipefd[1], STDOUT_FILENO) == -1) {
+int Processes::redirectStdout(int pipefd[2])
+{
+    if (dup2(pipefd[1], STDOUT_FILENO) == -1)
+    {
         handleError("Error in redirecting stdout");
         return (0);
     }
@@ -32,8 +35,10 @@ int Processes::redirectStdout(int pipefd[2]) {
     return (1);
 }
 
-int Processes::redirectStdin(int pipefd[2]) {
-    if (dup2(pipefd[0], STDIN_FILENO) == -1) {
+int Processes::redirectStdin(int pipefd[2])
+{
+    if (dup2(pipefd[0], STDIN_FILENO) == -1)
+    {
         handleError("Error in redirecting stdin");
         return (0);
     }
@@ -41,11 +46,13 @@ int Processes::redirectStdin(int pipefd[2]) {
     return (1);
 }
 
-void Processes::handleError(std::string message) {
+void Processes::handleError(std::string message)
+{
     std::cout << message << std::endl;
 }
 
-std::string Processes::readOutput(int pipefd[2]) {
+std::string Processes::readOutput(int pipefd[2])
+{
     ssize_t bytes_read;
     char temp_buff[BUFFER_SIZE];
     std::ostringstream http_response;
@@ -58,7 +65,8 @@ std::string Processes::readOutput(int pipefd[2]) {
     return (http_response.str());
 }
 
-void Processes::writeInput(int pipefd[2], const t_request &data) {
+void Processes::writeInput(int pipefd[2], const t_request &data)
+{
     std::ostringstream input_stream;
 
     input_stream << data.url << "\n";
@@ -76,30 +84,36 @@ void Processes::writeInput(int pipefd[2], const t_request &data) {
     close(pipefd[1]);
 }
 
-std::string Processes::createProcess(const t_request &data) {
+std::string Processes::createProcess(const t_request &data)
+{
     int stdin_pipefd[2];
     int stdout_pipefd[2];
     std::string response;
 
-    if (pipe(stdout_pipefd) == -1 || pipe(stdin_pipefd) == -1) {
+    if (pipe(stdout_pipefd) == -1 || pipe(stdin_pipefd) == -1)
+    {
         throw std::runtime_error("Error in creating pipe");
     }
     pid_t pid = fork();
-    if (pid == -1) {
+    if (pid == -1)
+    {
         close(stdout_pipefd[0]);
         close(stdout_pipefd[1]);
         close(stdin_pipefd[0]);
         close(stdin_pipefd[1]);
         throw std::runtime_error("Error in forking process");
     }
-    if (pid == 0) {
+    if (pid == 0)
+    {
         close(stdout_pipefd[0]);
         close(stdin_pipefd[1]);
         if (!redirectStdout(stdout_pipefd) || !redirectStdin(stdin_pipefd))
             throw std::runtime_error("Error in redirecting stdout or stdin");
         if (!executeCgi())
             throw std::runtime_error("Error in executing CGI script");
-    } else {
+    }
+    else
+    {
         close(stdout_pipefd[1]);
         close(stdin_pipefd[0]);
         writeInput(stdin_pipefd, data);
