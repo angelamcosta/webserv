@@ -33,11 +33,18 @@
 #include <typeinfo>
 #include <unistd.h>
 #include <vector>
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <iostream>
+#include <fstream>
+#include <sys/stat.h>
+#include <string>
 
 #define PORT 8080
 #define BUFFER_SIZE 1024
-#define RES                                                                    \
-    "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html><body><h1>Hello, "      \
+#define RES                                                               \
+    "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html><body><h1>Hello, " \
     "World!</h1></body></html>\n"
 #define HTML_EXT ".html"
 #define CSS_EXT ".css"
@@ -74,7 +81,8 @@
 #define CONTENT_HEADER "Content-Disposition: form-data;"
 #define TIMEOUT 5000
 
-typedef struct s_request {
+typedef struct s_request
+{
     std::string url;
     std::string index;
     std::string method;

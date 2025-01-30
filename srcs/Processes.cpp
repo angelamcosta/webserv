@@ -49,12 +49,9 @@ std::string Processes::readOutput(int pipefd[2]) {
     ssize_t bytes_read;
     char temp_buff[BUFFER_SIZE];
     std::ostringstream http_response;
-    size_t total_bytes_read = 0;
 
-    while ((bytes_read = read(pipefd[0], temp_buff, BUFFER_SIZE)) > 0) {
+    while ((bytes_read = read(pipefd[0], temp_buff, BUFFER_SIZE)) > 0)
         http_response.write(temp_buff, bytes_read);
-        total_bytes_read += bytes_read;
-    }
     if (bytes_read < 0)
         perror("read");
     close(pipefd[0]);
