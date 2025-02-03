@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2024/09/11 15:05:44 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/02/03 15:18:28 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 
 class Server {
   private:
+    std::string _cgi;
     std::string _root;
     std::string _index;
     std::string _error_page;
@@ -51,6 +52,9 @@ class Server {
 
     int getBodySize(void);
     void setBodySize(const std::string &body_size);
+
+    const std::string &getDirListing(void) const;
+    void setDirListing(const std::string &dir_listing);
 
     const std::string &getDirListing(void) const;
     void setDirListing(const std::string &dir_listing);
