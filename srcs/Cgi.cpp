@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 16:31:13 by anlima            #+#    #+#             */
-/*   Updated: 2024/10/22 16:09:23 by anlima           ###   ########.fr       */
+/*   Updated: 2025/02/03 13:26:03 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,9 @@ void Cgi::setTemplate(void)
 std::string &Cgi::getFullPath(void) { return (_full_path); }
 void Cgi::setFullPath(void)
 {
-    if (!_url.empty() && _url.front() == '/' && !_data.path_info.empty() && _data.path_info.back() == '/')
+    if (!_url.empty() && _url[0] == '/' && !_data.path_info.empty() && _data.path_info[_data.path_info.length() - 1] == '/')
         _full_path = _data.path_info + _url.substr(1);
-    else if ((!_url.empty() && _url.front() == '/') || (!_data.path_info.empty() && _data.path_info.back() == '/'))
+    else if ((!_url.empty() && _url[0] == '/') || (!_data.path_info.empty() && _data.path_info[_data.path_info.length() - 1] == '/'))
         _full_path = _data.path_info + _url;
     else
         _full_path = _data.path_info + "/" + _url;
@@ -75,7 +75,7 @@ void Cgi::setUploadDir(void)
 {
     if (!_data.path_info.empty())
     {
-        _upload_dir = _data.path_info.back() == '/' ? _data.path_info + "images/" : _data.path_info + "/images/";
+        _upload_dir = _data.path_info[_data.path_info.length() - 1] == '/' ? _data.path_info + "images/" : _data.path_info + "/images/";
     }
 }
 
