@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   macros.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:19:47 by anlima            #+#    #+#             */
-/*   Updated: 2024/06/07 13:31:32 by anlima           ###   ########.fr       */
+/*   Updated: 2025/02/06 15:13:54 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@
 
 typedef struct s_request
 {
+    std::string cgi;
     std::string url;
     std::string index;
     std::string method;

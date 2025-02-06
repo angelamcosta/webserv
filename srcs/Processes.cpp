@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Processes.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/06 13:51:49 by anlima           ###   ########.fr       */
+/*   Updated: 2025/02/06 15:53:45 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Processes.hpp"
+#include "../includes/Cgi.hpp"
 #include "../includes/Requests.hpp"
+#include "../includes/Processes.hpp"
 
 // TODO : - Use CPP cgi when Server cgi is ""
 
@@ -93,9 +94,7 @@ std::string Processes::createProcess(const t_request &data)
     std::string response;
 
     if (pipe(stdout_pipefd) == -1 || pipe(stdin_pipefd) == -1)
-    {
         throw std::runtime_error("Error in creating pipe");
-    }
     pid_t pid = fork();
     if (pid == -1)
     {
@@ -111,7 +110,11 @@ std::string Processes::createProcess(const t_request &data)
         close(stdin_pipefd[1]);
         if (!redirectStdout(stdout_pipefd) || !redirectStdin(stdin_pipefd))
             throw std::runtime_error("Error in redirecting stdout or stdin");
-        if (!executeCgi())
+        if (data.cgi == "") {
+            Cgi cgi(data);
+            cgi.handleMethod(data.method);
+        }
+        else if (!executeCgi())
             throw std::runtime_error("Error in executing CGI script");
     }
     else

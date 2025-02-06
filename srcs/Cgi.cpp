@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 16:31:13 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/06 13:51:48 by anlima           ###   ########.fr       */
+/*   Updated: 2025/02/06 15:53:08 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,9 +185,7 @@ bool isDirectory(const std::string &path)
 {
     struct stat buffer;
     if (stat(path.c_str(), &buffer) == 0)
-    {
         return S_ISDIR(buffer.st_mode);
-    }
     return false;
 }
 
@@ -195,9 +193,7 @@ bool isRegularFile(const std::string &path)
 {
     struct stat buffer;
     if (stat(path.c_str(), &buffer) == 0)
-    {
         return S_ISREG(buffer.st_mode);
-    }
     return false;
 }
 

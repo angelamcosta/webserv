@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Requests.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:42:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/08/30 15:51:47 by mpedroso         ###   ########.fr       */
+/*   Updated: 2025/02/06 15:14:20 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void Requests::handleRequest(int sockfd, Server &server,
         data.method = "DELETE";
     if (request.find("_filename") != std::string::npos)
         data.filename = getFilename(request);
+    data.cgi = server.getCgi();
     response = Processes::createProcess(data);
 }
 

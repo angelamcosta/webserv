@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/06 13:51:49 by anlima           ###   ########.fr       */
+/*   Updated: 2025/02/06 15:55:54 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void Server::addDirective(Directive directive)
 const std::string &Server::getCgi(void) { return (_cgi); }
 void Server::setCgi(const std::string &cgi) { _cgi = cgi; }
 
-const std::string &Server::getPort(void) { return (_port); }
+const std::string Server::getPort(void) { return (_port != "" ? _port : "8080"); }
 void Server::setPort(const std::string &port)
 {
     if (_port == "")
