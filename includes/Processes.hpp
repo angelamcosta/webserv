@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:17:50 by anlima            #+#    #+#             */
-/*   Updated: 2024/06/06 15:44:26 by anlima           ###   ########.fr       */
+/*   Updated: 2025/02/06 13:51:49 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ class Processes {
     static void handleError(std::string message);
     static std::string readOutput(int pipefd[2]);
     static std::string createProcess(const t_request &data);
-    static std::vector<char *> getArgs(const t_request &data);
     static void writeInput(int pipefd[2], const t_request &data);
 };
 

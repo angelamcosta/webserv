@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/03 15:18:28 by anlima           ###   ########.fr       */
+/*   Updated: 2025/02/06 13:51:49 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,10 @@ class Server {
     const std::string &getDirListing(void) const;
     void setDirListing(const std::string &dir_listing);
 
-    const std::string getPort(void);
+    const std::string &getCgi(void);
+    void setCgi(const std::string &cgi);
+
+    const std::string &getPort(void);
     void setPort(const std::string &port);
 
     const std::string &getRoot(void);

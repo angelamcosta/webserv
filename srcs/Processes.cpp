@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Processes.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2024/08/27 14:17:31 by mpedroso         ###   ########.fr       */
+/*   Updated: 2025/02/06 13:51:49 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Processes.hpp"
 #include "../includes/Requests.hpp"
+
+// TODO : - Use CPP cgi when Server cgi is ""
 
 int Processes::executeCgi(void)
 {
