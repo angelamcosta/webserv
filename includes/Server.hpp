@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/06 15:55:47 by anlima           ###   ########.fr       */
+/*   Updated: 2025/02/12 16:19:45 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class Server {
     int _body_size;
     std::string _dir_listing;
     std::vector<struct pollfd> _fds;
+    std::map<std::string, std::string> _url_methods;
 
   public:
     Server();
@@ -76,6 +77,7 @@ class Server {
 
     const std::string getUrlMethods(const std::string &url);
     const Location *findLocation(const std::string &path, const std::vector<Location> &locations);
+    void addUrlMethod(std::string line, std::string url);
 
     void checkBodySize(const std::string &body_size);
     size_t  checkDirectives(const std::string &name);

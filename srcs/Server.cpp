@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/06 15:55:54 by anlima           ###   ########.fr       */
+/*   Updated: 2025/02/12 17:25:23 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,14 +142,16 @@ const std::string Server::getUrlMethods(const std::string &url)
 {
     if (url.empty())
         return ("Not found");
-    size_t pos = url.find_last_of('/');
-    if (pos == std::string::npos)
-        return ("Not found");
-    std::string path = url.substr(pos);
-    const Location *location = findLocation(path, _locations);
-    if (location)
-        return (location->getMethods());
+    if (this->_url_methods.find(url) != this->_url_methods.end())
+        return (this->_url_methods[url]);
     return ("GET");
+}
+
+void Server::addUrlMethod(std::string line, std::string url) {
+    std::cout << url << std::endl;
+    size_t pos = line.find_first_of("s") + 2;
+    std::string methods = line.substr(pos);
+    this->_url_methods[url] = methods;
 }
 
 const Location *Server::findLocation(const std::string &path, const std::vector<Location> &locations)

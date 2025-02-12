@@ -6,7 +6,7 @@
 /*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:33:13 by anlima            #+#    #+#             */
-/*   Updated: 2024/09/11 15:40:07 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/02/12 17:40:39 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void Parser::processDirective(const std::string &line, Server &server) {
     server.addDirective(Directive(trim(name), trim(value)));
 }
 
-void Parser::processDirective(const std::string &line, Location &location) {
+void Parser::processDirective(const std::string &line, Location &location, Server &server) {
     std::stringstream iss(line);
     std::string name, value;
 
@@ -76,8 +76,13 @@ void Parser::processDirective(const std::string &line, Location &location) {
         throw std::invalid_argument("Error: Invalid directive.");
     if (name != static_cast<std::string>("listen") && location.checkDirectives(trim(name)))
         throw std::invalid_argument("Error: Invalid directive.");
-    std::getline(iss, value);
-    location.addDirective(Directive(trim(name), trim(value)));
+    if (name == static_cast<std::string>("allow_methods") && !location.getPath().empty()){
+        server.addUrlMethod(line, location.getPath());
+    }
+    else {
+        std::getline(iss, value);
+        location.addDirective(Directive(trim(name), trim(value)));
+    }
 }
 
 void Parser::processLine(const std::string &line, std::vector<Server> &servers, int &flag, Stack &stack) {
@@ -112,7 +117,7 @@ void Parser::processLine(const std::string &line, std::vector<Server> &servers, 
         if (servers.empty())
             throw std::invalid_argument("Error: Directive block outside server block.");
         if (stack.getType())
-            processDirective(line, const_cast<Location &>(stack.getLocation()));
+            processDirective(line, const_cast<Location &>(stack.getLocation()),const_cast<Server &>(servers.back()));
         else
             processDirective(line, const_cast<Server &>(servers.back()));
     }

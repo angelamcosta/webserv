@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 16:58:47 by anlima            #+#    #+#             */
-/*   Updated: 2024/08/27 15:26:00 by mpedroso         ###   ########.fr       */
+/*   Updated: 2025/02/12 16:18:08 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ class Parser {
     static void processLocation(const std::string &line, Server &server, Stack &stack);
 	static void processLocation(const std::string &line, Location &location, Stack &stack);
     static void processDirective(const std::string &line, Server &server);
-    static void processDirective(const std::string &line, Location &location);
+    static void processDirective(const std::string &line, Location &location, Server &server);
     static void processLine(const std::string &line, std::vector<Server> &servers, int &flag, Stack &stack);
     static std::string trim(const std::string &str);
     static void checkServers(std::vector<Server> &servers);
