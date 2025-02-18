@@ -6,11 +6,11 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 18:29:16 by anlima            #+#    #+#             */
-/*   Updated: 2024/05/14 18:32:22 by anlima           ###   ########.fr       */
+/*   Updated: 2025/02/18 16:08:55 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Cgi.hpp"
+
 
 int main(int argc, char **argv) {
     if (argc == 8)

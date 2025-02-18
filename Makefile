@@ -17,7 +17,6 @@ HEART 		= ♡
 FLOWER 		= ❀
 
 SRC			=	main.cpp \
-				$(SRCS_FOLDER)/Cgi.cpp \
 				$(SRCS_FOLDER)/Directive.cpp \
 				$(SRCS_FOLDER)/Location.cpp \
 				$(SRCS_FOLDER)/Parser.cpp \

@@ -6,15 +6,13 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/11 13:23:33 by anlima           ###   ########.fr       */
+/*   Updated: 2025/02/18 16:09:26 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Cgi.hpp"
+
 #include "../includes/Requests.hpp"
 #include "../includes/Processes.hpp"
-
-// TODO : - Use CPP cgi when Server cgi is ""
 
 int Processes::executeCgi(void)
 {
@@ -110,10 +108,6 @@ std::string Processes::createProcess(const t_request &data)
         close(stdin_pipefd[1]);
         if (!redirectStdout(stdout_pipefd) || !redirectStdin(stdin_pipefd))
             throw std::runtime_error("Error in redirecting stdout or stdin");
-        if (data.cgi == "") {
-            Cgi cgi(data);
-            cgi.handleMethod(data.method);
-        }
         else if (!executeCgi())
             throw std::runtime_error("Error in executing CGI script");
     }
