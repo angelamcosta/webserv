@@ -6,7 +6,7 @@
 /*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:33:13 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/12 17:40:39 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/02/18 15:56:58 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,10 @@ void Parser::processDirective(const std::string &line, Location &location, Serve
     if (name == static_cast<std::string>("allow_methods") && !location.getPath().empty()){
         server.addUrlMethod(line, location.getPath());
     }
+    if (name == static_cast<std::string>("cgi_path")) {
+        std::getline(iss, value);
+        server.setCgi(value);
+    }
     else {
         std::getline(iss, value);
         location.addDirective(Directive(trim(name), trim(value)));
@@ -92,6 +96,11 @@ void Parser::processLine(const std::string &line, std::vector<Server> &servers, 
     if (!(iss >> token))
         return;
     if (token == "server" && !flag) {
+        if (!servers.empty()) {
+            if (servers.back().getCgi().empty()) {
+                throw std::invalid_argument("Error: No CGI found in server definition.");
+            }
+        }
         if (((!(iss >> token)) || token != "{"))
             throw std::invalid_argument("Error: Invalid server definition.");
         servers.push_back(Server());
