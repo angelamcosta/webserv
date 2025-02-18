@@ -6,7 +6,7 @@
 /*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:33:13 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/18 15:56:58 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/02/18 16:16:52 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,11 @@ std::vector<Server> Parser::parseConf(const std::string &filename) {
         if (line.empty() || line[0] == '#')
             continue;
         processLine(line, servers, flag, stack);
+    }
+    if (!servers.empty()) {
+        if (servers.back().getCgi().empty()) {
+            throw std::invalid_argument("Error: No CGI found in server definition.");
+        }
     }
     if (flag)
         throw std::invalid_argument("Error: Invalid server definition.");
