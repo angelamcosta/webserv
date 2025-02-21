@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/12 17:25:23 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/02/21 13:38:01 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ Server::Server(const Server &other)
     _body_size = other._body_size;
     _dir_listing = other._dir_listing;
     _fds = other._fds;
+    _url_methods = other._url_methods;
 }
 
 Server &Server::operator=(const Server &other)
@@ -49,6 +50,7 @@ Server &Server::operator=(const Server &other)
         _body_size = other._body_size;
         _dir_listing = other._dir_listing;
         _fds = other._fds;
+        _url_methods = other._url_methods;
     }
     return (*this);
 }
@@ -142,16 +144,18 @@ const std::string Server::getUrlMethods(const std::string &url)
 {
     if (url.empty())
         return ("Not found");
-    if (this->_url_methods.find(url) != this->_url_methods.end())
-        return (this->_url_methods[url]);
+    for (std::map<std::string, std::string>::iterator it = _url_methods.begin(); it != _url_methods.end(); ++it) {
+        if (url.find(it->first) != std::string::npos)
+            return (it->second);
+    }
     return ("GET");
 }
 
-void Server::addUrlMethod(std::string line, std::string url) {
-    std::cout << url << std::endl;
+void Server::addUrlMethod(std::string line, std::string url)
+{
     size_t pos = line.find_first_of("s") + 2;
     std::string methods = line.substr(pos);
-    this->_url_methods[url] = methods;
+    _url_methods[url] = methods;
 }
 
 const Location *Server::findLocation(const std::string &path, const std::vector<Location> &locations)

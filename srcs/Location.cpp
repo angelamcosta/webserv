@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:24:24 by anlima            #+#    #+#             */
-/*   Updated: 2024/09/11 15:36:55 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/02/21 12:52:53 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void Location::setPath(const std::string &path) { _path = path; }
 void Location::addDirective(const Directive &directive) {
     if (directive.getName() == "index")
         setIndex(directive.getValue());
-    else if (directive.getName() == "allow_methods")
+    else if (directive.getName() == "allow_methods") 
         setMethods(directive.getValue());
     _directives.push_back(directive);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:33:13 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/18 16:16:52 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/02/21 12:53:06 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ std::vector<Server> Parser::parseConf(const std::string &filename) {
 void Parser::processLocation(const std::string &line, Server &server, Stack &stack) {
     std::stringstream iss(line);
     std::string location, path, signal;
-    Location return_location = Location(path);
     if (!(iss >> location >> path >> signal) || (signal != "{"))
         throw std::invalid_argument("Error: Invalid location directive.");
+    Location return_location = Location(trim(path));
     stack.addToStack(return_location);
     server.addLocation(return_location);
 }
@@ -53,9 +53,9 @@ void Parser::processLocation(const std::string &line, Server &server, Stack &sta
 void Parser::processLocation(const std::string &line, Location &location, Stack &stack) {
     std::stringstream iss(line);
     std::string new_location, path, signal;
-    Location return_location = Location(path);
     if (!(iss >> new_location >> path >> signal) || (signal != "{"))
         throw std::invalid_argument("Error: Invalid location directive.");
+    Location return_location = Location(trim(path));
     stack.addToStack(return_location);
     location.addLocation(return_location);
 }
@@ -66,7 +66,7 @@ void Parser::processDirective(const std::string &line, Server &server) {
 
     if (!(iss >> name))
         throw std::invalid_argument("Error: Invalid directive.");
-    if (name != static_cast<std::string>("listen") && server.checkDirectives(trim(name)))
+    if (name != "listen" && server.checkDirectives(trim(name)))
         throw std::invalid_argument("Error: Invalid directive.");
     std::getline(iss, value);
     value = trim(value);
@@ -79,14 +79,13 @@ void Parser::processDirective(const std::string &line, Location &location, Serve
 
     if (!(iss >> name))
         throw std::invalid_argument("Error: Invalid directive.");
-    if (name != static_cast<std::string>("listen") && location.checkDirectives(trim(name)))
+    if (name != "listen" && location.checkDirectives(trim(name)))
         throw std::invalid_argument("Error: Invalid directive.");
-    if (name == static_cast<std::string>("allow_methods") && !location.getPath().empty()){
-        server.addUrlMethod(line, location.getPath());
-    }
-    if (name == static_cast<std::string>("cgi_path")) {
+    if (name == "allow_methods" && !(location.getPath().empty()))
+        server.addUrlMethod(trim(line), location.getPath());
+    if (name == "cgi_path") {
         std::getline(iss, value);
-        server.setCgi(value);
+        server.setCgi(value); 
     }
     else {
         std::getline(iss, value);
@@ -131,9 +130,9 @@ void Parser::processLine(const std::string &line, std::vector<Server> &servers, 
         if (servers.empty())
             throw std::invalid_argument("Error: Directive block outside server block.");
         if (stack.getType())
-            processDirective(line, const_cast<Location &>(stack.getLocation()),const_cast<Server &>(servers.back()));
+            processDirective(line, stack.getLocation(),servers.back());
         else
-            processDirective(line, const_cast<Server &>(servers.back()));
+            processDirective(line, servers.back());
     }
     else if (token == "}") {
         stack.remove();
