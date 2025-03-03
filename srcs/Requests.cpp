@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:42:03 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/21 13:15:26 by anlima           ###   ########.fr       */
+/*   Updated: 2025/02/21 14:35:39 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void Requests::handleRequest(int sockfd, Server &server,
     if (request.find("_filename") != std::string::npos)
         data.filename = getFilename(request);
     data.cgi = server.getCgi();
-    // printRequest(data);
+    printRequest(data);
     response = Processes::createProcess(data);
 }
 
@@ -282,7 +282,7 @@ std::string Requests::getFilename(const std::string &request)
 void Requests::printRequest(const t_request &data)
 {
     std::cout << "\n------\nURL: " << data.url << std::endl;
-    std::cout << "Request: " << data.request << std::endl;
+    // std::cout << "Request: " << data.request << std::endl;
     std::cout << "Index: " << data.index << std::endl;
     std::cout << "Method: " << data.method << std::endl;
     std::cout << "Path Info: " << data.path_info << std::endl;

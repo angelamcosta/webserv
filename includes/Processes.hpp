@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:17:50 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/06 13:51:49 by anlima           ###   ########.fr       */
+/*   Updated: 2025/02/21 15:40:51 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ class Processes {
     Processes();
 
   public:
-    static int executeCgi(void);
+    static int executeCgi(std::string cgi);
     static int redirectStdin(int pipefd[2]);
     static int redirectStdout(int pipefd[2]);
     static void handleError(std::string message);

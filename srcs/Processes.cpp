@@ -6,21 +6,21 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/18 16:09:26 by anlima           ###   ########.fr       */
+/*   Updated: 2025/03/03 13:46:44 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
+#include "../includes/Parser.hpp"
 #include "../includes/Requests.hpp"
 #include "../includes/Processes.hpp"
 
-int Processes::executeCgi(void)
+int Processes::executeCgi(std::string cgi)
 {
     std::vector<char *> args;
-    args.push_back(const_cast<char *>(PYTHON_INDEX));
+    
+    args.push_back(const_cast<char *>(cgi.c_str()));
     args.push_back(NULL);
-
-    if (execve(PYTHON_INDEX, args.data(), NULL) == -1)
+    if (execve(cgi.c_str(), args.data(), NULL) == -1) 
         return (0);
     return (1);
 }
@@ -108,8 +108,8 @@ std::string Processes::createProcess(const t_request &data)
         close(stdin_pipefd[1]);
         if (!redirectStdout(stdout_pipefd) || !redirectStdin(stdin_pipefd))
             throw std::runtime_error("Error in redirecting stdout or stdin");
-        else if (!executeCgi())
-            throw std::runtime_error("Error in executing CGI script");
+        else if (!executeCgi(Parser::trim(data.cgi)))
+            throw std::runtime_error("Error in executing CGI script; path => " + data.cgi);
     }
     else
     {
