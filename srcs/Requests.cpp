@@ -39,14 +39,13 @@ void Requests::handleRequest(int sockfd, Server &server,
                 break;
         }
     }
-
     t_request data = processRequest(request, server);
     if (server.getBodySize() < (int)request.length())
         data.method = "invalid_size";
     if (request.find("_filename") != std::string::npos)
         data.filename = getFilename(request);
     data.cgi = server.getCgi();
-    printRequest(data);
+    // printRequest(data);
     response = Processes::createProcess(data);
 }
 
@@ -192,6 +191,7 @@ void Requests::setData(t_request &data, Server &server,
     data.error_page = server.getErrorPage();
     data.dir_listing = server.getDirListing();
     data.allowed_methods = server.getUrlMethods(data.url);
+    data.image_data = "";
     handleImagePost(data);
 }
 
@@ -206,6 +206,12 @@ void Requests::handleImagePost(t_request &data)
     std::string boundary = data.request.substr(
         boundary_start + 9, boundary_end - boundary_start - 9);
     size_t filename_start = data.request.find("filename=\"", boundary_end);
+    filename_start += 10;
+    size_t filename_end = data.request.find("\"", filename_start);
+    data.filename =
+        data.request.substr(filename_start, filename_end - filename_start);
+    if (data.filename == "")
+        return;
     size_t data_start = data.request.find("\r\n\r\n", filename_start);
     if (data_start == std::string::npos)
         return;
@@ -214,10 +220,6 @@ void Requests::handleImagePost(t_request &data)
     data.image_data = base64_encode(image_data);
     if (filename_start == std::string::npos)
         return;
-    filename_start += 10;
-    size_t filename_end = data.request.find("\"", filename_start);
-    data.filename =
-        data.request.substr(filename_start, filename_end - filename_start);
 }
 
 std::string Requests::base64_encode(const std::string &data)

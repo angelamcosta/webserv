@@ -56,7 +56,7 @@ def delete_failed(file):
 def handle_get(full_path, dir_listing, error_path, path_info, url, message=""):
     if message == "invalid_size":
         message = upload_failed()
-        get_file(full_path, path_info, url, message)
+        get_file(full_path, path_info, url, message, status="413 Request Entity Too Large")
     elif os.path.exists(full_path):
         if os.path.isdir(full_path):
             if dir_listing == "on":

@@ -26,13 +26,16 @@ def main():
                     error_path, path_info, url, method)
     elif method in allowed_methods:
         if method == "GET":
-            handle_get(full_path, dir_listing, error_path, path_info, url)
+            if "_method=DELETE" in url:
+                filename = full_path[full_path.find("_filename") + 10:]
+                url = full_path[:full_path.find("?")]
+                message = handle_delete(url, upload_dir, filename)
+                handle_get(url, dir_listing, error_path,
+                       path_info, url, message)
+            else:
+                handle_get(full_path, dir_listing, error_path, path_info, url)
         elif method == "POST":
             message = handle_post(upload_dir, image_data)
-            handle_get(full_path, dir_listing, error_path,
-                       path_info, url, message)
-        elif method == "DELETE":
-            message = handle_delete(url, upload_dir, filename)
             handle_get(full_path, dir_listing, error_path,
                        path_info, url, message)
         else:
