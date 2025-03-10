@@ -32,13 +32,13 @@ def get_upload_dir(path_info):
     return upload_dir
 
 
-def get_full_path(url, path_info, index):
+def get_full_path(url, path_info):
     if url.startswith("/") and path_info.endswith("/"):
         full_path = path_info + url[1:]
     elif url.startswith("/") or path_info.endswith("/"):
         full_path = path_info + url
     else:
-        full_path = path_info + "/" + url
+        full_path = path_info + "/" + url + "/"
     return full_path
 
 

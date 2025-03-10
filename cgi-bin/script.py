@@ -11,15 +11,15 @@ def main():
     url = args[0]
     index = args[1]
     method = args[2]
-    path_info = args[3]
-    error_page = args[4]
+    path_info = args[3] if args[3][-1] == "/" else args[3] + "/"
+    error_page = args[4] if args[4][-1] == "/" else args[4] + "/"
     dir_listing = args[5]
     allowed_methods = args[6]
     image_data = args[7]
     filename = args[8]
     upload_dir = get_upload_dir(path_info)
     url = "/" + index if url == "/" else url
-    full_path = get_full_path(url, path_info, index)
+    full_path = get_full_path(url, path_info)
     error_path = path_info + error_page
     if method == "invalid_size":
         handle_get(full_path, dir_listing,

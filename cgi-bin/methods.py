@@ -106,7 +106,7 @@ def get_file(full_path, path_info, url, message="", status="200 OK"):
         generate_response(status, text, full_path, template)
     except OSError:
         generate_response(
-            "404 Not found", "<h1>ERROR: Could not find the specified file</h1>", full_path, template)
+            "404 Not found", "<h1>ERROR: Could not find the specified file" + path_info +"</h1>", full_path, template)
 
 
 def handle_post(upload_dir, image_data):
