@@ -67,11 +67,7 @@
 #define FLOWER "❀"
 #define GET_PORT "listen"
 #define ERROR_PAGE "/error.html"
-#define HTTP_GET "GET"
-#define HTTP_POST "POST"
-#define HTTP_PUT "PUT"
-#define HTTP_DELETE "DELETE"
-#define UPLOAD_FOLDER "/home/anlima/webserv/public/images"
+#define UPLOAD_FOLDER "../public/images"
 #define CONTENT_HEADER "Content-Disposition: form-data;"
 #define TIMEOUT 5000
 
