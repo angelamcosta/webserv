@@ -12,6 +12,15 @@
 
 #include "../includes/Parser.hpp"
 
+int Parser::isValidConf(const std::string &name) {
+    std::string args[] = {"listen", "root", "index", "client_max_body_size", "autoindex", "allow_methods", "cgi_path", "error_page"};
+    for (size_t i = 0; i < ARGS_SIZE; ++i) {
+        if (name == args[i])
+            return (1);
+    }
+    return (0);
+}
+
 std::vector<Server> Parser::parseConf(const std::string &filename) {
     int flag = 0;
     std::ifstream file(filename.c_str());
@@ -87,10 +96,12 @@ void Parser::processDirective(const std::string &line, Location &location, Serve
         std::getline(iss, value);
         server.setCgi(value); 
     }
-    else {
+    else if (isValidConf(name)) {
         std::getline(iss, value);
         location.addDirective(Directive(trim(name), trim(value)));
     }
+    else
+        throw std::invalid_argument("Error: Invalid directive.");
 }
 
 void Parser::processLine(const std::string &line, std::vector<Server> &servers, int &flag, Stack &stack) {

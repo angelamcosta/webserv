@@ -17,19 +17,21 @@
 #include "macros.hpp"
 #include "Stack.hpp"
 
-class Parser {
-  private:
-    Parser();
+class Parser
+{
+private:
+	Parser();
 
-  public:
-    static std::vector<Server> parseConf(const std::string &filename);
-    static void processLocation(const std::string &line, Server &server, Stack &stack);
+public:
+	static int isValidConf(const std::string &name);
+	static std::vector<Server> parseConf(const std::string &filename);
+	static void processLocation(const std::string &line, Server &server, Stack &stack);
 	static void processLocation(const std::string &line, Location &location, Stack &stack);
-    static void processDirective(const std::string &line, Server &server);
-    static void processDirective(const std::string &line, Location &location, Server &server);
-    static void processLine(const std::string &line, std::vector<Server> &servers, int &flag, Stack &stack);
-    static std::string trim(const std::string &str);
-    static void checkServers(std::vector<Server> &servers);
+	static void processDirective(const std::string &line, Server &server);
+	static void processDirective(const std::string &line, Location &location, Server &server);
+	static void processLine(const std::string &line, std::vector<Server> &servers, int &flag, Stack &stack);
+	static std::string trim(const std::string &str);
+	static void checkServers(std::vector<Server> &servers);
 };
 
 #endif

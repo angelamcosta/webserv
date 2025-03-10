@@ -43,6 +43,7 @@
 
 #define PORT 8080
 #define BUFFER_SIZE 1024
+#define ARGS_SIZE 8
 #define RES                                                               \
     "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html><body><h1>Hello, " \
     "World!</h1></body></html>\n"
