@@ -20,17 +20,18 @@ def main():
     upload_dir = get_upload_dir(path_info)
     url = "/" + index if url == "/" else url
     full_path = get_full_path(url, path_info)
-    error_path = path_info + error_page
+    error_path = path_info + error_page if path_info[-1] != "/" else path_info[:-1] + error_page
     if method == "invalid_size":
         handle_get(full_path, dir_listing,
                     error_path, path_info, url, method)
     elif method in allowed_methods:
         if method == "GET":
             if "_method=DELETE" in url:
-                filename = full_path[full_path.find("_filename") + 10:]
-                url = full_path[:full_path.find("?")]
+                filename = url[url.find("_filename=") + 10:]
+                url = url[:url.find("?")]
+                full_path = full_path[:full_path.find("?")]
                 message = handle_delete(url, upload_dir, filename)
-                handle_get(url, dir_listing, error_path,
+                handle_get(full_path, dir_listing, error_path,
                        path_info, url, message)
             else:
                 handle_get(full_path, dir_listing, error_path, path_info, url)
