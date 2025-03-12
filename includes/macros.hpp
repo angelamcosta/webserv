@@ -40,6 +40,7 @@
 #include <fstream>
 #include <sys/stat.h>
 #include <string>
+#include <ctime>
 
 #define PORT 8080
 #define BUFFER_SIZE 1024

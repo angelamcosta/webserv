@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../includes/Utils.hpp"
 #include "../includes/Parser.hpp"
 #include "../includes/Requests.hpp"
 #include "../includes/Processes.hpp"
@@ -17,10 +18,10 @@
 int Processes::executeCgi(std::string cgi)
 {
     std::vector<char *> args;
-    
+
     args.push_back(const_cast<char *>(cgi.c_str()));
     args.push_back(NULL);
-    if (execve(cgi.c_str(), args.data(), NULL) == -1) 
+    if (execve(cgi.c_str(), args.data(), NULL) == -1)
         return (0);
     return (1);
 }
@@ -106,16 +107,31 @@ std::string Processes::createProcess(const t_request &data)
     {
         close(stdout_pipefd[0]);
         close(stdin_pipefd[1]);
-        if (!redirectStdout(stdout_pipefd) || !redirectStdin(stdin_pipefd))
-            throw std::runtime_error("Error in redirecting stdout or stdin");
-        else if (!executeCgi(Parser::trim(data.cgi)))
-            throw std::runtime_error("Error in executing CGI script; path => " + data.cgi);
+        if (!redirectStdout(stdout_pipefd))
+            throw std::runtime_error("Error in redirecting stdout");
+        if (data.cgi.empty())
+        {
+            Utils utils(data);
+            utils.setUrl();
+            utils.setFullPath();
+            utils.setErrorPath();
+            utils.handleMethod("");
+        }
+        else
+        {
+            if (!redirectStdin(stdin_pipefd))
+                throw std::runtime_error("Error in redirecting stdin");
+            else if (!data.cgi.empty() && (!executeCgi(Parser::trim(data.cgi))))
+                throw std::runtime_error("Error in executing CGI script; path => " + data.cgi);
+        }
+        exit(0);
     }
     else
     {
         close(stdout_pipefd[1]);
         close(stdin_pipefd[0]);
-        writeInput(stdin_pipefd, data);
+        if (!data.cgi.empty())
+            writeInput(stdin_pipefd, data);
         response = readOutput(stdout_pipefd);
         int status;
         waitpid(pid, &status, 0);

@@ -74,9 +74,7 @@ std::string &Utils::getUploadDir(void) { return (_upload_dir); }
 void Utils::setUploadDir(void)
 {
     if (!_data.path_info.empty())
-    {
         _upload_dir = _data.path_info[_data.path_info.length() - 1] == '/' ? _data.path_info + "images/" : _data.path_info + "/images/";
-    }
 }
 
 std::string &Utils::getErrorPath(void) { return (_error_path); }
@@ -229,7 +227,7 @@ void Utils::handleMethod(std::string message)
 }
 
 void Utils::getFile(const std::string &full_path, const std::string &path_info, const std::string &url,
-                  const std::string &message = "", const std::string &status = "200 OK")
+                    const std::string &message = "", const std::string &status = "200 OK")
 {
     std::ifstream file(full_path.c_str());
     if (!file.is_open())
