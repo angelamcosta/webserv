@@ -10,13 +10,20 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+// TODO : - Check routing/relative routing
+
 #include "../includes/Utils.hpp"
 #include "../includes/Requests.hpp"
 
 Utils::~Utils() {}
 
-Utils::Utils(const s_request &data) : _data(data), _url(""), _full_path(""), _upload_dir(""), _error_path("")
+Utils::Utils(const s_request &data) : _data(data), _index(data.index), _method(data.method), _filename(data.filename), _template(""), _full_path(""), _path_info(data.path_info), _image_data(data.image_data), _error_page(data.error_page), _error_path(""), _upload_dir(""), _dir_listing(data.dir_listing), _allowed_methods(data.allowed_methods)
 {
+    setUrl();
+    setTemplate();
+    setFullPath();
+    setUploadDir();
+    setErrorPath();
 }
 
 Utils::Utils(const Utils &copy)
@@ -25,9 +32,18 @@ Utils::Utils(const Utils &copy)
     {
         _data = copy._data;
         _url = copy._url;
+        _index = copy._index;
+        _method = copy._method;
+        _filename = copy._filename;
+        _template = copy._template;
         _full_path = copy._full_path;
-        _upload_dir = copy._upload_dir;
+        _path_info = copy._path_info;
+        _image_data = copy._image_data;
+        _error_page = copy._error_page;
         _error_path = copy._error_path;
+        _upload_dir = copy._upload_dir;
+        _dir_listing = copy._dir_listing;
+        _allowed_methods = copy._allowed_methods;
     }
 }
 
@@ -37,9 +53,18 @@ Utils &Utils::operator=(const Utils &copy)
     {
         _data = copy._data;
         _url = copy._url;
+        _index = copy._index;
+        _method = copy._method;
+        _filename = copy._filename;
+        _template = copy._template;
         _full_path = copy._full_path;
-        _upload_dir = copy._upload_dir;
+        _path_info = copy._path_info;
+        _image_data = copy._image_data;
+        _error_page = copy._error_page;
         _error_path = copy._error_path;
+        _upload_dir = copy._upload_dir;
+        _dir_listing = copy._dir_listing;
+        _allowed_methods = copy._allowed_methods;
     }
     return (*this);
 }
@@ -55,8 +80,7 @@ void Utils::setUrl(void)
 std::string &Utils::getTemplate(void) { return (_template); }
 void Utils::setTemplate(void)
 {
-    std::stringstream iss(_data.path_info);
-    iss >> _template;
+    std::string path_info = _path_info[-1] == '/' ? _path_info + "template.html" : _path_info + "/template.html";
 }
 
 std::string &Utils::getFullPath(void) { return (_full_path); }
@@ -80,7 +104,7 @@ void Utils::setUploadDir(void)
 std::string &Utils::getErrorPath(void) { return (_error_path); }
 void Utils::setErrorPath(void)
 {
-    _error_path = _data.path_info + _data.error_page;
+    _error_path = _path_info[-1] == '/' ? _path_info + _error_page : _path_info + '/' + _error_page;
 }
 
 const std::string Utils::successUpload(void) const
@@ -175,24 +199,14 @@ const std::string Utils::generateCards(std::string path_info, std::string url) c
 
 bool pathExists(const std::string &path)
 {
-    struct stat buffer;
-    return (stat(path.c_str(), &buffer) == 0);
+    std::ifstream file(path.c_str());
+    return (file.good());
 }
 
 bool isDirectory(const std::string &path)
 {
     struct stat buffer;
-    if (stat(path.c_str(), &buffer) == 0)
-        return S_ISDIR(buffer.st_mode);
-    return false;
-}
-
-bool isRegularFile(const std::string &path)
-{
-    struct stat buffer;
-    if (stat(path.c_str(), &buffer) == 0)
-        return S_ISREG(buffer.st_mode);
-    return false;
+    return(stat(path.c_str(), &buffer) == 0);
 }
 
 void Utils::handleMethod(std::string message)
@@ -211,7 +225,7 @@ void Utils::handleMethod(std::string message)
             else
                 getFile(_full_path, _data.path_info + "forbidden.html", _url, message, "403 Forbidden");
         }
-        else if (isRegularFile(_full_path))
+        else if (pathExists(_full_path))
         {
             if (_full_path.substr(_full_path.size() - 4) == ".png" ||
                 _full_path.substr(_full_path.size() - 4) == ".jpg" ||
@@ -286,15 +300,15 @@ std::string Utils::generateHeaders(const std::string &status, size_t content_len
     return (headers.str());
 }
 
-void Utils::generateResponse(const std::string &status, const std::string &content, const std::string &fullPath, const std::string &templateStr = "")
+void Utils::generateResponse(const std::string &status, const std::string &content, const std::string &full_path, const std::string &template_str = "")
 {
-    std::string updated_template = templateStr;
+    std::string updated_template = template_str;
     std::string placeholder = "{{placeholder}}";
     size_t pos = updated_template.find(placeholder);
     if (pos != std::string::npos)
         updated_template.replace(pos, placeholder.length(), content);
-    size_t slashPos = fullPath.find_last_of("/\\");
-    std::string filename = (slashPos != std::string::npos) ? fullPath.substr(slashPos + 1) : fullPath;
+    size_t slashPos = full_path.find_last_of("/\\");
+    std::string filename = (slashPos != std::string::npos) ? full_path.substr(slashPos + 1) : full_path;
     size_t contentLength = updated_template.size();
     std::string headers = generateHeaders(status, contentLength, filename);
     std::cout << headers << updated_template << std::endl;
@@ -392,4 +406,21 @@ void Utils::getImage(const std::string full_path, const std::string path_info, c
     std::cout.write(content, contentLength);
 
     delete[] content;
+}
+
+void Utils::printVariables(void)
+{
+    std::cout << "_url: " << _url << "\n";
+    std::cout << "_index: " << _index << "\n";
+    std::cout << "_method: " << _method << "\n";
+    std::cout << "_filename: " << _filename << "\n";
+    std::cout << "_template: " << _template << "\n";
+    std::cout << "_full_path: " << _full_path << "\n";
+    std::cout << "_path_info: " << _path_info << "\n";
+    std::cout << "_image_data: " << _image_data << "\n";
+    std::cout << "_error_page: " << _error_page << "\n";
+    std::cout << "_error_path: " << _error_path << "\n";
+    std::cout << "_upload_dir: " << _upload_dir << "\n";
+    std::cout << "_dir_listing: " << _dir_listing << "\n";
+    std::cout << "_allowed_methods: " << _allowed_methods << "\n";
 }

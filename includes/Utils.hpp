@@ -20,10 +20,18 @@ class Utils
 private:
     s_request _data;
     std::string _url;
+    std::string _index;
+    std::string _method;
+    std::string _filename;
     std::string _template;
     std::string _full_path;
-    std::string _upload_dir;
+    std::string _path_info;
+    std::string _image_data;
+    std::string _error_page;
     std::string _error_path;
+    std::string _upload_dir;
+    std::string _dir_listing;
+    std::string _allowed_methods;
     Utils();
 
 public:
@@ -31,6 +39,8 @@ public:
     Utils(const s_request &data);
     Utils(const Utils &copy);
     Utils &operator=(const Utils &copy);
+
+    void printVariables(void);
 
     const s_request &getData(void);
 

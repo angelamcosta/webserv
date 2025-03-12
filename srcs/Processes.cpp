@@ -112,9 +112,6 @@ std::string Processes::createProcess(const t_request &data)
         if (data.cgi.empty())
         {
             Utils utils(data);
-            utils.setUrl();
-            utils.setFullPath();
-            utils.setErrorPath();
             utils.handleMethod("");
         }
         else
