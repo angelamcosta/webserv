@@ -41,11 +41,6 @@ std::vector<Server> Parser::parseConf(const std::string &filename) {
             continue;
         processLine(lines, i, servers, flag, stack);
 	}
-    if (!servers.empty()) {
-        if (servers.back().getCgi().empty()) {
-            throw std::invalid_argument("Error: No CGI found in server definition.");
-        }
-    }
     if (flag)
         throw std::invalid_argument("Error: Invalid server definition.");
     file.close();
