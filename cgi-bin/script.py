@@ -26,7 +26,7 @@ def main():
                     error_path, path_info, url, method)
     elif method in allowed_methods:
         if method == "GET":
-            if "_method=DELETE" in url:
+            if "_method=DELETE" in url and "DELETE" in allowed_methods:
                 filename = url[url.find("_filename=") + 10:]
                 url = url[:url.find("?")]
                 full_path = full_path[:full_path.find("?")]
