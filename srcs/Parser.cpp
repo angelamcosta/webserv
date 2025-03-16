@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:33:13 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/21 12:53:06 by anlima           ###   ########.fr       */
+/*   Updated: 2025/03/16 17:33:31 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,21 @@ std::vector<Server> Parser::parseConf(const std::string &filename) {
         throw std::invalid_argument("Error: Unable to open config file.");
 
     std::vector<Server> servers;
+	std::vector<std::string> lines;
     std::string line;
 
     while (std::getline(file, line)) {
-        if (line.empty() || line[0] == '#')
+        lines.push_back(trim(line));
+    }
+	for (size_t i = 0; i < lines.size(); ++i) {
+		if (lines[i].empty() || lines[i][0] == '#')
             continue;
-        processLine(line, servers, flag, stack);
+        processLine(lines, i, servers, flag, stack);
+	}
+    if (!servers.empty()) {
+        if (servers.back().getCgi().empty()) {
+            throw std::invalid_argument("Error: No CGI found in server definition.");
+        }
     }
     if (flag)
         throw std::invalid_argument("Error: Invalid server definition.");
@@ -79,14 +88,19 @@ void Parser::processDirective(const std::string &line, Server &server) {
 
 void Parser::processDirective(const std::string &line, Location &location, Server &server) {
     std::stringstream iss(line);
+	std::stringstream iss2(line);
     std::string name, value;
-
+	
     if (!(iss >> name))
         throw std::invalid_argument("Error: Invalid directive.");
     if (name != "listen" && location.checkDirectives(trim(name)))
         throw std::invalid_argument("Error: Invalid directive.");
-    if (name == "allow_methods" && !(location.getPath().empty()))
+    if (name == "allow_methods" && !(location.getPath().empty())) {
+		iss2 >> name >> value;
+		if (trim(value).empty())
+			throw std::invalid_argument("Error: Invalid directive.");
         server.addUrlMethod(trim(line), location.getPath());
+	}
     if (name == "cgi_path") {
         std::getline(iss, value);
         server.setCgi(value); 
@@ -99,12 +113,13 @@ void Parser::processDirective(const std::string &line, Location &location, Serve
         throw std::invalid_argument("Error: Invalid directive.");
 }
 
-void Parser::processLine(const std::string &line, std::vector<Server> &servers, int &flag, Stack &stack) {
-    std::stringstream iss(line);
+void Parser::processLine(std::vector<std::string> lines, int i, std::vector<Server> &servers, int &flag, Stack &stack) {
+	std::stringstream iss(lines[i]);
     std::string token;
-
-    if (!(iss >> token))
-        return;
+	
+	checkEmptyLoc(lines, i, flag);
+	if (!(iss >> token))
+		return ;
     if (token == "server" && !flag) {
         if (((!(iss >> token)) || token != "{"))
             throw std::invalid_argument("Error: Invalid server definition.");
@@ -119,21 +134,20 @@ void Parser::processLine(const std::string &line, std::vector<Server> &servers, 
         throw std::invalid_argument("Error: Invalid server definition.");
     else if (token == "location" && flag) {
         if (servers.empty())
-            throw std::invalid_argument(
-                "Error: Location block outside server block.");
+            throw std::invalid_argument("Error: Location block outside server block.");
         if (!stack.getType())
-            processLocation(line, servers.back(), stack);
+            processLocation(lines[i], servers.back(), stack);
         else
-            processLocation(line, stack.getLocation(), stack);
+            processLocation(lines[i], stack.getLocation(), stack);
         flag++;
     }
     else if (token != "}" && flag) {
         if (servers.empty())
             throw std::invalid_argument("Error: Directive block outside server block.");
         if (stack.getType())
-            processDirective(line, stack.getLocation(),servers.back());
+            processDirective(lines[i], stack.getLocation(),servers.back());
         else
-            processDirective(line, servers.back());
+            processDirective(lines[i], servers.back());
     }
     else if (token == "}") {
         stack.remove();
@@ -142,11 +156,11 @@ void Parser::processLine(const std::string &line, std::vector<Server> &servers, 
 }
 
 std::string Parser::trim(const std::string &str) {
-    size_t first = str.find_first_not_of(' ');
+    size_t first = str.find_first_not_of(" \t");
     if (std::string::npos == first) {
-        return str;
+        return "";
     }
-    size_t last = str.find_last_not_of(' ');
+    size_t last = str.find_last_not_of(" \t");
     return (str.substr(first, (last - first + 1)));
 }
 
@@ -163,4 +177,24 @@ void Parser::checkServers(std::vector<Server> &servers) {
                 throw std::invalid_argument("Error: Two different servers share the same server name and port.");
         }
     }
+}
+
+void Parser::checkEmptyLoc(std::vector<std::string> lines, int i, int flag) {
+	std::string token;
+	std::stringstream iss(lines[i]);
+	if (iss >> token && (token == "location" && flag)) {
+		int tempIndex = i + 1;
+		int sizeLines = lines.size();
+    	bool locationBlockEmpty = true;
+
+		while (tempIndex < sizeLines && lines[tempIndex] != "}") {
+        	if (!lines[tempIndex].empty()) {
+            	locationBlockEmpty = false;
+            	break;
+        	}
+        	tempIndex++;
+		}	
+		if (lines[i + 1] == "}" || locationBlockEmpty)
+			throw std::invalid_argument("Error: Location block empty.");
+	}
 }
