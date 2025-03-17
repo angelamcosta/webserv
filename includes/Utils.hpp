@@ -67,14 +67,20 @@ public:
     const std::string successDelete(void) const;
     const std::string generateCards(std::string path_info, std::string url) const;
 
+    std::string handlePost(void);
+    std::string generateUuid(void);
+    void handleGet(std::string &message);
     void handleMethod(std::string message);
+    std::string base64_decode(const std::string &encoded);
     void getFile(const std::string &full_path, const std::string &path_info, const std::string &url, const std::string &message, const std::string &status);
     void generateResponse(const std::string &status, const std::string &content, const std::string &full_path, const std::string &template_str);
-    std::string loadTemplateFile(const std::string &path_info);
+    std::string loadTemplateFile(void);
     std::string generateHeaders(const std::string &status, size_t content_length, const std::string &filename);
     void getDirectories(const std::string &full_path, const std::string &path_info);
     void getImage(const std::string full_path, const std::string path_info, const std::string error_path, const std::string url, const std::string message, const std::string status);
     std::string generateHTMLList(const std::vector<std::string> &files);
+    bool isDirectory(const std::string &path) const;
+    bool pathExists(const std::string &path) const;
 };
 
 #endif

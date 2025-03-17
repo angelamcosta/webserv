@@ -33,6 +33,9 @@ def main():
                 message = handle_delete(url, upload_dir, filename)
                 handle_get(full_path, dir_listing, error_path,
                        path_info, url, message)
+            elif "_method=DELETE" in url and "DELETE" not in allowed_methods:
+                get_file(path_info + "not_allowed.html", path_info,
+                         url, message="", status="405 Not Allowed")
             else:
                 handle_get(full_path, dir_listing, error_path, path_info, url)
         elif method == "POST":

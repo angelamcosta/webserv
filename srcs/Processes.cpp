@@ -112,7 +112,10 @@ std::string Processes::createProcess(const t_request &data)
         if (data.cgi.empty())
         {
             Utils utils(data);
-            utils.handleMethod("");
+            if (data.method == "invalid_size")
+                utils.handleMethod(data.method);
+            else
+                utils.handleMethod("");
         }
         else
         {

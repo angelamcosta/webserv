@@ -143,7 +143,7 @@ void Server::setErrorPage(const std::string &error_page) { _error_page = error_p
 const std::string Server::getUrlMethods(const std::string &url)
 {
     if (url.empty())
-        return ("Not found");
+        return ("Not Found");
     for (std::map<std::string, std::string>::iterator it = _url_methods.begin(); it != _url_methods.end(); ++it) {
         if (url.find(it->first) != std::string::npos)
             return (it->second);
