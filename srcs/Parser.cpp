@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:33:13 by anlima            #+#    #+#             */
-/*   Updated: 2025/03/16 17:33:31 by mpedroso         ###   ########.fr       */
+/*   Updated: 2025/03/18 14:37:11 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ void Parser::processLocation(const std::string &line, Server &server, Stack &sta
     if (!(iss >> location >> path >> signal) || (signal != "{"))
         throw std::invalid_argument("Error: Invalid location directive.");
     Location return_location = Location(trim(path));
-    stack.addToStack(return_location);
     server.addLocation(return_location);
+    stack.addToStack(return_location);
 }
 
 void Parser::processLocation(const std::string &line, Location &location, Stack &stack) {
@@ -64,16 +64,17 @@ void Parser::processLocation(const std::string &line, Location &location, Stack 
     if (!(iss >> new_location >> path >> signal) || (signal != "{"))
         throw std::invalid_argument("Error: Invalid location directive.");
     Location return_location = Location(trim(path));
-    stack.addToStack(return_location);
     location.addLocation(return_location);
+    stack.addToStack(return_location);
 }
 
 void Parser::processDirective(const std::string &line, Server &server) {
     std::stringstream iss(line);
     std::string name, value;
 
-    if (!(iss >> name))
+    if (!(iss >> name)) {
         throw std::invalid_argument("Error: Invalid directive.");
+    }
     if (name != "listen" && server.checkDirectives(trim(name)))
         throw std::invalid_argument("Error: Invalid directive.");
     std::getline(iss, value);
