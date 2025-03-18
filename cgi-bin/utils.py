@@ -70,7 +70,7 @@ def generate_cards(directory, url):
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <a class="btn btn-outline-primary" href="{path}" role="button">View</a>
-                                <form method="delete" action="{url}">
+                                <form method="DELETE" action="{url}">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <input type="hidden" name="_filename" value="{filename}">
                                     <button type="submit" class="btn btn-outline-secondary" role="button">Delete</button>

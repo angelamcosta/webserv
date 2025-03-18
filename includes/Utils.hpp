@@ -66,8 +66,8 @@ public:
     const std::string successUpload(void) const;
     const std::string successDelete(void) const;
     const std::string generateCards(std::string path_info, std::string url) const;
-
     std::string handlePost(void);
+    std::string handleDelete(void);
     std::string generateUuid(void);
     void handleGet(std::string &message);
     void handleMethod(std::string message);
@@ -79,6 +79,7 @@ public:
     void getDirectories(const std::string &full_path, const std::string &path_info);
     void getImage(const std::string full_path, const std::string path_info, const std::string error_path, const std::string url, const std::string message, const std::string status);
     std::string generateHTMLList(const std::vector<std::string> &files);
+    bool isImage(void);
     bool isDirectory(const std::string &path) const;
     bool pathExists(const std::string &path) const;
 };

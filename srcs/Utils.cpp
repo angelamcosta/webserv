@@ -125,7 +125,7 @@ const std::string Utils::uploadFailed(void) const
 const std::string Utils::fileMissing(void) const
 {
     return ("<div class=\"alert alert-warning mt-3\" role=\"alert\">\n"
-            "    No file field found in the form.\n"
+            "    File not found.\n"
             "</div>\n");
 }
 
@@ -186,7 +186,7 @@ const std::string Utils::generateCards(std::string path_info, std::string url) c
               << "                        <div class=\"d-flex justify-content-between align-items-center\">\n"
               << "                            <div class=\"d-grid gap-2 d-md-flex justify-content-md-end\">\n"
               << "                                <a class=\"btn btn-outline-primary\" href=\"" << path << "\" role=\"button\">View</a>\n"
-              << "                                <form method=\"post\" action=\"" << url << "\">\n"
+              << "                                <form method=\"DELETE\" action=\"" << url << "\">\n"
               << "                                    <input type=\"hidden\" name=\"_method\" value=\"DELETE\">\n"
               << "                                    <input type=\"hidden\" name=\"_filename\" value=\"" << *it << "\">\n"
               << "                                    <button type=\"submit\" class=\"btn btn-outline-secondary\" role=\"button\">Delete</button>\n"
@@ -222,7 +222,15 @@ void Utils::handleMethod(std::string message)
     }
     else if (_allowed_methods.find(_method) != std::string::npos)
     {
-        if (_method == "GET")
+        if (_url.find("_method=DELETE") != std::string::npos)
+        {
+            message = handlePost();
+            if (message == "not allowed")
+                getFile(_full_path, _data.path_info + "not_allowed.html", _url, message, "405 Not Allowed");
+            else
+                handleGet(message);
+        }
+        else if (_method == "GET")
             handleGet(message);
         else if ((_method == "POST") && (_allowed_methods.find("POST") != std::string::npos))
         {
@@ -263,18 +271,6 @@ void Utils::handleGet(std::string &message)
         getFile(_error_path, _data.path_info, _url, message, "404 Not Found");
         return;
     }
-    if ((_url.find("_method=DELETE") != std::string::npos) && (_allowed_methods.find("DELETE") != std::string::npos))
-    {
-        int index = _url.find("_filename=");
-        _filename = _url.substr(index + 10);
-        index = _url.find_first_of("?");
-        _url = _url.substr(0, index);
-        index = _full_path.find_first_of("?");
-        _full_path = _full_path.substr(0, index);
-        // TODO : - delete ^-^
-    }
-    else if ((_url.find("_method=DELETE") != std::string::npos) && (_allowed_methods.find("DELETE") == std::string::npos))
-        getFile(_error_path, _data.path_info, _url, message, "405 Not Allowed");
     else
     {
         if (isDirectory(_full_path))
@@ -287,10 +283,7 @@ void Utils::handleGet(std::string &message)
         else if (pathExists(_full_path))
         {
             // printVariables();
-            if (_full_path.substr(_full_path.size() - 4) == ".png" ||
-                _full_path.substr(_full_path.size() - 4) == ".jpg" ||
-                _full_path.substr(_full_path.size() - 5) == ".jpeg" ||
-                _full_path.substr(_full_path.size() - 4) == ".gif")
+            if (isImage())
                 getImage(_full_path, _data.path_info, _error_path, _url, message, "200 OK");
             else
                 getFile(_full_path, _data.path_info, _url, message, "200 OK");
@@ -298,29 +291,49 @@ void Utils::handleGet(std::string &message)
     }
 }
 
+std::string Utils::handleDelete(void)
+{
+    if ((_url.find("_method=DELETE") != std::string::npos) && (_allowed_methods.find("DELETE") != std::string::npos))
+    {
+        int index = _url.find("_filename=");
+        _filename = _url.substr(index + 10);
+        std::remove((_data.path_info + _filename).c_str());
+        if (pathExists(_full_path))
+            return deleteFailed();
+        else
+            return successDelete();
+    }
+    return "not allowed";
+}
+
 std::string Utils::handlePost(void)
 {
-    std::string valid_extensions[] = {".png", ".jpg", ".jpeg", ".gif"};
-    if (_image_data == "")
-        return fileMissing();
+    if (_url.find("_method=DELETE") != std::string::npos)
+        return handleDelete();
     else
     {
-        size_t index = _filename.find_last_of(".");
-        if (index == std::string::npos)
-            return uploadFailed();
+        std::string valid_extensions[] = {".png", ".jpg", ".jpeg", ".gif"};
+        if (_image_data == "")
+            return fileMissing();
         else
         {
-            std::string file_extension = _filename.substr(index);
-            if (valid_extensions->find(file_extension) == std::string::npos)
+            size_t index = _filename.find_last_of(".");
+            if (index == std::string::npos)
                 return uploadFailed();
-            std::string binary_data = base64_decode(_image_data);
-            std::string filename = _upload_dir + generateUuid() + file_extension;
-            std::ofstream outfile(filename.c_str(), std::ofstream::binary);
-            if (!outfile)
-                return uploadFailed();
+            else
+            {
+                std::string file_extension = _filename.substr(index);
+                if (valid_extensions->find(file_extension) == std::string::npos)
+                    return uploadFailed();
+                std::string binary_data = base64_decode(_image_data);
+                std::string filename = _upload_dir + generateUuid() + file_extension;
+                std::ofstream outfile(filename.c_str(), std::ofstream::binary);
+                if (!outfile)
+                    return uploadFailed();
 
-            outfile.write(binary_data.c_str(), binary_data.size());
-            outfile.close();
+                outfile.write(binary_data.c_str(), binary_data.size());
+                outfile.close();
+            }
         }
     }
     return successUpload();
@@ -559,6 +572,16 @@ std::string Utils::base64_decode(const std::string &encoded)
     }
 
     return std::string(decoded_data.begin(), decoded_data.end());
+}
+
+bool Utils::isImage(void)
+{
+    if (_full_path.substr(_full_path.size() - 4) == ".png" ||
+        _full_path.substr(_full_path.size() - 4) == ".jpg" ||
+        _full_path.substr(_full_path.size() - 5) == ".jpeg" ||
+        _full_path.substr(_full_path.size() - 4) == ".gif")
+        return true;
+    return false;
 }
 
 void Utils::printVariables(void)

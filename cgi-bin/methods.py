@@ -29,7 +29,7 @@ def upload_failed():
 def file_missing():
     message = """
         <div class="alert alert-warning mt-3" role="alert">
-            No file field found in the form.
+            File not found.
         </div>
 """
     return message
@@ -44,7 +44,7 @@ def success_delete():
     return message
 
 
-def delete_failed(file):
+def delete_failed():
     message = f"""
         <div class="alert alert-danger mt-3" role="alert">
             File delete failed.
