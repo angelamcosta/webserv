@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// TODO : - fix get images
-
 #include "../includes/Utils.hpp"
 #include "../includes/Requests.hpp"
 
@@ -317,10 +315,12 @@ std::string Utils::handlePost(void)
             if (valid_extensions->find(file_extension) == std::string::npos)
                 return uploadFailed();
             std::string binary_data = base64_decode(_image_data);
-            std::string filename = generateUuid() + file_extension;
+            std::string filename = _upload_dir + generateUuid() + file_extension;
             std::ofstream outfile(filename.c_str(), std::ofstream::binary);
+            if (!outfile)
+                return uploadFailed();
 
-            outfile << binary_data;
+            outfile.write(binary_data.c_str(), binary_data.size());
             outfile.close();
         }
     }
@@ -415,7 +415,7 @@ void Utils::getDirectories(const std::string &full_path, const std::string &path
     }
     else
     {
-        std::cerr << "Error: Unable to open directory " << full_path << std::endl;
+        getFile(_error_path, _data.path_info, _url, "", "404 Not Found");
         return;
     }
 
@@ -457,6 +457,22 @@ void Utils::getImage(const std::string full_path, const std::string path_info, c
         getFile(error_path, path_info, url, message, "404 Not Found");
         return;
     }
+
+    file.seekg(0, std::ios::end);
+    std::streamsize size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    if (size <= 0)
+    {
+        getFile(error_path, path_info, url, message, "404 Not Found");
+        return;
+    }
+
+    std::vector<char> buffer(size);
+    file.read(buffer.data(), size);
+    file.close();
+
+    std::cout.write(buffer.data(), size);
 
     struct stat file_stat;
     if (stat(full_path.c_str(), &file_stat) != 0)
