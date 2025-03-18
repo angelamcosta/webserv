@@ -6,7 +6,7 @@
 /*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:46:03 by anlima            #+#    #+#             */
-/*   Updated: 2025/03/18 15:04:37 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/03/18 16:54:39 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 
 void    signal_handler(int sig) {
     if (sig == SIGINT) {
-        throw std::runtime_error("Process terminated by signal SIGINT");
+        throw std::runtime_error("\nProcess terminated by signal SIGINT");
     }
 }
 
