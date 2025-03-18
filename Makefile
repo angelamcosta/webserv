@@ -15,6 +15,7 @@ SKYBLUE 	= \033[38;5;117m
 YELLOW 		= \033[38;5;226m
 HEART 		= ♡
 FLOWER 		= ❀
+OBJ			=	$(SRC:.cpp=.o)
 
 SRC			=	main.cpp \
 				$(SRCS_FOLDER)/Directive.cpp \
@@ -27,16 +28,11 @@ SRC			=	main.cpp \
 				$(SRCS_FOLDER)/Stack.cpp \
 				$(SRCS_FOLDER)/Utils.cpp
 
-
-OBJ			=	$(SRC:.cpp=.o)
-
-%.o : %.cpp
-			@$(CXX) -c $(CXXFLAGS) $< -o $@
-
 all:		$(NAME)
 
-$(NAME):	out_obj $(OBJ)
-			@echo "$(PEACH)$(HEART) Creating all resources $(HEART)$(CLEAR)"
+$(NAME):	$(OBJ)
+			@echo "$(LAVENDER)$(HEART) Created all objects $(HEART)$(CLEAR)"
+			@echo "$(PEACH)$(HEART) Created all resources $(HEART)$(CLEAR)"
 			@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
 			@cd cgi-bin && chmod 777 *.py
 			@cd public/images && chmod 644 *
@@ -50,8 +46,5 @@ fclean:		clean
 			@$(RM) $(PY_CACHE)
 			
 re:			fclean all
-
-out_obj:	
-			@echo "$(LAVENDER)$(HEART) Creating all objects $(HEART)$(CLEAR)"
-
+			
 PHONY:		all clean fclean re
