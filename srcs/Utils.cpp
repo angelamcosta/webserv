@@ -329,7 +329,13 @@ std::string Utils::handlePost(void)
 void Utils::getFile(const std::string &full_path, const std::string &path_info, const std::string &url,
                     const std::string &message = "", const std::string &status = "200 OK")
 {
-    std::ifstream file(full_path.c_str());
+    std::string new_file;
+
+    if (isDirectory(full_path.c_str()))
+        new_file = path_info;
+    else
+        new_file = full_path;
+    std::ifstream file(new_file.c_str());
     if (!file.is_open())
     {
         generateResponse("404 Not Found",
@@ -337,7 +343,6 @@ void Utils::getFile(const std::string &full_path, const std::string &path_info, 
                          full_path, loadTemplateFile());
         return;
     }
-
     std::stringstream buffer;
     buffer << file.rdbuf();
     std::string text = buffer.str();
@@ -352,7 +357,6 @@ void Utils::getFile(const std::string &full_path, const std::string &path_info, 
         std::string cards = generateCards(path_info + "images", url);
         text.replace(pos, 10, cards);
     }
-
     generateResponse(status, text, full_path, loadTemplateFile());
 }
 
