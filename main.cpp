@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:46:03 by anlima            #+#    #+#             */
-/*   Updated: 2024/08/26 15:49:12 by mpedroso         ###   ########.fr       */
+/*   Updated: 2025/03/18 15:04:37 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,12 @@
 #include "includes/Sockets.hpp"
 #include "includes/macros.hpp"
 
+void    signal_handler(int sig) {
+    if (sig == SIGINT) {
+        throw std::runtime_error("Process terminated by signal SIGINT");
+    }
+}
+
 int main(int argc, char **argv) {
     if (argc != 2) {
         Processes::handleError("Error! Usage => ./webserv <config filename>");
@@ -28,6 +34,7 @@ int main(int argc, char **argv) {
         std::vector<struct pollfd> fds;
         std::vector<Server> servers = Parser::parseConf(argv[1]);
 
+        signal(SIGINT, signal_handler);
         for (size_t i = 0; i < servers.size(); ++i) {
             servers[i].setSocket(Sockets::createServer(servers[i].getServerName(), servers[i].getPort()));
             for (size_t j = 0; j < servers[i].getSocket().size(); ++j) {
