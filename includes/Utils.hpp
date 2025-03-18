@@ -75,7 +75,7 @@ public:
     void getFile(const std::string &full_path, const std::string &path_info, const std::string &url, const std::string &message, const std::string &status);
     void generateResponse(const std::string &status, const std::string &content, const std::string &full_path, const std::string &template_str);
     std::string loadTemplateFile(void);
-    std::string generateHeaders(const std::string &status, size_t content_length, const std::string &filename);
+    std::string generateHeaders(const std::string &status, size_t content_length, const std::string &filename, std::string content_type);
     void getDirectories(const std::string &full_path, const std::string &path_info);
     void getImage(const std::string full_path, const std::string path_info, const std::string error_path, const std::string url, const std::string message, const std::string status);
     std::string generateHTMLList(const std::vector<std::string> &files);

@@ -265,7 +265,6 @@ void Utils::handleGet(std::string &message)
     }
     if ((_url.find("_method=DELETE") != std::string::npos) && (_allowed_methods.find("DELETE") != std::string::npos))
     {
-        std::cout << "DEBUG: cai aqui" << std::endl;
         int index = _url.find("_filename=");
         _filename = _url.substr(index + 10);
         index = _url.find_first_of("?");
@@ -370,13 +369,13 @@ std::string Utils::loadTemplateFile(void)
     return (buffer.str());
 }
 
-std::string Utils::generateHeaders(const std::string &status, size_t content_length, const std::string &filename)
+std::string Utils::generateHeaders(const std::string &status, size_t content_length, const std::string &filename, std::string content_type = "text/html")
 {
     std::ostringstream headers;
     headers << "HTTP/1.1 " << status << "\r\n"
             << "Content-Length: " << content_length << "\r\n"
             << "Content-Disposition: inline; filename=\"" << filename << "\"\r\n"
-            << "Content-Type: text/html\r\n"
+            << "Content-Type: " << content_type << "\r\n"
             << "\r\n";
     return (headers.str());
 }
@@ -458,6 +457,29 @@ void Utils::getImage(const std::string full_path, const std::string path_info, c
         return;
     }
 
+    std::string mime_type;
+    size_t dot_pos = full_path.find_last_of(".");
+    if (dot_pos != std::string::npos)
+    {
+        std::string extension = full_path.substr(dot_pos);
+        if (extension == ".png")
+            mime_type = "image/png";
+        else if (extension == ".jpg" || extension == ".jpeg")
+            mime_type = "image/jpeg";
+        else if (extension == ".gif")
+            mime_type = "image/gif";
+        else
+        {
+            getFile(error_path, path_info, url, message, "415 Unsupported Media Type");
+            return;
+        }
+    }
+    else
+    {
+        getFile(error_path, path_info, url, message, "415 Unsupported Media Type");
+        return;
+    }
+
     file.seekg(0, std::ios::end);
     std::streamsize size = file.tellg();
     file.seekg(0, std::ios::beg);
@@ -469,81 +491,69 @@ void Utils::getImage(const std::string full_path, const std::string path_info, c
     }
 
     std::vector<char> buffer(size);
-    file.read(buffer.data(), size);
-    file.close();
+    if (!file.read(buffer.data(), size))
+    {
+        getFile(error_path, path_info, url, message, "500 Internal Server Error");
+        return;
+    }
 
+    std::string headers = generateHeaders(status, size, _full_path.substr(_full_path.find_last_of("/") + 1), mime_type);
+    std::cout << headers;
     std::cout.write(buffer.data(), size);
-
-    struct stat file_stat;
-    if (stat(full_path.c_str(), &file_stat) != 0)
-    {
-        getFile(error_path, path_info, url, message, "404 Not Found");
-        return;
-    }
-    size_t contentLength = file_stat.st_size;
-
-    char *content = new char[contentLength];
-    file.read(content, contentLength);
-    if (!file || file.gcount() != static_cast<std::streamsize>(contentLength))
-    {
-        delete[] content;
-        getFile(error_path, path_info, url, message, "404 Not Found");
-        return;
-    }
-
-    file.close();
-
-    std::string filename;
-    size_t pos = full_path.find_last_of("/\\");
-    if (pos != std::string::npos)
-        filename = full_path.substr(pos + 1);
-    else
-        filename = full_path;
-
-    std::string headers = generateHeaders(status, contentLength, filename);
-
-    std::cout << headers << "\r\n";
-    std::cout.write(content, contentLength);
-
-    delete[] content;
 }
 
 std::string Utils::base64_decode(const std::string &encoded)
 {
-    std::string set = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                      "abcdefghijklmnopqrstuvwxyz"
-                      "0123456789+/";
+    const std::string base64_chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz"
+        "0123456789+/";
+
+    if (encoded.length() % 4 != 0)
+        throw std::runtime_error("Invalid Base64 encoded string length");
+
     std::vector<unsigned char> decoded_data;
-    std::vector<int> index(256, -1);
-    for (size_t i = 0; i < set.size(); ++i)
-        index[static_cast<unsigned char>(set[i])] = i;
-    size_t encoded_size = encoded.size();
-    unsigned char block[4], group[3];
     int i = 0;
-    for (size_t j = 0; j < encoded_size; ++j)
+    unsigned char char_array_4[4], char_array_3[3];
+
+    for (size_t idx = 0; idx < encoded.length(); idx++)
     {
-        if (encoded[j] == '=')
+        char current_char = encoded[idx];
+        if (current_char == '=')
             break;
-        if (index[static_cast<unsigned char>(encoded[j])] == -1)
+
+        size_t char_pos = base64_chars.find(current_char);
+        if (char_pos == std::string::npos)
             continue;
-        block[i++] = static_cast<unsigned char>(encoded[j]);
+
+        char_array_4[i++] = static_cast<unsigned char>(char_pos);
         if (i == 4)
         {
-            int b0 = index[block[0]];
-            int b1 = index[block[1]];
-            int b2 = index[block[2]];
-            int b3 = index[block[3]];
-            group[0] = (b0 << 2) | ((b1 & 0x30) >> 4);
-            group[1] = ((b1 & 0x0F) << 4) | ((b2 & 0x3C) >> 2);
-            group[2] = ((b2 & 0x03) << 6) | b3;
-            decoded_data.push_back(group[0]);
-            if (block[2] != '=')
-                decoded_data.push_back(group[1]);
-            if (block[3] != '=')
-                decoded_data.push_back(group[2]);
+            char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
+            char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
+            char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
+
+            for (int k = 0; k < 3; k++)
+            {
+                decoded_data.push_back(char_array_3[k]);
+            }
             i = 0;
         }
     }
+
+    if (i > 0)
+    {
+        for (int k = i; k < 4; k++)
+            char_array_4[k] = 0;
+
+        char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
+        char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
+        char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
+
+        for (int k = 0; k < i - 1; k++)
+            decoded_data.push_back(char_array_3[k]);
+    }
+
     return std::string(decoded_data.begin(), decoded_data.end());
 }
 
