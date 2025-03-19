@@ -297,7 +297,7 @@ std::string Utils::handleDelete(void)
     {
         int index = _url.find("_filename=");
         _filename = _url.substr(index + 10);
-        std::remove((_data.path_info + _filename).c_str());
+        std::remove((_data.path_info + "/images/" + _filename).c_str());
         if (pathExists(_full_path))
             return deleteFailed();
         else
