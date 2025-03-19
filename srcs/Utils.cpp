@@ -11,12 +11,12 @@
 /* ************************************************************************** */
 
 #include "../includes/Utils.hpp"
+
 #include "../includes/Requests.hpp"
 
 Utils::~Utils() {}
 
-Utils::Utils(const s_request &data) : _data(data), _url(data.url), _index(data.index), _method(data.method), _filename(data.filename), _template(""), _full_path(""), _path_info(data.path_info), _image_data(data.image_data), _error_page(data.error_page), _error_path(""), _upload_dir(""), _dir_listing(data.dir_listing), _allowed_methods(data.allowed_methods)
-{
+Utils::Utils(const s_request &data) : _data(data), _url(data.url), _index(data.index), _method(data.method), _filename(data.filename), _template(""), _full_path(""), _path_info(data.path_info), _image_data(data.image_data), _error_page(data.error_page), _error_path(""), _upload_dir(""), _dir_listing(data.dir_listing), _allowed_methods(data.allowed_methods) {
     setUrl();
     setTemplate();
     setFullPath();
@@ -24,10 +24,8 @@ Utils::Utils(const s_request &data) : _data(data), _url(data.url), _index(data.i
     setErrorPath();
 }
 
-Utils::Utils(const Utils &copy)
-{
-    if (this != &copy)
-    {
+Utils::Utils(const Utils &copy) {
+    if (this != &copy) {
         _data = copy._data;
         _url = copy._url;
         _index = copy._index;
@@ -45,10 +43,8 @@ Utils::Utils(const Utils &copy)
     }
 }
 
-Utils &Utils::operator=(const Utils &copy)
-{
-    if (this != &copy)
-    {
+Utils &Utils::operator=(const Utils &copy) {
+    if (this != &copy) {
         _data = copy._data;
         _url = copy._url;
         _index = copy._index;
@@ -70,8 +66,7 @@ Utils &Utils::operator=(const Utils &copy)
 const s_request &Utils::getData(void) { return (_data); }
 
 const std::string &Utils::getUrl(void) { return (_url); }
-void Utils::setUrl(void)
-{
+void Utils::setUrl(void) {
     if (_data.url == "" || _data.url == "/")
         _url = "/index.html";
     else
@@ -79,14 +74,12 @@ void Utils::setUrl(void)
 }
 
 std::string &Utils::getTemplate(void) { return (_template); }
-void Utils::setTemplate(void)
-{
+void Utils::setTemplate(void) {
     _template = _path_info + "template.html";
 }
 
 std::string &Utils::getFullPath(void) { return (_full_path); }
-void Utils::setFullPath(void)
-{
+void Utils::setFullPath(void) {
     if (!_url.empty() && _url[0] == '/' && !_data.path_info.empty() && _data.path_info[_data.path_info.length() - 1] == '/')
         _full_path = _data.path_info + _url.substr(1);
     else if ((!_url.empty() && _url[0] == '/') || (!_data.path_info.empty() && _data.path_info[_data.path_info.length() - 1] == '/'))
@@ -96,73 +89,67 @@ void Utils::setFullPath(void)
 }
 
 std::string &Utils::getUploadDir(void) { return (_upload_dir); }
-void Utils::setUploadDir(void)
-{
+void Utils::setUploadDir(void) {
     if (!_data.path_info.empty())
         _upload_dir = _data.path_info[_data.path_info.length() - 1] == '/' ? _data.path_info + "images/" : _data.path_info + "/images/";
 }
 
 std::string &Utils::getErrorPath(void) { return (_error_path); }
-void Utils::setErrorPath(void)
-{
+void Utils::setErrorPath(void) {
     _error_path = _path_info + _error_page.substr(1);
 }
 
-const std::string Utils::successUpload(void) const
-{
-    return ("<div class=\"alert alert-success mt-3\" role=\"alert\">\n"
-            "    File uploaded successfully!\n"
-            "</div>\n");
+const std::string Utils::successUpload(void) const {
+    return (
+        "<div class=\"alert alert-success mt-3\" role=\"alert\">\n"
+        "    File uploaded successfully!\n"
+        "</div>\n");
 }
 
-const std::string Utils::uploadFailed(void) const
-{
-    return ("<div class=\"alert alert-danger mt-3\" role=\"alert\">\n"
-            "    File upload failed.\n"
-            "</div>\n");
+const std::string Utils::uploadFailed(void) const {
+    return (
+        "<div class=\"alert alert-danger mt-3\" role=\"alert\">\n"
+        "    File upload failed.\n"
+        "</div>\n");
 }
 
-const std::string Utils::fileMissing(void) const
-{
-    return ("<div class=\"alert alert-warning mt-3\" role=\"alert\">\n"
-            "    File not found.\n"
-            "</div>\n");
+const std::string Utils::fileMissing(void) const {
+    return (
+        "<div class=\"alert alert-warning mt-3\" role=\"alert\">\n"
+        "    File not found.\n"
+        "</div>\n");
 }
 
-const std::string Utils::successDelete(void) const
-{
-    return ("<div class=\"alert alert-success mt-3\" role=\"alert\">\n"
-            "    File deleted successfully!\n"
-            "</div>\n");
+const std::string Utils::successDelete(void) const {
+    return (
+        "<div class=\"alert alert-success mt-3\" role=\"alert\">\n"
+        "    File deleted successfully!\n"
+        "</div>\n");
 }
 
-const std::string Utils::deleteFailed(void) const
-{
-    return ("<div class=\"alert alert-danger mt-3\" role=\"alert\">\n"
-            "    File delete failed.\n"
-            "</div>\n");
+const std::string Utils::deleteFailed(void) const {
+    return (
+        "<div class=\"alert alert-danger mt-3\" role=\"alert\">\n"
+        "    File delete failed.\n"
+        "</div>\n");
 }
 
-const std::string Utils::emptyFolder(void) const
-{
-    return ("<div class=\"alert alert-secondary mt-3\" role=\"alert\">\n"
-            "    The pond is empty right now.\n"
-            "</div>\n");
+const std::string Utils::emptyFolder(void) const {
+    return (
+        "<div class=\"alert alert-secondary mt-3\" role=\"alert\">\n"
+        "    The pond is empty right now.\n"
+        "</div>\n");
 }
 
-const std::string Utils::generateCards(std::string path_info, std::string url) const
-{
+const std::string Utils::generateCards(std::string path_info, std::string url) const {
     std::ostringstream cards;
     std::vector<std::string> images;
 
-    if (isDirectory(_path_info))
-    {
+    if (isDirectory(_path_info)) {
         DIR *dir = opendir(path_info.c_str());
-        if (dir)
-        {
+        if (dir) {
             struct dirent *entry;
-            while ((entry = readdir(dir)) != NULL)
-            {
+            while ((entry = readdir(dir)) != NULL) {
                 std::string filename(entry->d_name);
                 if (filename != "." && filename != "..")
                     images.push_back(filename);
@@ -170,14 +157,12 @@ const std::string Utils::generateCards(std::string path_info, std::string url) c
             closedir(dir);
         }
     }
-    if (images.empty())
-    {
+    if (images.empty()) {
         return "<div class=\"alert alert-secondary\" role=\"alert\">\n"
                "    The pond is empty right now.\n"
                "</div>\n";
     }
-    for (std::vector<std::string>::const_iterator it = images.begin(); it != images.end(); ++it)
-    {
+    for (std::vector<std::string>::const_iterator it = images.begin(); it != images.end(); ++it) {
         std::string path = "../images/" + *it;
         cards << "            <div class=\"col\">\n"
               << "                <div class=\"card shadow-sm\">\n"
@@ -201,49 +186,42 @@ const std::string Utils::generateCards(std::string path_info, std::string url) c
     return (cards.str());
 }
 
-bool Utils::pathExists(const std::string &path) const
-{
+bool Utils::pathExists(const std::string &path) const {
     struct stat s;
     return (stat(path.c_str(), &s) == 0 && s.st_mode & S_IFREG);
 }
 
-bool Utils::isDirectory(const std::string &path) const
-{
+bool Utils::isDirectory(const std::string &path) const {
     struct stat s;
     return (stat(path.c_str(), &s) == 0 && s.st_mode & S_IFDIR);
 }
 
-void Utils::handleMethod(std::string message)
-{
-    if (message == "invalid_size")
-    {
+void Utils::handleMethod(std::string message) {
+    if (message == "invalid_size") {
         message = uploadFailed();
         getFile(_full_path, _data.path_info, _url, message, "403 Forbidden");
-    }
-    else if (_allowed_methods.find(_method) != std::string::npos)
-    {
-        if (_url.find("_method=DELETE") != std::string::npos)
-        {
+    } else if (_allowed_methods.find(_method) != std::string::npos) {
+        if (_url.find("_method=DELETE") != std::string::npos) {
             message = handlePost();
-            if (message == "not allowed")
-                getFile(_full_path, _data.path_info + "not_allowed.html", _url, message, "405 Not Allowed");
-            else
+            if (message == "not allowed") {
+                _full_path = _full_path.substr(0, _full_path.find_first_of("?"));
+                _url = _url.substr(0, _url.find_first_of("?"));
+                getFile(_data.path_info + "not_allowed.html", _data.path_info, _url, "", "405 Not Allowed");
+            } else {
+                _full_path = _full_path.substr(0, _full_path.find_first_of("?"));
                 handleGet(message);
-        }
-        else if (_method == "GET")
+            }
+        } else if (_method == "GET")
             handleGet(message);
-        else if ((_method == "POST") && (_allowed_methods.find("POST") != std::string::npos))
-        {
+        else if ((_method == "POST") && (_allowed_methods.find("POST") != std::string::npos)) {
             message = handlePost();
             handleGet(message);
         }
-    }
-    else
-        getFile(_error_path, _data.path_info, _url, message, "405 Not Allowed");
+    } else
+        getFile(_data.path_info + "not_allowed.html", _data.path_info, _url, "", "405 Not Allowed");
 }
 
-std::string Utils::generateUuid(void)
-{
+std::string Utils::generateUuid(void) {
     std::ostringstream uuid;
     std::srand(std::time(0));
 
@@ -264,24 +242,17 @@ std::string Utils::generateUuid(void)
     return uuid.str();
 }
 
-void Utils::handleGet(std::string &message)
-{
-    if (!isDirectory(_full_path) && !pathExists(_full_path))
-    {
+void Utils::handleGet(std::string &message) {
+    if (!isDirectory(_full_path) && !pathExists(_full_path)) {
         getFile(_error_path, _data.path_info, _url, message, "404 Not Found");
         return;
-    }
-    else
-    {
-        if (isDirectory(_full_path))
-        {
+    } else {
+        if (isDirectory(_full_path)) {
             if (_data.dir_listing == "on")
                 getDirectories(_full_path, _data.path_info);
             else
                 getFile(_full_path, _data.path_info + "forbidden.html", _url, message, "403 Forbidden");
-        }
-        else if (pathExists(_full_path))
-        {
+        } else if (pathExists(_full_path)) {
             // printVariables();
             if (isImage())
                 getImage(_full_path, _data.path_info, _error_path, _url, message, "200 OK");
@@ -291,10 +262,8 @@ void Utils::handleGet(std::string &message)
     }
 }
 
-std::string Utils::handleDelete(void)
-{
-    if ((_url.find("_method=DELETE") != std::string::npos) && (_allowed_methods.find("DELETE") != std::string::npos))
-    {
+std::string Utils::handleDelete(void) {
+    if ((_url.find("_method=DELETE") != std::string::npos) && (_allowed_methods.find("DELETE") != std::string::npos)) {
         int index = _url.find("_filename=");
         _filename = _url.substr(index + 10);
         std::remove((_data.path_info + "/images/" + _filename).c_str());
@@ -306,22 +275,18 @@ std::string Utils::handleDelete(void)
     return "not allowed";
 }
 
-std::string Utils::handlePost(void)
-{
+std::string Utils::handlePost(void) {
     if (_url.find("_method=DELETE") != std::string::npos)
         return handleDelete();
-    else
-    {
+    else {
         std::string valid_extensions[] = {".png", ".jpg", ".jpeg", ".gif"};
         if (_image_data == "")
             return fileMissing();
-        else
-        {
+        else {
             size_t index = _filename.find_last_of(".");
             if (index == std::string::npos)
                 return uploadFailed();
-            else
-            {
+            else {
                 std::string file_extension = _filename.substr(index);
                 if (valid_extensions->find(file_extension) == std::string::npos)
                     return uploadFailed();
@@ -340,8 +305,7 @@ std::string Utils::handlePost(void)
 }
 
 void Utils::getFile(const std::string &full_path, const std::string &path_info, const std::string &url,
-                    const std::string &message = "", const std::string &status = "200 OK")
-{
+                    const std::string &message = "", const std::string &status = "200 OK") {
     std::string new_file;
 
     if (isDirectory(full_path.c_str()))
@@ -349,8 +313,7 @@ void Utils::getFile(const std::string &full_path, const std::string &path_info, 
     else
         new_file = full_path;
     std::ifstream file(new_file.c_str());
-    if (!file.is_open())
-    {
+    if (!file.is_open()) {
         generateResponse("404 Not Found",
                          "<h1>ERROR: Could not find the specified file</h1>",
                          full_path, loadTemplateFile());
@@ -365,16 +328,14 @@ void Utils::getFile(const std::string &full_path, const std::string &path_info, 
     while ((pos = text.find("{{alert}}")) != std::string::npos)
         text.replace(pos, 9, message);
 
-    if ((pos = text.find("{{images}}")) != std::string::npos)
-    {
+    if ((pos = text.find("{{images}}")) != std::string::npos) {
         std::string cards = generateCards(path_info + "images", url);
         text.replace(pos, 10, cards);
     }
     generateResponse(status, text, full_path, loadTemplateFile());
 }
 
-std::string Utils::loadTemplateFile(void)
-{
+std::string Utils::loadTemplateFile(void) {
     std::string template_path = getTemplate();
     std::ifstream file(template_path.c_str());
 
@@ -386,8 +347,7 @@ std::string Utils::loadTemplateFile(void)
     return (buffer.str());
 }
 
-std::string Utils::generateHeaders(const std::string &status, size_t content_length, const std::string &filename, std::string content_type = "text/html")
-{
+std::string Utils::generateHeaders(const std::string &status, size_t content_length, const std::string &filename, std::string content_type = "text/html") {
     std::ostringstream headers;
     headers << "HTTP/1.1 " << status << "\r\n"
             << "Content-Length: " << content_length << "\r\n"
@@ -397,8 +357,7 @@ std::string Utils::generateHeaders(const std::string &status, size_t content_len
     return (headers.str());
 }
 
-void Utils::generateResponse(const std::string &status, const std::string &content, const std::string &full_path, const std::string &template_str)
-{
+void Utils::generateResponse(const std::string &status, const std::string &content, const std::string &full_path, const std::string &template_str) {
     std::string updated_template = template_str;
     std::string placeholder = "{{placeholder}}";
     size_t pos = updated_template.find(placeholder);
@@ -411,26 +370,20 @@ void Utils::generateResponse(const std::string &status, const std::string &conte
     std::cout << headers << updated_template << std::endl;
 }
 
-void Utils::getDirectories(const std::string &full_path, const std::string &path_info)
-{
+void Utils::getDirectories(const std::string &full_path, const std::string &path_info) {
     std::vector<std::string> files;
-    if (isDirectory(full_path))
-    {
+    if (isDirectory(full_path)) {
         DIR *dir = opendir(full_path.c_str());
-        if (dir != NULL)
-        {
+        if (dir != NULL) {
             struct dirent *entry;
-            while ((entry = readdir(dir)) != NULL)
-            {
+            while ((entry = readdir(dir)) != NULL) {
                 std::string name = entry->d_name;
                 if (name != "." && name != "..")
                     files.push_back(name);
             }
             closedir(dir);
         }
-    }
-    else
-    {
+    } else {
         getFile(_error_path, _data.path_info, _url, "", "404 Not Found");
         return;
     }
@@ -443,8 +396,9 @@ void Utils::getDirectories(const std::string &full_path, const std::string &path
         "<div class=\"col-md-12\">"
         "<div class=\"error-template\">"
         "<h1>" +
-        full_path + "</h1>"
-                    "<div class=\"error-details\">" +
+        full_path +
+        "</h1>"
+        "<div class=\"error-details\">" +
         file_list_HTML +
         "</div>"
         "</div>"
@@ -455,8 +409,7 @@ void Utils::getDirectories(const std::string &full_path, const std::string &path
     generateResponse("200 OK", html_code, path_info + "index.html", template_file);
 }
 
-std::string Utils::generateHTMLList(const std::vector<std::string> &files)
-{
+std::string Utils::generateHTMLList(const std::vector<std::string> &files) {
     std::ostringstream html_stream;
     html_stream << "<ul>";
     for (size_t i = 0; i < files.size(); ++i)
@@ -465,19 +418,16 @@ std::string Utils::generateHTMLList(const std::vector<std::string> &files)
     return (html_stream.str());
 }
 
-void Utils::getImage(const std::string full_path, const std::string path_info, const std::string error_path, const std::string url, const std::string message, const std::string status)
-{
+void Utils::getImage(const std::string full_path, const std::string path_info, const std::string error_path, const std::string url, const std::string message, const std::string status) {
     std::ifstream file(full_path.c_str(), std::ios::in | std::ios::binary);
-    if (!file.is_open())
-    {
+    if (!file.is_open()) {
         getFile(error_path, path_info, url, message, "404 Not Found");
         return;
     }
 
     std::string mime_type;
     size_t dot_pos = full_path.find_last_of(".");
-    if (dot_pos != std::string::npos)
-    {
+    if (dot_pos != std::string::npos) {
         std::string extension = full_path.substr(dot_pos);
         if (extension == ".png")
             mime_type = "image/png";
@@ -485,14 +435,11 @@ void Utils::getImage(const std::string full_path, const std::string path_info, c
             mime_type = "image/jpeg";
         else if (extension == ".gif")
             mime_type = "image/gif";
-        else
-        {
+        else {
             getFile(error_path, path_info, url, message, "415 Unsupported Media Type");
             return;
         }
-    }
-    else
-    {
+    } else {
         getFile(error_path, path_info, url, message, "415 Unsupported Media Type");
         return;
     }
@@ -501,15 +448,13 @@ void Utils::getImage(const std::string full_path, const std::string path_info, c
     std::streamsize size = file.tellg();
     file.seekg(0, std::ios::beg);
 
-    if (size <= 0)
-    {
+    if (size <= 0) {
         getFile(error_path, path_info, url, message, "404 Not Found");
         return;
     }
 
     std::vector<char> buffer(size);
-    if (!file.read(buffer.data(), size))
-    {
+    if (!file.read(buffer.data(), size)) {
         getFile(error_path, path_info, url, message, "500 Internal Server Error");
         return;
     }
@@ -519,8 +464,7 @@ void Utils::getImage(const std::string full_path, const std::string path_info, c
     std::cout.write(buffer.data(), size);
 }
 
-std::string Utils::base64_decode(const std::string &encoded)
-{
+std::string Utils::base64_decode(const std::string &encoded) {
     const std::string base64_chars =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz"
@@ -533,8 +477,7 @@ std::string Utils::base64_decode(const std::string &encoded)
     int i = 0;
     unsigned char char_array_4[4], char_array_3[3];
 
-    for (size_t idx = 0; idx < encoded.length(); idx++)
-    {
+    for (size_t idx = 0; idx < encoded.length(); idx++) {
         char current_char = encoded[idx];
         if (current_char == '=')
             break;
@@ -544,22 +487,19 @@ std::string Utils::base64_decode(const std::string &encoded)
             continue;
 
         char_array_4[i++] = static_cast<unsigned char>(char_pos);
-        if (i == 4)
-        {
+        if (i == 4) {
             char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
             char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
             char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
 
-            for (int k = 0; k < 3; k++)
-            {
+            for (int k = 0; k < 3; k++) {
                 decoded_data.push_back(char_array_3[k]);
             }
             i = 0;
         }
     }
 
-    if (i > 0)
-    {
+    if (i > 0) {
         for (int k = i; k < 4; k++)
             char_array_4[k] = 0;
 
@@ -574,8 +514,7 @@ std::string Utils::base64_decode(const std::string &encoded)
     return std::string(decoded_data.begin(), decoded_data.end());
 }
 
-bool Utils::isImage(void)
-{
+bool Utils::isImage(void) {
     if (_full_path.substr(_full_path.size() - 4) == ".png" ||
         _full_path.substr(_full_path.size() - 4) == ".jpg" ||
         _full_path.substr(_full_path.size() - 5) == ".jpeg" ||
@@ -584,8 +523,7 @@ bool Utils::isImage(void)
     return false;
 }
 
-void Utils::printVariables(void)
-{
+void Utils::printVariables(void) {
     std::cout << "_url: " << _url << "\n";
     std::cout << "_index: " << _index << "\n";
     std::cout << "_method: " << _method << "\n";
