@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Processes.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2025/03/03 13:46:44 by anlima           ###   ########.fr       */
+/*   Updated: 2025/03/19 17:01:44 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ std::string Processes::createProcess(const t_request &data)
             else if (!data.cgi.empty() && (!executeCgi(Parser::trim(data.cgi))))
                 throw std::runtime_error("Error in executing CGI script; path => " + data.cgi);
         }
-        exit(0);
+        throw std::runtime_error("");
     }
     else
     {
