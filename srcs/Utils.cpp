@@ -279,7 +279,8 @@ std::string Utils::handlePost(void) {
     if (_url.find("_method=DELETE") != std::string::npos)
         return handleDelete();
     else {
-        std::string valid_extensions[] = {".png", ".jpg", ".jpeg", ".gif"};
+        std::string ext[] = {".png", ".jpg", ".jpeg", ".gif"};
+        std::vector<std::string> valid_extensions(ext, ext + 4);
         if (_image_data == "")
             return fileMissing();
         else {
@@ -288,7 +289,8 @@ std::string Utils::handlePost(void) {
                 return uploadFailed();
             else {
                 std::string file_extension = _filename.substr(index);
-                if (valid_extensions->find(file_extension) == std::string::npos)
+                std::vector<std::string>::iterator it = std::find(valid_extensions.begin(), valid_extensions.end(), file_extension);
+                if (it == valid_extensions.end())    
                     return uploadFailed();
                 std::string binary_data = base64_decode(_image_data);
                 std::string filename = _upload_dir + generateUuid() + file_extension;
@@ -431,7 +433,9 @@ void Utils::getImage(const std::string full_path, const std::string path_info, c
         std::string extension = full_path.substr(dot_pos);
         if (extension == ".png")
             mime_type = "image/png";
-        else if (extension == ".jpg" || extension == ".jpeg")
+        else if (extension == ".jpg")
+            mime_type = "image/jpg";
+        else if (extension == ".jpeg")
             mime_type = "image/jpeg";
         else if (extension == ".gif")
             mime_type = "image/gif";
