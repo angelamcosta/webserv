@@ -70,7 +70,8 @@ def handle_get(full_path, dir_listing, error_path, path_info, url, message=""):
             else:
                 get_file(full_path, path_info, url, message)
     else:
-        get_file(error_path, path_info, url, message, "404 Not Found")
+        get_file(error_path, path_info,
+                 url, message="", status="404 Not Found")
 
 
 def get_directories(full_path, path_info):
@@ -99,14 +100,14 @@ def get_file(full_path, path_info, url, message="", status="200 OK"):
     try:
         with open(full_path, "r", encoding="iso-8859-1") as f:
             text = f.read()
-        text = text.replace("{{alert}}", message)
+        if "{{alert}}" in text:
+            text = text.replace("{{alert}}", message)
         if "{{images}}" in text:
             text = text.replace("{{images}}", generate_cards(
                 path_info + "images", url))
         generate_response(status, text, full_path, template)
     except OSError:
-        generate_response(
-            "404 Not Found", "<h1>ERROR: Could not find the specified file" + path_info +"</h1>", full_path, template)
+        generate_response("404 Not Found", "", full_path, template)
 
 
 def handle_post(upload_dir, image_data):
@@ -130,14 +131,16 @@ def get_image(full_path, path_info, error_path, url, message="", status="200 OK"
         filename = os.path.basename(full_path)
         content_length = os.path.getsize(full_path)
         if len(content) != content_length:
-            get_file(error_path, path_info, url, message, "404 Not Found")
+            get_file(path_info + "error.html", path_info,
+                 url, message="", status="404 Not Found")
             return
         headers = generate_headers(status, content_length, filename)
         sys.stdout.buffer.write(headers.encode())
         sys.stdout.buffer.write(b"\r\n")
         sys.stdout.buffer.write(content)
     except OSError:
-        get_file(error_path, path_info, url, message, "404 Not Found")
+        get_file(error_path, path_info,
+                 url, message="", status="404 Not Found")
 
 
 def handle_delete(url, upload_dir, filename):

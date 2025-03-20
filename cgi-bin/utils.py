@@ -7,7 +7,10 @@ import mimetypes
 
 def generate_response(status, content, full_path, template=""):
     template = template.replace("{{placeholder}}", content)
-    filename = os.path.basename(full_path)
+    if os.path.basename(full_path):
+        filename = os.path.basename(full_path)
+    else:
+        filename = ""
     content_length = len(template)
     headers = generate_headers(status, content_length, filename)
     print(headers + '\r\n' + template)
@@ -20,9 +23,9 @@ def generate_headers(status, content_length, filename):
     headers += f"Content-Length: {content_length}\r\n"
     content_type, _ = mimetypes.guess_type(filename)
     if content_type is None:
-        content_type = 'application/octet-stream'
+        content_type = 'text/html'
     headers += f"Content-Type: {content_type}\r\n"
-    headers += "Connection: close\r\n"
+    headers += "Connection: keep-alive\r\n"
     return headers
 
 

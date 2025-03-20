@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 
+import os
 import sys
 from methods import handle_get, handle_post, handle_delete, get_file
-from utils import get_upload_dir, get_full_path
+from utils import get_upload_dir, get_full_path, load_template_file
 
 
 def main():
@@ -20,7 +21,7 @@ def main():
     upload_dir = get_upload_dir(path_info)
     url = "/" + index if url == "/" else url
     full_path = get_full_path(url, path_info)
-    error_path = path_info + error_page if path_info[-1] != "/" else path_info[:-1] + error_page
+    error_path = path_info + error_page if error_page[-1] != "/" else path_info + error_page[:-1]
     if method == "invalid_size":
         handle_get(full_path, dir_listing,
                     error_path, path_info, url, method)
