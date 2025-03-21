@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/12 16:19:45 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/03/21 13:04:15 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class Server {
     std::vector<Directive> _directives;
     std::string _port;
     std::vector<int> _socket;
-    int _body_size;
+    long _body_size;
     std::string _dir_listing;
     std::vector<struct pollfd> _fds;
     std::map<std::string, std::string> _url_methods;
@@ -51,7 +51,7 @@ class Server {
     std::vector<int> getSocket(void);
     void setSocket(const std::vector<int> &socket);
 
-    int getBodySize(void);
+    long getBodySize(void);
     void setBodySize(const std::string &body_size);
 
     const std::string &getDirListing(void) const;

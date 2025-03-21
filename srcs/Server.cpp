@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/21 13:38:01 by anlima           ###   ########.fr       */
+/*   Updated: 2025/03/21 13:25:38 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,10 +101,10 @@ void Server::setPort(const std::string &port)
 std::vector<int> Server::getSocket(void) { return (_socket); }
 void Server::setSocket(const std::vector<int> &socket) { _socket = socket; }
 
-int Server::getBodySize(void) { return (_body_size); }
+long Server::getBodySize(void) { return (_body_size); }
 void Server::setBodySize(const std::string &body_size)
 {
-    int value = 0;
+    long value = 0;
     std::istringstream iss(body_size);
 
     checkBodySize(body_size);

@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:42:03 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/21 14:35:39 by anlima           ###   ########.fr       */
+/*   Updated: 2025/03/21 13:31:39 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void Requests::handleRequest(int sockfd, Server &server,
         }
     }
     t_request data = processRequest(request, server);
-    if (server.getBodySize() < (int)request.length())
+    if (server.getBodySize() < (long int)request.length())
         data.method = "invalid_size";
     if (request.find("_filename") != std::string::npos)
         data.filename = getFilename(request);
@@ -125,7 +125,7 @@ void Requests::handleConn(std::vector<struct pollfd> fds, std::vector<Server> &s
                     else
                         close(client_fd);
                 }
-                if (fds[i].revents & POLLOUT)
+                else if (fds[i].revents & POLLOUT)
                 {
                     int client_fd = fds[i].fd;
                     if (responses.find(client_fd) != responses.end())
@@ -152,7 +152,7 @@ void Requests::sendResponse(int sockfd, const std::string &response)
     while (total_sent < length)
     {
         ssize_t sent = send(sockfd, data + total_sent, length - total_sent, 0);
-        if (sent < 0)
+        if (sent <= 0)
         {
             perror("send");
             break;
