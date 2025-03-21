@@ -199,7 +199,7 @@ bool Utils::isDirectory(const std::string &path) const {
 void Utils::handleMethod(std::string message) {
     if (message == "invalid_size") {
         message = uploadFailed();
-        getFile(_full_path, _data.path_info, _url, message, "403 Forbidden");
+        getFile(_data.path_info + "content_too_large.html", _data.path_info, _url, "", "413 Content Too Large");
     } else if (_allowed_methods.find(_method) != std::string::npos) {
         if (_url.find("_method=DELETE") != std::string::npos) {
             message = handlePost();
@@ -266,8 +266,11 @@ std::string Utils::handleDelete(void) {
     if ((_url.find("_method=DELETE") != std::string::npos) && (_allowed_methods.find("DELETE") != std::string::npos)) {
         int index = _url.find("_filename=");
         _filename = _url.substr(index + 10);
-        std::remove((_data.path_info + "/images/" + _filename).c_str());
-        if (pathExists(_full_path))
+        std::string path = _data.path_info + "/images/" + _filename;
+        if (!pathExists(path))
+            return fileMissing();
+        std::remove(path.c_str());
+        if (pathExists(path))
             return deleteFailed();
         else
             return successDelete();

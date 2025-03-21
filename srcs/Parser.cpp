@@ -6,7 +6,7 @@
 /*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:33:13 by anlima            #+#    #+#             */
-/*   Updated: 2025/03/18 14:37:11 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/03/21 14:47:44 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,7 @@ void Parser::checkServers(std::vector<Server> &servers) {
             if (i == j)
                 continue ;
             if (server_name1 == server_name2 && host1 == host2)
-                throw std::invalid_argument("Error: Two different servers share the same server name and port.");
+                throw std::invalid_argument("Error: Two different servers share the same port.");
         }
     }
 }
