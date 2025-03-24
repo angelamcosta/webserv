@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Requests.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
+/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:42:03 by anlima            #+#    #+#             */
-/*   Updated: 2025/03/21 13:31:39 by anlima           ###   ########.fr       */
+/*   Updated: 2025/03/24 16:11:14 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,14 +81,14 @@ int Requests::readAll(const std::string &request, int content_length)
     return (0);
 }
 
-void Requests::handleConn(std::vector<struct pollfd> fds, std::vector<Server> &servers)
+void Requests::handleConn(std::vector<struct pollfd> &fds, std::vector<Server> &servers)
 {
     std::map<int, std::string> responses;
     while (1)
     {
         int ret = poll(&fds[0], fds.size(), TIMEOUT);
         if (ret < 0)
-        {
+        {   
             perror("poll");
             exit(EXIT_FAILURE);
         }

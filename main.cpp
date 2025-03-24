@@ -6,7 +6,7 @@
 /*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:46:03 by anlima            #+#    #+#             */
-/*   Updated: 2025/03/18 16:54:39 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/03/24 16:07:05 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,3 +49,8 @@ int main(int argc, char **argv) {
     }
     return (0);
 }
+
+// curl -v http://localhost:8080
+// curl -X GET http://localhost:8080
+// curl -X POST -F "file=@/path/to/file" http://localhost:8080
+// curl -X DELETE "localhost:8080/crud/read.html?_method=DELETE&_filename=<filename>"

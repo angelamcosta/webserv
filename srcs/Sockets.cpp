@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Sockets.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:54:32 by anlima            #+#    #+#             */
-/*   Updated: 2024/08/30 15:53:49 by mpedroso         ###   ########.fr       */
+/*   Updated: 2025/03/24 15:50:35 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,16 @@
 std::vector<int> Sockets::createServer(const std::string &serverName,
                           const std::string &port) {
     struct addrinfo hints, *res;
-    std::string name = serverName.empty() ? "localhost" : serverName;
+    std::vector<std::string> name;
+    std::stringstream iss(serverName);
+    std::string value;
+
+    if (serverName.empty())
+        name.push_back("localhost");
+    else {
+        while (iss >> value)
+            name.push_back(value);
+    }
 
     std::memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET;
@@ -28,15 +37,17 @@ std::vector<int> Sockets::createServer(const std::string &serverName,
     std::string singlePort;
 
     while (portsStream >> singlePort) {
-        int status = getaddrinfo(name.c_str(), singlePort.c_str(), &hints, &res);
-        if (status != 0)
-            throw std::runtime_error("getaddrinfo error");
-        int sockfd = createSocket(res);
-        bindSocket(sockfd, res);
-        startServer(sockfd, res);
-        freeaddrinfo(res);
-        setNonBlocking(sockfd);
-        sockets.push_back(sockfd);
+        for (std::vector<std::string>::iterator it = name.begin() ; it != name.end(); ++it) {
+            int status = getaddrinfo((*it).c_str(), singlePort.c_str(), &hints, &res);
+            if (status != 0)
+                throw std::runtime_error("getaddrinfo error");
+            int sockfd = createSocket(res);
+            bindSocket(sockfd, res);
+            startServer(sockfd, res);
+            freeaddrinfo(res);
+            setNonBlocking(sockfd);
+            sockets.push_back(sockfd);
+        }
     }
     return (sockets);
 }
@@ -70,13 +81,7 @@ void Sockets::startServer(int sockfd, struct addrinfo *res) {
 }
 
 void Sockets::setNonBlocking(int sockfd) {
-    int flags = fcntl(sockfd, F_GETFL, 0);
-
-    if (flags == -1) {
-        perror("fcntl");
-        exit(EXIT_FAILURE);
-    }
-    if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
+    if (fcntl(sockfd, F_SETFL, O_NONBLOCK) == -1) {
         perror("fcntl");
         exit(EXIT_FAILURE);
     }

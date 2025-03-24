@@ -6,14 +6,14 @@
 /*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:33:13 by anlima            #+#    #+#             */
-/*   Updated: 2025/03/21 14:47:44 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/03/24 16:08:07 by gsilva           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Parser.hpp"
 
 int Parser::isValidConf(const std::string &name) {
-    std::string args[] = {"listen", "root", "index", "client_max_body_size", "autoindex", "allow_methods", "cgi_path", "error_page"};
+    std::string args[] = {"root", "index", "client_max_body_size", "autoindex", "allow_methods", "cgi_path", "error_page"};
     for (size_t i = 0; i < ARGS_SIZE; ++i) {
         if (name == args[i])
             return (1);

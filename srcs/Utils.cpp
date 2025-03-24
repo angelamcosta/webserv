@@ -207,6 +207,9 @@ void Utils::handleMethod(std::string message) {
                 _full_path = _full_path.substr(0, _full_path.find_first_of("?"));
                 _url = _url.substr(0, _url.find_first_of("?"));
                 getFile(_data.path_info + "not_allowed.html", _data.path_info, _url, "", "405 Not Allowed");
+            } else if (!message.find(fileMissing())) {
+                _full_path = _full_path.substr(0, _full_path.find_first_of("?"));
+                getFile(_full_path, _data.path_info, _url, message, "400 Bad Request");
             } else {
                 _full_path = _full_path.substr(0, _full_path.find_first_of("?"));
                 handleGet(message);
@@ -358,6 +361,7 @@ std::string Utils::generateHeaders(const std::string &status, size_t content_len
             << "Content-Length: " << content_length << "\r\n"
             << "Content-Disposition: inline; filename=\"" << filename << "\"\r\n"
             << "Content-Type: " << content_type << "\r\n"
+            << "Connection: keep-alive" << "\r\n"
             << "\r\n";
     return (headers.str());
 }
