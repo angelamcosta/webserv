@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Processes.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mpedroso <mpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:43:18 by anlima            #+#    #+#             */
-/*   Updated: 2025/03/19 17:01:44 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/03/27 12:04:44 by mpedroso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,8 @@ std::string Processes::createProcess(const t_request &data)
         response = readOutput(stdout_pipefd);
         int status;
         waitpid(pid, &status, 0);
+		close(stdout_pipefd[0]);
+        close(stdin_pipefd[1]);
     }
     return (response);
 }

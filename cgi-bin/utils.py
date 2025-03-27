@@ -64,7 +64,7 @@ def generate_cards(directory, url):
 """
         return res
     for filename in images:
-        path = os.path.join("../images/", filename)
+        path = os.path.join("/images/", filename)
         cards += f"""
             <div class="col">
                 <div class="card shadow-sm">

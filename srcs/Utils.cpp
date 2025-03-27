@@ -163,7 +163,7 @@ const std::string Utils::generateCards(std::string path_info, std::string url) c
                "</div>\n";
     }
     for (std::vector<std::string>::const_iterator it = images.begin(); it != images.end(); ++it) {
-        std::string path = "../images/" + *it;
+        std::string path = "/images/" + *it;
         cards << "            <div class=\"col\">\n"
               << "                <div class=\"card shadow-sm\">\n"
               << "                    <img src=\"" << path << "\" class=\"card-img-top\" width=\"100%\" height=\"225\" style=\"object-fit: cover;\">\n"
