@@ -71,6 +71,7 @@ def generate_cards(directory, url):
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <h5 class="card-title">{filename}</h5>
                                 <a class="btn btn-outline-primary" href="{path}" role="button">View</a>
                                 <form method="DELETE" action="{url}">
                                     <input type="hidden" name="_method" value="DELETE">
