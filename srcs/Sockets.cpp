@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Sockets.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:54:32 by anlima            #+#    #+#             */
-/*   Updated: 2025/03/24 15:50:35 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/03/27 19:08:03 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ std::vector<int> Sockets::createServer(const std::string &serverName,
             sockets.push_back(sockfd);
         }
     }
+    std::cout << "Listening on port " << singlePort << std::endl;
     return (sockets);
 }
 

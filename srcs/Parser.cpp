@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:33:13 by anlima            #+#    #+#             */
-/*   Updated: 2025/03/24 16:08:07 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/03/27 19:06:34 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ void Parser::processLine(std::vector<std::string> lines, int i, std::vector<Serv
 	std::stringstream iss(lines[i]);
     std::string token;
 	
+    checkServDir(lines, i);
 	checkEmptyLoc(lines, i, flag);
 	if (!(iss >> token))
 		return ;
@@ -193,4 +194,11 @@ void Parser::checkEmptyLoc(std::vector<std::string> lines, int i, int flag) {
 		if (lines[i + 1] == "}" || locationBlockEmpty)
 			throw std::invalid_argument("Error: Location block empty.");
 	}
+}
+
+void Parser::checkServDir(std::vector<std::string> lines, int i) {
+    std::string token;
+	std::stringstream iss(lines[i]);
+	if (iss >> token && (token == "index" || token == "error_page") && !(iss >> token))
+        throw std::invalid_argument("Error: Invalid directive declaration (index/error_page)");
 }
