@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:46:03 by anlima            #+#    #+#             */
-/*   Updated: 2025/03/24 16:07:05 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/03/27 15:53:27 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,19 +31,13 @@ int main(int argc, char **argv) {
         return (1);
     }
     try {
-        std::vector<struct pollfd> fds;
         std::vector<Server> servers = Parser::parseConf(argv[1]);
 
         signal(SIGINT, signal_handler);
         for (size_t i = 0; i < servers.size(); ++i) {
             servers[i].setSocket(Sockets::createServer(servers[i].getServerName(), servers[i].getPort()));
-            for (size_t j = 0; j < servers[i].getSocket().size(); ++j) {
-                servers[i].setPollfd(Sockets::createPollfd(servers[i].getSocket()[j]));
-                Sockets::setNonBlocking(servers[i].getPollfd()[j].fd);
-                fds.push_back(servers[i].getPollfd()[j]);
-            }
         }
-        Requests::handleConn(fds, servers);
+        Requests::handleConn(servers);
     } catch (const std::exception &e) {
         std::cout << e.what() << '\n';
     }

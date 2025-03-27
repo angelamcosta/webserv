@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:22:09 by anlima            #+#    #+#             */
-/*   Updated: 2025/03/21 13:25:38 by anlima           ###   ########.fr       */
+/*   Updated: 2025/03/27 15:31:30 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ Server::Server(const Server &other)
     _socket = other._socket;
     _body_size = other._body_size;
     _dir_listing = other._dir_listing;
-    _fds = other._fds;
     _url_methods = other._url_methods;
 }
 
@@ -49,7 +48,6 @@ Server &Server::operator=(const Server &other)
         _socket = other._socket;
         _body_size = other._body_size;
         _dir_listing = other._dir_listing;
-        _fds = other._fds;
         _url_methods = other._url_methods;
     }
     return (*this);
@@ -98,8 +96,8 @@ void Server::setPort(const std::string &port)
         _port += " " + port;
 }
 
-std::vector<int> Server::getSocket(void) { return (_socket); }
-void Server::setSocket(const std::vector<int> &socket) { _socket = socket; }
+int Server::getSocket(void) { return (_socket); }
+void Server::setSocket(const int &socket) { _socket = socket; }
 
 long Server::getBodySize(void) { return (_body_size); }
 void Server::setBodySize(const std::string &body_size)
@@ -124,9 +122,6 @@ void Server::setDirListing(const std::string &dir_listing)
         throw std::invalid_argument("Error: Invalid autoindex option: " +
                                     dir_listing);
 }
-
-std::vector<struct pollfd> Server::getPollfd(void) { return (_fds); }
-void Server::setPollfd(struct pollfd fd) { _fds.push_back(fd); }
 
 const std::string &Server::getRoot(void) { return (_root); }
 void Server::setRoot(const std::string &root) { _root = root; }
@@ -180,15 +175,12 @@ void Server::checkBodySize(const std::string &body_size)
     }
 }
 
-size_t Server::getServerByFd(pollfd fd, std::vector<Server> &servers)
+size_t Server::getServerByFd(int fd, std::vector<Server> &servers)
 {
     for (size_t i = 0; i < servers.size(); ++i)
     {
-        for (size_t j = 0; j < servers[i].getPollfd().size(); ++j)
-        {
-            if (fd.fd == servers[i].getPollfd()[j].fd)
-                return i;
-        }
+        if (fd == servers[i].getSocket())
+            return i;
     }
     return -1;
 }

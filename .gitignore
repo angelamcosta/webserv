@@ -7,3 +7,4 @@ test.cpp
 test.config
 __pycache__/
 .vscode/
+stress_test.py

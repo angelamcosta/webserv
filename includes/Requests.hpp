@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Requests.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gsilva <gsilva@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:20:33 by anlima            #+#    #+#             */
-/*   Updated: 2025/03/24 16:11:10 by gsilva           ###   ########.fr       */
+/*   Updated: 2025/03/27 15:02:50 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,13 @@
 #include "macros.hpp"
 
 class Requests {
-  private:
+   private:
     Requests();
 
-  public:
+   public:
     static void handleImagePost(t_request &data);
     static void printRequest(const t_request &data);
+    static void handleConn(std::vector<Server> &servers);
     static std::string base64_encode(const std::string &data);
     static std::string getFilename(const std::string &request);
     static void sendResponse(int sockfd, const std::string &response);
@@ -31,7 +32,6 @@ class Requests {
     static t_request processRequest(const std::string &request, Server &server);
     static void handleRequest(int sockfd, Server &server, std::string &response);
     static void setData(t_request &data, Server &server, const std::string &request);
-    static void handleConn(std::vector<struct pollfd> &fds, std::vector<Server> &servers);
     static void findHeaderEnd(const std::string &request, int &read_header, int &content_length);
 };
 

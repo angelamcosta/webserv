@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   macros.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anlima <anlima@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:19:47 by anlima            #+#    #+#             */
-/*   Updated: 2025/02/06 15:13:54 by anlima           ###   ########.fr       */
+/*   Updated: 2025/03/27 15:30:27 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,36 +14,33 @@
 #define MACROS_HPP
 
 #include <arpa/inet.h>
-#include <cstdlib>
-#include <cstring>
 #include <dirent.h>
 #include <fcntl.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <sys/epoll.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#include <algorithm>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <map>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <poll.h>
 #include <sstream>
 #include <stdexcept>
 #include <string>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <typeinfo>
-#include <unistd.h>
 #include <vector>
-#include <dirent.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <iostream>
-#include <fstream>
-#include <sys/stat.h>
-#include <string>
-#include <ctime>
-#include <algorithm>
 
 #define PORT 8080
+#define MAX_CONN 100
 #define BUFFER_SIZE 1024
 #define ARGS_SIZE 8
 #define RES                                                               \
@@ -74,8 +71,7 @@
 #define CONTENT_HEADER "Content-Disposition: form-data;"
 #define TIMEOUT 5000
 
-typedef struct s_request
-{
+typedef struct s_request {
     std::string cgi;
     std::string url;
     std::string index;

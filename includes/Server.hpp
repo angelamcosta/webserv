@@ -6,7 +6,7 @@
 /*   By: anlima <anlima@student.42lisboa.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 15:06:05 by anlima            #+#    #+#             */
-/*   Updated: 2025/03/21 13:04:15 by anlima           ###   ########.fr       */
+/*   Updated: 2025/03/27 15:30:37 by anlima           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,9 @@ class Server {
     std::vector<Location> _locations;
     std::vector<Directive> _directives;
     std::string _port;
-    std::vector<int> _socket;
+    int _socket;
     long _body_size;
     std::string _dir_listing;
-    std::vector<struct pollfd> _fds;
     std::map<std::string, std::string> _url_methods;
 
   public:
@@ -45,11 +44,10 @@ class Server {
     void addLocation(Location location);
     void addDirective(Directive directive);
 
-    std::vector<struct pollfd> getPollfd(void);
-    void setPollfd(struct pollfd fd);
+  
 
-    std::vector<int> getSocket(void);
-    void setSocket(const std::vector<int> &socket);
+    int getSocket(void);
+    void setSocket(const int &socket);
 
     long getBodySize(void);
     void setBodySize(const std::string &body_size);
@@ -81,7 +79,7 @@ class Server {
 
     void checkBodySize(const std::string &body_size);
     size_t  checkDirectives(const std::string &name);
-    static size_t getServerByFd(pollfd fd, std::vector<Server> &servers);
+    static size_t getServerByFd(int fd, std::vector<Server> &servers);
 };
 
 #endif
