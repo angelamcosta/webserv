@@ -92,7 +92,7 @@ def get_directories(full_path, path_info):
             </div>
     """
     generate_response("200 OK", directory_listing_html,
-                      path_info + "index.html", template)
+                      full_path, template)
 
 
 def get_file(full_path, path_info, url, message="", status="200 OK"):

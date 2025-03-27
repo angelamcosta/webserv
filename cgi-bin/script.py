@@ -22,6 +22,8 @@ def main():
     url = "/" + index if url == "/" else url
     full_path = get_full_path(url, path_info)
     error_path = path_info + error_page if error_page[-1] != "/" else path_info + error_page[:-1]
+    if not os.path.exists(error_path):
+        error_path = path_info + "error.html"
     if method == "invalid_size":
         handle_get(full_path, dir_listing,
                     error_path, path_info, url, method)

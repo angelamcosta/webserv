@@ -97,6 +97,8 @@ void Utils::setUploadDir(void) {
 std::string &Utils::getErrorPath(void) { return (_error_path); }
 void Utils::setErrorPath(void) {
     _error_path = _path_info + _error_page.substr(1);
+    if (!pathExists(_error_path))
+        _error_path = _path_info + "error.html";
 }
 
 const std::string Utils::successUpload(void) const {
@@ -198,7 +200,9 @@ void Utils::handleMethod(std::string message) {
         message = uploadFailed();
         getFile(_data.path_info + "content_too_large.html", _data.path_info, _url, "", "413 Content Too Large");
     } else if (_allowed_methods.find(_method) != std::string::npos) {
-        if (_url.find("_method=DELETE") != std::string::npos) {
+        if ((_url.find("_method=DELETE") == std::string::npos) && (_method == "GET"))
+            handleGet(message);
+        else if (_url.find("_method=DELETE") != std::string::npos) {
             message = handlePost();
             if (message == "not allowed") {
                 _full_path = _full_path.substr(0, _full_path.find_first_of("?"));
@@ -211,9 +215,7 @@ void Utils::handleMethod(std::string message) {
                 _full_path = _full_path.substr(0, _full_path.find_first_of("?"));
                 handleGet(message);
             }
-        } else if (_method == "GET")
-            handleGet(message);
-        else if ((_method == "POST") && (_allowed_methods.find("POST") != std::string::npos)) {
+        } else if ((_method == "POST") && (_allowed_methods.find("POST") != std::string::npos)) {
             message = handlePost();
             handleGet(message);
         }
