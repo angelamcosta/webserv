@@ -164,22 +164,20 @@ const std::string Utils::generateCards(std::string path_info, std::string url) c
     }
     for (std::vector<std::string>::const_iterator it = images.begin(); it != images.end(); ++it) {
         std::string path = "/images/" + *it;
-        cards << "            <div class=\"col\">\n"
-              << "                <div class=\"card shadow-sm\">\n"
-              << "                    <div class=\"card-body\">\n"
-              << "                        <div class=\"d-flex justify-content-between align-items-center\">\n"
-              << "                            <div class=\"d-grid gap-2 d-md-flex justify-content-md-end\">\n"
-              << "                                <a class=\"btn btn-outline-primary\" href=\"" << path << "\" role=\"button\">View</a>\n"
-              << "                                <form method=\"DELETE\" action=\"" << url << "\">\n"
-              << "                                    <input type=\"hidden\" name=\"_method\" value=\"DELETE\">\n"
-              << "                                    <input type=\"hidden\" name=\"_filename\" value=\"" << *it << "\">\n"
-              << "                                    <button type=\"submit\" class=\"btn btn-outline-secondary\" role=\"button\">Delete</button>\n"
-              << "                                </form>\n"
-              << "                            </div>\n"
-              << "                        </div>\n"
-              << "                    </div>\n"
-              << "                </div>\n"
-              << "            </div>\n";
+        cards << "<div class=\"col\">\n"
+              << "    <div class=\"card\">\n"
+              << "        <h5 class=\"card-header\">Filename</h5>\n"
+              << "        <div class=\"card-body\">\n"
+              << "            <h5 class=\"card-title\">" << *it << "</h5>\n"
+              << "            <a class=\"btn btn-outline-primary\" href=\"" << path << "\" role=\"button\">View</a>\n"
+              << "            <form method=\"DELETE\" action=\"" << url << "\">\n"
+              << "                <input type=\"hidden\" name=\"_method\" value=\"DELETE\">\n"
+              << "                <input type=\"hidden\" name=\"_filename\" value=\"" << *it << "\">\n"
+              << "                <button type=\"submit\" class=\"btn btn-outline-secondary\" role=\"button\">Delete</button>\n"
+              << "            </form>\n"
+              << "        </div>\n"
+              << "    </div>\n"
+              << "</div>\n";
     }
 
     return (cards.str());
