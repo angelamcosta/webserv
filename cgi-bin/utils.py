@@ -68,7 +68,6 @@ def generate_cards(directory, url):
         cards += f"""
             <div class="col">
                 <div class="card shadow-sm">
-                    <img src="{path}" class="card-img-top" width="100%" height="225" style="object-fit: cover;">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">

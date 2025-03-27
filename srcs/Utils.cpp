@@ -166,7 +166,6 @@ const std::string Utils::generateCards(std::string path_info, std::string url) c
         std::string path = "/images/" + *it;
         cards << "            <div class=\"col\">\n"
               << "                <div class=\"card shadow-sm\">\n"
-              << "                    <img src=\"" << path << "\" class=\"card-img-top\" width=\"100%\" height=\"225\" style=\"object-fit: cover;\">\n"
               << "                    <div class=\"card-body\">\n"
               << "                        <div class=\"d-flex justify-content-between align-items-center\">\n"
               << "                            <div class=\"d-grid gap-2 d-md-flex justify-content-md-end\">\n"
@@ -296,7 +295,7 @@ std::string Utils::handlePost(void) {
             else {
                 std::string file_extension = _filename.substr(index);
                 std::vector<std::string>::iterator it = std::find(valid_extensions.begin(), valid_extensions.end(), file_extension);
-                if (it == valid_extensions.end())    
+                if (it == valid_extensions.end())
                     return uploadFailed();
                 std::string binary_data = base64_decode(_image_data);
                 std::string filename = _upload_dir + generateUuid() + file_extension;
