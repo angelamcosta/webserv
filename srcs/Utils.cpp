@@ -68,7 +68,7 @@ const s_request &Utils::getData(void) { return (_data); }
 const std::string &Utils::getUrl(void) { return (_url); }
 void Utils::setUrl(void) {
     if (_data.url == "" || _data.url == "/")
-        _url = "/index.html";
+        _url += _index;
     else
         _url = _data.url;
 }
@@ -164,23 +164,20 @@ const std::string Utils::generateCards(std::string path_info, std::string url) c
     }
     for (std::vector<std::string>::const_iterator it = images.begin(); it != images.end(); ++it) {
         std::string path = "/images/" + *it;
-        cards << "            <div class=\"col\">\n"
-              << "                <div class=\"card shadow-sm\">\n"
-              << "                    <img src=\"" << path << "\" class=\"card-img-top\" width=\"100%\" height=\"225\" style=\"object-fit: cover;\">\n"
-              << "                    <div class=\"card-body\">\n"
-              << "                        <div class=\"d-flex justify-content-between align-items-center\">\n"
-              << "                            <div class=\"d-grid gap-2 d-md-flex justify-content-md-end\">\n"
-              << "                                <a class=\"btn btn-outline-primary\" href=\"" << path << "\" role=\"button\">View</a>\n"
-              << "                                <form method=\"DELETE\" action=\"" << url << "\">\n"
-              << "                                    <input type=\"hidden\" name=\"_method\" value=\"DELETE\">\n"
-              << "                                    <input type=\"hidden\" name=\"_filename\" value=\"" << *it << "\">\n"
-              << "                                    <button type=\"submit\" class=\"btn btn-outline-secondary\" role=\"button\">Delete</button>\n"
-              << "                                </form>\n"
-              << "                            </div>\n"
-              << "                        </div>\n"
-              << "                    </div>\n"
-              << "                </div>\n"
-              << "            </div>\n";
+        cards << "<div class=\"col\">\n"
+              << "    <div class=\"card\">\n"
+              << "        <h5 class=\"card-header\">Filename</h5>\n"
+              << "        <div class=\"card-body\">\n"
+              << "            <h5 class=\"card-title\">" << *it << "</h5>\n"
+              << "            <a class=\"btn btn-outline-primary\" href=\"" << path << "\" role=\"button\">View</a>\n"
+              << "            <form method=\"DELETE\" action=\"" << url << "\">\n"
+              << "                <input type=\"hidden\" name=\"_method\" value=\"DELETE\">\n"
+              << "                <input type=\"hidden\" name=\"_filename\" value=\"" << *it << "\">\n"
+              << "                <button type=\"submit\" class=\"btn btn-outline-secondary\" role=\"button\">Delete</button>\n"
+              << "            </form>\n"
+              << "        </div>\n"
+              << "    </div>\n"
+              << "</div>\n";
     }
 
     return (cards.str());
@@ -296,7 +293,7 @@ std::string Utils::handlePost(void) {
             else {
                 std::string file_extension = _filename.substr(index);
                 std::vector<std::string>::iterator it = std::find(valid_extensions.begin(), valid_extensions.end(), file_extension);
-                if (it == valid_extensions.end())    
+                if (it == valid_extensions.end())
                     return uploadFailed();
                 std::string binary_data = base64_decode(_image_data);
                 std::string filename = _upload_dir + generateUuid() + file_extension;
@@ -415,7 +412,7 @@ void Utils::getDirectories(const std::string &full_path, const std::string &path
         "</div>"
         "</div>";
 
-    generateResponse("200 OK", html_code, path_info + "index.html", template_file);
+    generateResponse("200 OK", html_code, path_info + _index, template_file);
 }
 
 std::string Utils::generateHTMLList(const std::vector<std::string> &files) {
